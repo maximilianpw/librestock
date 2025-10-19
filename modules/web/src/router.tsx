@@ -6,7 +6,7 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider'
 import { routeTree } from './routeTree.gen'
 
 // Create a new router instance
-export const createRouter = () => {
+export function createRouter() {
   const rqContext = TanstackQuery.getContext()
 
   const router = createTanstackRouter({
@@ -25,6 +25,16 @@ export const createRouter = () => {
   setupRouterSsrQueryIntegration({ router, queryClient: rqContext.queryClient })
 
   return router
+}
+
+// Create singleton router instance for TanStack Start
+let routerInstance: ReturnType<typeof createRouter> | undefined
+
+export function getRouter() {
+  if (!routerInstance) {
+    routerInstance = createRouter()
+  }
+  return routerInstance
 }
 
 // Register the router instance for type safety

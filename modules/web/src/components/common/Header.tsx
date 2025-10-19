@@ -16,14 +16,44 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import {
+  ButtonVariant,
+  NavigationRoutes,
+  SheetPosition,
+  SizeVariant,
+} from '@/lib/enums'
 
 const routes = [
-  { name: 'Dashboard', route: '/dashboard', icon: LayoutDashboard },
-  { name: 'Items', route: '/items', icon: Package },
-  { name: 'Search', route: '/search', icon: Search },
-  { name: 'Deliveries', route: '/deliveries', icon: Truck },
-  { name: 'Tags', route: '/tags', icon: Tag },
-  { name: 'Report', route: '/report', icon: BarChart2 },
+  {
+    name: NavigationRoutes.DASHBOARD.label,
+    route: NavigationRoutes.DASHBOARD.path,
+    icon: LayoutDashboard,
+  },
+  {
+    name: NavigationRoutes.ITEMS.label,
+    route: NavigationRoutes.ITEMS.path,
+    icon: Package,
+  },
+  {
+    name: NavigationRoutes.SEARCH.label,
+    route: NavigationRoutes.SEARCH.path,
+    icon: Search,
+  },
+  {
+    name: NavigationRoutes.DELIVERIES.label,
+    route: NavigationRoutes.DELIVERIES.path,
+    icon: Truck,
+  },
+  {
+    name: NavigationRoutes.TAGS.label,
+    route: NavigationRoutes.TAGS.path,
+    icon: Tag,
+  },
+  {
+    name: NavigationRoutes.REPORT.label,
+    route: NavigationRoutes.REPORT.path,
+    icon: BarChart2,
+  },
 ]
 
 function useIsActive(to: string) {
@@ -88,9 +118,17 @@ function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
 
       {/* Footer / Settings */}
       <div className="p-3">
-        <Link to="/settings" className="w-full" onClick={onItemClick}>
-          <Button variant="outline" className="w-full justify-start rounded-xl">
-            <Settings className="mr-2 h-4 w-4" /> User Settings
+        <Link
+          to={NavigationRoutes.SETTINGS.path}
+          className="w-full"
+          onClick={onItemClick}
+        >
+          <Button
+            variant={ButtonVariant.OUTLINE}
+            className="w-full justify-start rounded-xl"
+          >
+            <Settings className="mr-2 h-4 w-4" />{' '}
+            {NavigationRoutes.SETTINGS.label}
           </Button>
         </Link>
       </div>
@@ -113,11 +151,11 @@ export default function Header() {
           </Link>
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant={ButtonVariant.OUTLINE} size={SizeVariant.SM}>
                 <Menu className="h-4 w-4" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
+            <SheetContent side={SheetPosition.LEFT} className="w-64 p-0">
               <SidebarContent onItemClick={() => setMobileMenuOpen(false)} />
             </SheetContent>
           </Sheet>
