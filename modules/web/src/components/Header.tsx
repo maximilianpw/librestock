@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Link, useRouterState } from '@tanstack/react-router'
 import {
   BarChart2,
@@ -12,10 +11,11 @@ import {
   Tag,
   Truck,
 } from 'lucide-react'
+import clsx from 'clsx'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import clsx from 'clsx'
 
 const routes = [
   { name: 'Dashboard', route: '/dashboard', icon: LayoutDashboard },

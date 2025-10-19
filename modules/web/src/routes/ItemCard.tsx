@@ -1,6 +1,7 @@
-import { type Item } from '@/data/routes/item'
 import * as React from 'react'
-import { DisplayType, Package } from './items'
+import { Package } from './items'
+import type {Item} from '@/data/routes/item';
+import type { DisplayType} from './items';
 
 export function ItemCard({
   item,

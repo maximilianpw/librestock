@@ -71,7 +71,7 @@ function FolderItem({
 }
 
 interface FolderSidebarProps {
-  folders?: FolderNode[]
+  folders?: Array<FolderNode>
   selectedId?: string
   onSelect?: (id: string) => void
 }

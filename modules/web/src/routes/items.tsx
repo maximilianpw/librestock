@@ -1,5 +1,3 @@
-import { sampleItems } from '@/data/routes/item'
-import type { FolderNode } from '@/data/types/folder-node'
 import { createFileRoute } from '@tanstack/react-router'
 import clsx from 'clsx'
 import {
@@ -15,8 +13,10 @@ import FolderSidebar from '../components/FolderSidebar'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Select } from '../components/ui/select'
-import { sampleFolders } from '@/data/routes/folders'
 import { ItemCard } from './ItemCard'
+import type { FolderNode } from '@/data/types/folder-node'
+import { sampleItems } from '@/data/routes/item'
+import { sampleFolders } from '@/data/routes/folders'
 
 export const Route = createFileRoute('/items')({
   component: ItemsPage,
