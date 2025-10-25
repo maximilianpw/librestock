@@ -8,5 +8,7 @@
 .direnv
 .claude
 
+logfile
+
 # PostgreSQL
 .postgres/
