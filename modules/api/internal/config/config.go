@@ -3,14 +3,16 @@ package config
 import "os"
 
 type Config struct {
-	DatabaseURL string
-	Port        string
+	DatabaseURL     string
+	Port            string
+	ClerkSecretKey  string
 }
 
 func Load() *Config {
 	return &Config{
-		DatabaseURL: getEnv("DATABASE_URL", ""),
-		Port:        getEnv("PORT", "5432"),
+		DatabaseURL:    getEnv("DATABASE_URL", ""),
+		Port:           getEnv("PORT", "5432"),
+		ClerkSecretKey: getEnv("CLERK_SECRET_KEY", ""),
 	}
 }
 

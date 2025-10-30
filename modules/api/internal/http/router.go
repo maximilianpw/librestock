@@ -3,18 +3,30 @@ package http
 import (
 	"net/http"
 
+	"github.com/maximilianpw/rbi-inventory/internal/config"
 	"github.com/maximilianpw/rbi-inventory/internal/database"
+	"github.com/maximilianpw/rbi-inventory/internal/handlers/auth"
 	"github.com/maximilianpw/rbi-inventory/internal/handlers/users"
+	"github.com/maximilianpw/rbi-inventory/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func BuildRouter(r *gin.Engine, db *database.DB) {
+func BuildRouter(r *gin.Engine, db *database.DB, cfg *config.Config) {
 	r.GET("/health-check", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
-	v1 := r.Group("/api/v1")
 
-	usersGroup := v1.Group("/users")
-	users.BuildRoutes(usersGroup, db)
+	// Protected API routes
+	v1 := r.Group("/api/v1")
+	v1.Use(middleware.AuthMiddleware(cfg)) // Apply auth middleware to all /api/v1 routes
+	{
+		// Auth routes (protected)
+		authGroup := v1.Group("/auth")
+		auth.BuildRoutes(authGroup, db, cfg)
+
+		// Users routes (protected)
+		usersGroup := v1.Group("/users")
+		users.BuildRoutes(usersGroup, db)
+	}
 }
