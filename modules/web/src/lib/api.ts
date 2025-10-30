@@ -1,6 +1,7 @@
 import { useAuth } from '@clerk/clerk-react'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1'
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1'
 
 export interface ApiResponse<T> {
   data?: T
@@ -17,7 +18,10 @@ export function useApiClient() {
      * @param options - Fetch options (method, body, headers, etc.)
      * @returns Parsed JSON response
      */
-    async fetch<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    async fetch<T = unknown>(
+      endpoint: string,
+      options: RequestInit = {},
+    ): Promise<T> {
       const token = await getToken()
 
       if (!token) {
@@ -27,15 +31,19 @@ export function useApiClient() {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
           ...options.headers,
         },
       })
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: 'Request failed' }))
-        throw new Error(error.error || `HTTP ${response.status}: ${response.statusText}`)
+        const error = await response
+          .json()
+          .catch(() => ({ error: 'Request failed' }))
+        throw new Error(
+          error.error || `HTTP ${response.status}: ${response.statusText}`,
+        )
       }
 
       return response.json()

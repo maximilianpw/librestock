@@ -1,10 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useApiClient, API_ENDPOINTS } from '@/lib/api'
+import { CheckCircle2, Loader2, XCircle } from 'lucide-react'
+import { API_ENDPOINTS, useApiClient } from '@/lib/api'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 
 export const Route = createFileRoute('/_authed/api-test')({
   component: ApiTestPage,
@@ -13,7 +19,9 @@ export const Route = createFileRoute('/_authed/api-test')({
 function ApiTestPage() {
   const api = useApiClient()
   const [loading, setLoading] = useState<string | null>(null)
-  const [results, setResults] = useState<Record<string, { success: boolean; data?: any; error?: string }>>({})
+  const [results, setResults] = useState<
+    Record<string, { success: boolean; data?: any; error?: string }>
+  >({})
 
   async function testEndpoint(name: string, testFn: () => Promise<any>) {
     setLoading(name)
@@ -26,7 +34,10 @@ function ApiTestPage() {
     } catch (error) {
       setResults((prev) => ({
         ...prev,
-        [name]: { success: false, error: error instanceof Error ? error.message : 'Unknown error' },
+        [name]: {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
       }))
     } finally {
       setLoading(null)
@@ -77,7 +88,8 @@ function ApiTestPage() {
         <AlertDescription>
           <strong>Backend URL:</strong> http://localhost:8080/api/v1
           <br />
-          <strong>Auth Method:</strong> Clerk JWT via Authorization Bearer header
+          <strong>Auth Method:</strong> Clerk JWT via Authorization Bearer
+          header
         </AlertDescription>
       </Alert>
 
@@ -91,12 +103,10 @@ function ApiTestPage() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   {test.name}
-                  {result && (
-                    result.success ? (
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-red-500" />
-                    )
+                  {result.success ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <XCircle className="h-5 w-5 text-red-500" />
                   )}
                 </CardTitle>
                 <CardDescription>{test.description}</CardDescription>
@@ -117,13 +127,15 @@ function ApiTestPage() {
                   )}
                 </Button>
 
-                {result && (
+                {
                   <div className="space-y-2">
                     <div className="text-sm font-medium">
                       {result.success ? (
                         <span className="text-green-600">Success</span>
                       ) : (
-                        <span className="text-red-600">Error: {result.error}</span>
+                        <span className="text-red-600">
+                          Error: {result.error}
+                        </span>
                       )}
                     </div>
                     {result.data && (
@@ -132,7 +144,7 @@ function ApiTestPage() {
                       </pre>
                     )}
                   </div>
-                )}
+                }
               </CardContent>
             </Card>
           )
