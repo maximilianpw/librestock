@@ -1,8 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import type { SortOption } from '@/components/items/SortSelect'
-import type { FolderNode } from '@/data/types/folder-node'
 import Breadcrumbs from '@/components/common/Breadcrumbs'
 import FolderSidebar from '@/components/common/FolderSidebar'
 import { ActionButtons } from '@/components/items/ActionButtons'
@@ -10,15 +5,25 @@ import { DisplayTypeToggle } from '@/components/items/DisplayTypeToggle'
 import { ItemCard } from '@/components/items/ItemCard'
 import { ItemsGrid } from '@/components/items/ItemsGrid'
 import { SearchBar } from '@/components/items/SearchBar'
+import type { SortOption } from '@/components/items/SortSelect'
 import { SortSelect } from '@/components/items/SortSelect'
 import { sampleFolders } from '@/data/routes/folders'
 import { sampleItems } from '@/data/routes/item'
-import { SortField } from '@/lib/enums/sort-field.enum'
 import { DisplayType } from '@/lib/enums/display-type.enum'
+import { SortField } from '@/lib/enums/sort-field.enum'
+import { findFolderPath } from '@/lib/utils'
+import { createFileRoute } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/_authed/items')({
   component: ItemsPage,
 })
+
+const fetchItems = createServerFn({
+  method: 'GET',
+}).handler(() => sampleItems)
 
 const useSortOptions = (): Array<SortOption> => {
   const { t } = useTranslation()
@@ -30,25 +35,7 @@ const useSortOptions = (): Array<SortOption> => {
   ]
 }
 
-function findFolderPath(
-  folders: Array<FolderNode>,
-  targetId: string,
-  currentPath: Array<FolderNode> = [],
-): Array<FolderNode> | null {
-  for (const folder of folders) {
-    const newPath = [...currentPath, folder]
-    if (folder.id === targetId) {
-      return newPath
-    }
-    if (folder.children) {
-      const result = findFolderPath(folder.children, targetId, newPath)
-      if (result) return result
-    }
-  }
-  return null
-}
-
-function ItemsPage() {
+async function ItemsPage() {
   const { t } = useTranslation()
   const sortOptions = useSortOptions()
   const [selectedFolderId, setSelectedFolderId] = useState<string | undefined>()
@@ -60,7 +47,9 @@ function ItemsPage() {
     ? findFolderPath(sampleFolders, selectedFolderId) || []
     : []
 
-  const filteredItems = sampleItems.filter(
+  const items = await fetchItems()
+
+  const filteredItems = items.filter(
     (item) =>
       (!selectedFolderId || item.folderId === selectedFolderId) &&
       item.name.toLowerCase().includes(searchQuery.toLowerCase()),

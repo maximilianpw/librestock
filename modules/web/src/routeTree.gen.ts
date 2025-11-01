@@ -13,8 +13,6 @@ import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as AuthedItemsRouteImport } from './routes/_authed/items'
-import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
-import { Route as AuthedApiTestRouteImport } from './routes/_authed/api-test'
 
 const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
@@ -35,28 +33,14 @@ const AuthedItemsRoute = AuthedItemsRouteImport.update({
   path: '/items',
   getParentRoute: () => AuthedRoute,
 } as any)
-const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthedRoute,
-} as any)
-const AuthedApiTestRoute = AuthedApiTestRouteImport.update({
-  id: '/api-test',
-  path: '/api-test',
-  getParentRoute: () => AuthedRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api-test': typeof AuthedApiTestRoute
-  '/dashboard': typeof AuthedDashboardRoute
   '/items': typeof AuthedItemsRoute
   '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api-test': typeof AuthedApiTestRoute
-  '/dashboard': typeof AuthedDashboardRoute
   '/items': typeof AuthedItemsRoute
   '/settings': typeof SettingsIndexRoute
 }
@@ -64,24 +48,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
-  '/_authed/api-test': typeof AuthedApiTestRoute
-  '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/items': typeof AuthedItemsRoute
   '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api-test' | '/dashboard' | '/items' | '/settings'
+  fullPaths: '/' | '/items' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api-test' | '/dashboard' | '/items' | '/settings'
-  id:
-    | '__root__'
-    | '/'
-    | '/_authed'
-    | '/_authed/api-test'
-    | '/_authed/dashboard'
-    | '/_authed/items'
-    | '/settings/'
+  to: '/' | '/items' | '/settings'
+  id: '__root__' | '/' | '/_authed' | '/_authed/items' | '/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -120,32 +95,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedItemsRouteImport
       parentRoute: typeof AuthedRoute
     }
-    '/_authed/dashboard': {
-      id: '/_authed/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthedDashboardRouteImport
-      parentRoute: typeof AuthedRoute
-    }
-    '/_authed/api-test': {
-      id: '/_authed/api-test'
-      path: '/api-test'
-      fullPath: '/api-test'
-      preLoaderRoute: typeof AuthedApiTestRouteImport
-      parentRoute: typeof AuthedRoute
-    }
   }
 }
 
 interface AuthedRouteChildren {
-  AuthedApiTestRoute: typeof AuthedApiTestRoute
-  AuthedDashboardRoute: typeof AuthedDashboardRoute
   AuthedItemsRoute: typeof AuthedItemsRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
-  AuthedApiTestRoute: AuthedApiTestRoute,
-  AuthedDashboardRoute: AuthedDashboardRoute,
   AuthedItemsRoute: AuthedItemsRoute,
 }
 

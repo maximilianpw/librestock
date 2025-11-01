@@ -64,6 +64,11 @@
   "pnpm": {
     "overrides": {
       "srvx": "0.8.15"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@clerk/shared",
+      "esbuild",
+      "unrs-resolver"
+    ]
   }
 }

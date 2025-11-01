@@ -38,22 +38,33 @@ A dedicated portal for yacht owners to:
 
 The inventory management system will provide:
 
-- **Folders** to group items by product categories, brands, or suppliers
+- **Categories** to organize items by product type (e.g., "Bathroom Amenities", "Linens", "Cosmetics")
+- **Brands** to track and filter items by manufacturer/brand
 - **Items** with comprehensive tracking:
   - Quantity, weight, volume
+  - Purchase price tracking
   - Expiry dates and shelf life
-  - Supplier pricing and order details
   - Minimum stock levels with automated alerts
   - Custom notes and specifications
-- **Suppliers** database with full contact information for quick reordering
-- **Usages** tracking to record stock changes (sales, usage, returns)
-- **Photos** for visual documentation and identification
-- **Audit logs** for accountability and change tracking
-- **Statistics and Alerts**:
+  - Storage location tracking
+- **Suppliers** database with:
+  - Full contact information for quick reordering
+  - Supplier details (address, email, phone, contact person)
+  - Contract type (e.g., fixed-term, recurring, ad-hoc)
+  - Supplier-specific pricing and terms
+- **Editing History** with complete audit trail:
+  - Track all changes to items, suppliers, and inventory records
+  - User ID logging to identify who made each change
+  - Timestamp tracking for accountability
+- **Reports** providing business insights:
+  - Inventory level reports (current stock across all items)
+  - Inventory value reports (total asset value based on purchase prices)
   - Low stock notifications (items below minimum threshold)
   - Upcoming expiry warnings
   - Usage trends and shortage history
   - Most frequently ordered items
+- **Photos** for visual documentation and identification
+- **Usages** tracking to record stock changes (sales, usage, returns)
 
 ---
 
@@ -89,12 +100,14 @@ _(Development instructions will be added as the project structure is finalized)_
 
 ### Inventory Management
 
-- **Folders**: Organize items by categories (e.g., "Bathroom Amenities", "Linens", "Cosmetics")
-- **Items**: Individual products with full tracking capabilities
-- **Suppliers**: Contact database for procurement
+- **Categories**: Organize items by product type (e.g., "Bathroom Amenities", "Linens", "Cosmetics")
+- **Brands**: Track and filter items by manufacturer/brand
+- **Items**: Individual products with full tracking capabilities including purchase price and location
+- **Suppliers**: Contact database for procurement with contract type tracking
 - **Minimum Level**: Automated low-stock alerts when quantity drops below threshold
 - **Usages**: Historical record of all stock movements
-- **Audit Logs**: Complete accountability trail for all system changes
+- **Editing History**: Complete accountability trail with user ID tracking for all system changes
+- **Reports**: Inventory level and value reporting for business insights
 
 ### Business Workflow
 
