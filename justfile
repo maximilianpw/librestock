@@ -1,35 +1,31 @@
-# bootstrap both apps
+# Bootstrap both frontend and backend
 bootstrap:
-  cd modules/web && pnpm install
+  just modules/web/bootstrap
 
-# start infra (db/redis/traefik)
-up:
-  docker compose -f docker-compose.dev.yml up -d
+# Decrypt environment variables for both apps
+decrypt:
+  just modules/web/decrypt
+  just modules/api/decrypt
 
-# stop infra
-down:
-  docker compose -f docker-compose.dev.yml down
-
-# run both apps (two terminals recommended)
-api:
-  cd modules/api && go run cmd/api/main.go
-
+# Frontend commands
 web:
-  cd modules/web && pnpm dev
+  just modules/web/dev
 
-# database migrations
+lint:
+  just modules/web/lint
+
+wtest:
+  just modules/web/test
+
+# Backend commands
+api:
+  just modules/api/run
+
 migrate-up:
-  cd modules/api && go run cmd/migrate/main.go -action=up
+  just modules/api/migrate-up
 
 migrate-down:
-  cd modules/api && go run cmd/migrate/main.go -action=down
+  just modules/api/migrate-down
 
 migrate-status:
-  cd modules/api && go run cmd/migrate/main.go -action=status
-
-# lint & tests
-lint:
-  cd modules/web && pnpm lint && pnpm typecheck
-
-test:
-  cd modules/web && pnpm test
+  just modules/api/migrate-status
