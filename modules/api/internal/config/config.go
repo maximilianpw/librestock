@@ -3,14 +3,14 @@ package config
 import "os"
 
 type Config struct {
-	DatabaseURL    tring
-	Port          string
-	ClerkSecretKeystring
+	DatabaseURL    string
+	Port           string
+	ClerkSecretKey string
 }
 
 func Load() *Config {
 	return &Config{
-		DatabaseURL:    getEnv("DATABASE_URL", ""),
+		DatabaseURL:    getEnv("DATABASE_URL", "postgresql://postgres@/rbi_inventory?host=/home/maxpw/local/rbi-inventory/.postgres"),
 		Port:           getEnv("PORT", "8080"),
 		ClerkSecretKey: getEnv("CLERK_SECRET_KEY", ""),
 	}
