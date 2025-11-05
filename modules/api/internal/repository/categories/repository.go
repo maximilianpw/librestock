@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+
 	"github.com/maximilianpw/rbi-inventory/internal/models"
 )
 
@@ -51,9 +52,17 @@ func (r *categoryRepository) GetByID(ctx context.Context, id uuid.UUID) (*models
 
 func (r *categoryRepository) List(ctx context.Context) ([]*models.Category, error) {
 	query := `
-		SELECT id, name, parent_id, description, created_at, updated_at
-		FROM categories
-		ORDER BY name
+		WITH RECURSIVE category_tree AS (
+			SELECT id, name, parent_id, description, created_at, updated_at
+			FROM categories
+
+			UNION ALL
+
+			SELECT c.id, c.name, c.parent_id, c.description, c.created_at, c.updated_at
+			FROM categories c
+			JOIN category_tree ct ON c.parent_id = ct.id
+		)
+		SELECT * FROM category_tree ORDER BY name
 	`
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {

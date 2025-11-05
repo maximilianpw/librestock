@@ -29,72 +29,38 @@ func (h *categoryHandler) HandleGetCategories(c *gin.Context) {
 		return
 	}
 
-	responses := make([]dtos.CategoryResponse, 0, len(categories))
+	responses := make([]dtos.CategoryWithChildrenResponse, 0, len(categories))
 	for _, cat := range categories {
-		responses = append(responses, dtos.CategoryResponse{
+		children, err := h.repo.GetChildren(ctx, cat.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch category children"})
+			return
+		}
+
+		childResponses := make([]dtos.CategoryResponse, 0, len(children))
+		for _, child := range children {
+			childResponses = append(childResponses, dtos.CategoryResponse{
+				ID:          child.ID,
+				Name:        child.Name,
+				ParentID:    child.ParentID,
+				Description: child.Description,
+				CreatedAt:   child.CreatedAt,
+				UpdatedAt:   child.UpdatedAt,
+			})
+		}
+
+		responses = append(responses, dtos.CategoryWithChildrenResponse{
 			ID:          cat.ID,
 			Name:        cat.Name,
 			ParentID:    cat.ParentID,
 			Description: cat.Description,
+			Children:    childResponses,
 			CreatedAt:   cat.CreatedAt,
 			UpdatedAt:   cat.UpdatedAt,
 		})
 	}
 
 	c.JSON(http.StatusOK, responses)
-}
-
-// GET /categories/:id - Get category with all children
-func (h *categoryHandler) HandleGetCategory(c *gin.Context) {
-	id := c.Param("id")
-	categoryID, err := uuid.Parse(id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
-		return
-	}
-
-	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
-	defer cancel()
-
-	category, err := h.repo.GetByID(ctx, categoryID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch category"})
-		return
-	}
-
-	// Get all children recursively
-	children, err := h.repo.GetChildren(ctx, categoryID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch category children"})
-		return
-	}
-
-	response := dtos.CategoryWithChildrenResponse{
-		ID:          category.ID,
-		Name:        category.Name,
-		ParentID:    category.ParentID,
-		Description: category.Description,
-		Children:    make([]dtos.CategoryResponse, 0, len(children)),
-		CreatedAt:   category.CreatedAt,
-		UpdatedAt:   category.UpdatedAt,
-	}
-
-	for _, child := range children {
-		response.Children = append(response.Children, dtos.CategoryResponse{
-			ID:          child.ID,
-			Name:        child.Name,
-			ParentID:    child.ParentID,
-			Description: child.Description,
-			CreatedAt:   child.CreatedAt,
-			UpdatedAt:   child.UpdatedAt,
-		})
-	}
-
-	c.JSON(http.StatusOK, response)
 }
 
 // POST /categories - Create category
@@ -213,9 +179,8 @@ func NewHandler(db *database.DB) *categoryHandler {
 func BuildRoutes(rg *gin.RouterGroup, db *database.DB) {
 	handler := NewHandler(db)
 
-	rg.GET("", handler.HandleGetCategories)       // GET /categories
-	rg.GET("/:id", handler.HandleGetCategory)     // GET /categories/:id
-	rg.POST("", handler.HandleCreateCategory)     // POST /categories
-	rg.PUT("/:id", handler.HandleUpdateCategory)  // PUT /categories/:id
+	rg.GET("", handler.HandleGetCategories)         // GET /categories
+	rg.POST("", handler.HandleCreateCategory)       // POST /categories
+	rg.PUT("/:id", handler.HandleUpdateCategory)    // PUT /categories/:id
 	rg.DELETE("/:id", handler.HandleDeleteCategory) // DELETE /categories/:id
 }
