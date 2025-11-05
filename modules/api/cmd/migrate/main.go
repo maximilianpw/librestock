@@ -11,10 +11,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 
 	"github.com/maximilianpw/rbi-inventory/internal/config"
-
-	_ "github.com/lib/pq"
 )
 
 type Migration struct {
