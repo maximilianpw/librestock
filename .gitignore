@@ -9,6 +9,7 @@
 .claude
 
 logfile
+#sortly.csv
 
 # PostgreSQL
 .postgres/
