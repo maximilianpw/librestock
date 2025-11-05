@@ -6,6 +6,8 @@ import (
 	"github.com/maximilianpw/rbi-inventory/internal/config"
 	"github.com/maximilianpw/rbi-inventory/internal/database"
 	"github.com/maximilianpw/rbi-inventory/internal/handlers/auth"
+	"github.com/maximilianpw/rbi-inventory/internal/handlers/categories"
+	"github.com/maximilianpw/rbi-inventory/internal/handlers/products"
 	"github.com/maximilianpw/rbi-inventory/internal/handlers/users"
 	"github.com/maximilianpw/rbi-inventory/internal/middleware"
 
@@ -28,5 +30,13 @@ func BuildRouter(r *gin.Engine, db *database.DB, cfg *config.Config) {
 		// Users routes (protected)
 		usersGroup := v1.Group("/users")
 		users.BuildRoutes(usersGroup, db)
+
+		// Categories routes (protected)
+		categoriesGroup := v1.Group("/categories")
+		categories.BuildRoutes(categoriesGroup, db)
+
+		// Products routes (protected)
+		productsGroup := v1.Group("/products")
+		products.BuildRoutes(productsGroup, db)
 	}
 }
