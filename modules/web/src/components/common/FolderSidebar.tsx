@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { ChevronDown, ChevronRight, Folder, FolderOpen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import type { FolderNode } from '@/data/types/folder-node'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { FolderNode } from '@/lib/data/types/folder-node'
 
 interface FolderItemProps {
   folder: FolderNode

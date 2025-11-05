@@ -1,7 +1,6 @@
 import { Package } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent } from '../ui/card'
-import type { Item } from '@/data/types/item'
 import { ImagePlaceholder } from '@/components/items/ImagePlaceholder'
 import { DisplayType } from '@/lib/enums/display-type.enum'
 
@@ -9,7 +8,7 @@ export function ItemCard({
   item,
   displayType,
 }: {
-  item: Item
+  item: any
   displayType: DisplayType
 }) {
   const { t } = useTranslation()

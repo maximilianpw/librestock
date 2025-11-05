@@ -2,7 +2,6 @@ import clsx from 'clsx'
 import { Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { ReactNode } from 'react'
-import { EmptyState } from '@/components/common/EmptyState'
 import { DisplayType } from '@/lib/enums/display-type.enum'
 
 interface ItemsGridProps {
@@ -13,29 +12,7 @@ interface ItemsGridProps {
   searchQuery?: string
 }
 
-export function ItemsGrid({
-  items,
-  displayType,
-  renderItem,
-  emptyMessage,
-  searchQuery = '',
-}: ItemsGridProps) {
-  const { t } = useTranslation()
-
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        icon={Search}
-        message={
-          searchQuery
-            ? t('items.noItemsFound')
-            : emptyMessage || t('items.noItemsFound')
-        }
-        description={searchQuery ? t('search.help') : undefined}
-      />
-    )
-  }
-
+export function ItemsGrid({ items, displayType, renderItem }: ItemsGridProps) {
   return (
     <div
       className={clsx(

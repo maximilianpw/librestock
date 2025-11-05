@@ -1,7 +1,4 @@
-import { Link, useRouterState } from '@tanstack/react-router'
-import { BarChart2, LayoutDashboard, Package, Settings } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import { SignInButton, SignedOut } from '@clerk/tanstack-react-start'
+'use client'
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +11,10 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar'
+import { SignedOut, SignInButton } from '@clerk/nextjs'
+import { BarChart2, LayoutDashboard, Package, Settings } from 'lucide-react'
+import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 
 const useRoutes = () => {
   const { t } = useTranslation()
@@ -30,8 +31,8 @@ const useRoutes = () => {
       icon: Package,
     },
     {
-      name: t('navigation.catalog'),
-      route: '/catalog',
+      name: t('navigation.search'),
+      route: '/search',
       icon: Package,
     },
     {
@@ -42,12 +43,6 @@ const useRoutes = () => {
   ]
 }
 
-function useIsActive(to: string) {
-  const { location } = useRouterState()
-  if (to === '/') return location.pathname === '/'
-  return location.pathname.startsWith(to)
-}
-
 export default function AppSidebar() {
   const { t } = useTranslation()
   const routes = useRoutes()
@@ -55,7 +50,7 @@ export default function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link to="/" className="inline-flex items-center gap-2 px-2">
+        <Link href="/" className="inline-flex items-center gap-2 px-2">
           <span className="text-base font-bold tracking-tight">
             RBI Inventory
           </span>
@@ -69,11 +64,10 @@ export default function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {routes.map(({ name, route, icon: Icon }) => {
-                const isActive = useIsActive(route)
                 return (
                   <SidebarMenuItem key={route}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={route}>
+                    <SidebarMenuButton asChild isActive={false}>
+                      <Link href={route}>
                         <Icon />
                         <span>{name}</span>
                       </Link>
@@ -91,8 +85,8 @@ export default function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={useIsActive('/settings')}>
-              <Link to="/settings">
+            <SidebarMenuButton asChild isActive={false}>
+              <Link href="/settings">
                 <Settings />
                 <span>{t('navigation.settings')}</span>
               </Link>

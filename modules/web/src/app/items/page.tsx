@@ -1,5 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+'use client'
+
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { SortOption } from '@/components/items/SortSelect'
 import FolderSidebar from '@/components/common/FolderSidebar'
@@ -20,16 +21,8 @@ import {
 import { sampleFolders } from '@/lib/data/routes/folders'
 import { DisplayType } from '@/lib/enums/display-type.enum'
 import { SortField } from '@/lib/enums/sort-field.enum'
-import { fetchItems } from '@/lib/items'
 import { findFolderPath } from '@/lib/utils'
-
-export const Route = createFileRoute('/_authed/items')({
-  component: ItemsPage,
-  loader: async () => {
-    const response = await fetchItems()
-    return response
-  },
-})
+import { sampleItems } from '@/lib/data/routes/item'
 
 const useSortOptions = (): Array<SortOption> => {
   const { t } = useTranslation()
@@ -41,19 +34,18 @@ const useSortOptions = (): Array<SortOption> => {
   ]
 }
 
-function ItemsPage() {
+export default function ItemsPage() {
   const { t } = useTranslation()
   const sortOptions = useSortOptions()
   const [selectedFolderId, setSelectedFolderId] = useState<string | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState(SortField.NAME)
   const [displayType, setDisplayType] = useState<DisplayType>(DisplayType.GRID)
+  const [items, setItems] = useState(sampleItems)
 
   const breadcrumbPath = selectedFolderId
     ? findFolderPath(sampleFolders, selectedFolderId) || []
     : []
-
-  const items = Route.useLoaderData()
 
   const filteredItems = items.filter(
     (item) =>
@@ -87,7 +79,7 @@ function ItemsPage() {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               {breadcrumbPath.map((folder, index) => (
-                <>
+                <div key={index}>
                   <BreadcrumbSeparator key={`sep-${folder.id}`} />
                   <BreadcrumbItem key={folder.id}>
                     {index === breadcrumbPath.length - 1 ? (
@@ -101,7 +93,7 @@ function ItemsPage() {
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
-                </>
+                </div>
               ))}
             </BreadcrumbList>
           </Breadcrumb>
