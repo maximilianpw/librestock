@@ -17,29 +17,18 @@
         # Toolchain & services
         buildInputs = [
           pkgs.go_1_24 # Go toolchain
-          pkgs.delve # Debugger (dlv)
-          pkgs.go-tools # go vet, godoc, etc.
-          pkgs.gotestsum # Pretty test runner output
-
-          pkgs.sqlc # Type-safe DB access codegen
-          pkgs.goose # DB migrations
 
           pkgs.just # Task runner
+          pkgs.nodejs_24 # node
           pkgs.pnpm_10 # Better npm
 
-          pkgs.docker # Optional: local containers
+          pkgs.docker
           pkgs.docker-compose
 
           pkgs.postgresql
         ];
 
         shellHook = ''
-          export GO111MODULE=on
-          export CGO_ENABLED=1
-
-          # Add ./bin (if you generate helpers) to PATH
-          export PATH="$PWD/modules/api/bin:$PATH"
-
           # PostgreSQL configuration
           export PGDATA="$PWD/.postgres/data"
           export PGHOST="$PWD/.postgres"
