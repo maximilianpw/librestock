@@ -2,20 +2,20 @@ package categories
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
+	bizcategories "github.com/maximilianpw/rbi-inventory/internal/biz/categories"
 	"github.com/maximilianpw/rbi-inventory/internal/database"
 	"github.com/maximilianpw/rbi-inventory/internal/handlers/categories/dtos"
 	"github.com/maximilianpw/rbi-inventory/internal/repository/categories"
 )
 
 type categoryHandler struct {
-	repo categories.CategoryRepository
+	service bizcategories.CategoryService
 }
 
 // GET /categories - List all categories
@@ -23,7 +23,7 @@ func (h *categoryHandler) HandleGetCategories(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	categories, err := h.repo.List(ctx)
+	categories, err := h.service.List(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories"})
 		return
@@ -31,7 +31,7 @@ func (h *categoryHandler) HandleGetCategories(c *gin.Context) {
 
 	responses := make([]dtos.CategoryWithChildrenResponse, 0, len(categories))
 	for _, cat := range categories {
-		children, err := h.repo.GetChildren(ctx, cat.ID)
+		children, err := h.service.GetChildren(ctx, cat.ID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch category children"})
 			return
@@ -74,9 +74,7 @@ func (h *categoryHandler) HandleCreateCategory(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	category := req.ToModel()
-
-	err := h.repo.Create(ctx, category)
+	category, err := h.service.Create(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create category"})
 		return
@@ -112,28 +110,12 @@ func (h *categoryHandler) HandleUpdateCategory(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	category, err := h.repo.GetByID(ctx, categoryID)
+	category, err := h.service.Update(ctx, categoryID, req)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if _, ok := err.(*bizcategories.NotFoundError); ok {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch category"})
-		return
-	}
-
-	if req.Name != nil {
-		category.Name = *req.Name
-	}
-	if req.ParentID != nil {
-		category.ParentID = req.ParentID
-	}
-	if req.Description != nil {
-		category.Description = req.Description
-	}
-
-	err = h.repo.Update(ctx, category)
-	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update category"})
 		return
 	}
@@ -162,7 +144,7 @@ func (h *categoryHandler) HandleDeleteCategory(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	err = h.repo.Delete(ctx, categoryID)
+	err = h.service.Delete(ctx, categoryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete category"})
 		return
@@ -173,7 +155,8 @@ func (h *categoryHandler) HandleDeleteCategory(c *gin.Context) {
 
 func NewHandler(db *database.DB) *categoryHandler {
 	categoryRepo := categories.NewRepository(db.DB)
-	return &categoryHandler{repo: categoryRepo}
+	categoryService := bizcategories.NewService(categoryRepo)
+	return &categoryHandler{service: categoryService}
 }
 
 func BuildRoutes(rg *gin.RouterGroup, db *database.DB) {

@@ -2,25 +2,26 @@ package products
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
+	bizproducts "github.com/maximilianpw/rbi-inventory/internal/biz/products"
 	"github.com/maximilianpw/rbi-inventory/internal/database"
 	"github.com/maximilianpw/rbi-inventory/internal/handlers/products/dtos"
 	"github.com/maximilianpw/rbi-inventory/internal/repository/products"
 )
 
 type productHandler struct {
-	repo products.ProductRepository
+	service bizproducts.ProductService
 }
 
 func NewHandler(db *database.DB) *productHandler {
 	productRepo := products.NewRepository(db.DB)
-	return &productHandler{repo: productRepo}
+	productService := bizproducts.NewService(productRepo)
+	return &productHandler{service: productService}
 }
 
 // GET /products - List all products
@@ -28,7 +29,7 @@ func (h *productHandler) HandleGetProducts(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	products, err := h.repo.List(ctx)
+	products, err := h.service.List(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
 		return
@@ -75,9 +76,9 @@ func (h *productHandler) HandleGetProduct(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	product, err := h.repo.GetByID(ctx, productID)
+	product, err := h.service.GetByID(ctx, productID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if _, ok := err.(*bizproducts.NotFoundError); ok {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}
@@ -123,7 +124,7 @@ func (h *productHandler) HandleGetProductsByCategory(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	products, err := h.repo.GetByCategory(ctx, categoryID)
+	products, err := h.service.GetByCategory(ctx, categoryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
 		return
@@ -170,7 +171,7 @@ func (h *productHandler) HandleGetProductsByCategoryTree(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	products, err := h.repo.GetByCategoryWithChildren(ctx, categoryID)
+	products, err := h.service.GetByCategoryWithChildren(ctx, categoryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
 		return
@@ -216,9 +217,7 @@ func (h *productHandler) HandleCreateProduct(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	product := req.ToModel()
-
-	err := h.repo.Create(ctx, product)
+	product, err := h.service.Create(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create product"})
 		return
@@ -268,71 +267,12 @@ func (h *productHandler) HandleUpdateProduct(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	product, err := h.repo.GetByID(ctx, productID)
+	product, err := h.service.Update(ctx, productID, req)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if _, ok := err.(*bizproducts.NotFoundError); ok {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch product"})
-		return
-	}
-
-	// Apply updates
-	if req.SKU != nil {
-		product.SKU = *req.SKU
-	}
-	if req.Name != nil {
-		product.Name = *req.Name
-	}
-	if req.Description != nil {
-		product.Description = req.Description
-	}
-	if req.CategoryID != nil {
-		product.CategoryID = *req.CategoryID
-	}
-	if req.BrandID != nil {
-		product.BrandID = req.BrandID
-	}
-	if req.VolumeML != nil {
-		product.VolumeML = req.VolumeML
-	}
-	if req.WeightKG != nil {
-		product.WeightKG = req.WeightKG
-	}
-	if req.DimensionsCM != nil {
-		product.DimensionsCM = req.DimensionsCM
-	}
-	if req.StandardCost != nil {
-		product.StandardCost = req.StandardCost
-	}
-	if req.StandardPrice != nil {
-		product.StandardPrice = req.StandardPrice
-	}
-	if req.MarkupPercentage != nil {
-		product.MarkupPercentage = req.MarkupPercentage
-	}
-	if req.ReorderPoint != nil {
-		product.ReorderPoint = *req.ReorderPoint
-	}
-	if req.PrimarySupplierID != nil {
-		product.PrimarySupplierID = req.PrimarySupplierID
-	}
-	if req.SupplierSKU != nil {
-		product.SupplierSKU = req.SupplierSKU
-	}
-	if req.IsActive != nil {
-		product.IsActive = *req.IsActive
-	}
-	if req.IsPerishable != nil {
-		product.IsPerishable = *req.IsPerishable
-	}
-	if req.Notes != nil {
-		product.Notes = req.Notes
-	}
-
-	err = h.repo.Update(ctx, product)
-	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update product"})
 		return
 	}
@@ -375,7 +315,7 @@ func (h *productHandler) HandleDeleteProduct(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	err = h.repo.Delete(ctx, productID)
+	err = h.service.Delete(ctx, productID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete product"})
 		return
