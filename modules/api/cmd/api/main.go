@@ -7,6 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
+	swaggerfiles "github.com/swaggo/files"
+	ginswagger "github.com/swaggo/gin-swagger"
+
 	"github.com/maximilianpw/rbi-inventory/internal/config"
 	"github.com/maximilianpw/rbi-inventory/internal/database"
 	"github.com/maximilianpw/rbi-inventory/internal/http"
@@ -53,8 +56,12 @@ func main() {
 
 	http.BuildRouter(r, db, cfg)
 
-	log.Info("listening on port", "port", port)
+	// Swagger UI
+	r.GET("/swagger/*any", ginswagger.WrapHandler(swaggerfiles.Handler,
+		ginswagger.URL("http://localhost:8080/openapi.yaml"),
+	))
 
+	log.Info("listening on port", "port", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Server error", "error", err.Error())
 	}

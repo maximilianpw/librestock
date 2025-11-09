@@ -1,0 +1,1361 @@
+openapi: 3.0.0
+info:
+  title: RBI Inventory API
+  description: REST API for RBI Inventory Management System
+  version: 1.0.0
+  contact:
+    name: API Support
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Development Server
+  - url: https://api.rbi-inventory.com
+    description: Production Server
+
+tags:
+  - name: Health
+    description: System health endpoints
+  - name: Auth
+    description: Authentication endpoints (Clerk JWT)
+  - name: Users
+    description: User management endpoints
+  - name: Categories
+    description: Product category management
+  - name: Products
+    description: Product catalog management
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Clerk JWT token
+
+  schemas:
+    UUID:
+      type: string
+      format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Resource not found"
+      required:
+        - error
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operation completed successfully"
+      required:
+        - message
+
+    # User Schemas
+    UserResponse:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        role:
+          type: string
+          enum: [ADMIN, WAREHOUSE_MANAGER, PICKER, SALES]
+          example: "ADMIN"
+        is_active:
+          type: boolean
+          example: true
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - role
+        - is_active
+        - created_at
+        - updated_at
+
+    CreateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        role:
+          type: string
+          enum: [ADMIN, WAREHOUSE_MANAGER, PICKER, SALES]
+          example: "ADMIN"
+      required:
+        - name
+        - email
+        - role
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [ADMIN, WAREHOUSE_MANAGER, PICKER, SALES]
+        is_active:
+          type: boolean
+
+    # Category Schemas
+    CategoryResponse:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+          example: "Electronics"
+        parent_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          example: "Electronic equipment and components"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+
+    CategoryWithChildrenResponse:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        parent_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryResponse"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - children
+        - created_at
+        - updated_at
+
+    CreateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Electronics"
+        parent_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        description:
+          type: string
+          maxLength: 500
+          nullable: true
+      required:
+        - name
+
+    UpdateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        parent_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        description:
+          type: string
+          maxLength: 500
+          nullable: true
+
+    # Product Schemas
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        sku:
+          type: string
+          example: "PROD-001"
+        name:
+          type: string
+          example: "Marine Pump"
+        description:
+          type: string
+          nullable: true
+        category_id:
+          $ref: "#/components/schemas/UUID"
+        brand_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        volume_ml:
+          type: integer
+          nullable: true
+        weight_kg:
+          type: number
+          format: float
+          nullable: true
+        dimensions_cm:
+          type: string
+          nullable: true
+          example: "10x10x5"
+        standard_cost:
+          type: number
+          format: float
+          nullable: true
+        standard_price:
+          type: number
+          format: float
+          nullable: true
+        markup_percentage:
+          type: number
+          format: float
+          nullable: true
+        reorder_point:
+          type: integer
+          example: 10
+        primary_supplier_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        supplier_sku:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        is_perishable:
+          type: boolean
+        notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - sku
+        - name
+        - category_id
+        - reorder_point
+        - is_active
+        - is_perishable
+        - created_at
+        - updated_at
+
+    CreateProductRequest:
+      type: object
+      properties:
+        sku:
+          type: string
+          minLength: 1
+          maxLength: 50
+          example: "PROD-001"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: "Marine Pump"
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+        category_id:
+          $ref: "#/components/schemas/UUID"
+        brand_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        volume_ml:
+          type: integer
+          minimum: 1
+          nullable: true
+        weight_kg:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+        dimensions_cm:
+          type: string
+          maxLength: 50
+          nullable: true
+        standard_cost:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+        standard_price:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+        markup_percentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1000
+          nullable: true
+        reorder_point:
+          type: integer
+          minimum: 0
+          example: 10
+        primary_supplier_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        supplier_sku:
+          type: string
+          maxLength: 50
+          nullable: true
+        is_active:
+          type: boolean
+        is_perishable:
+          type: boolean
+        notes:
+          type: string
+          maxLength: 500
+          nullable: true
+      required:
+        - sku
+        - name
+        - category_id
+        - reorder_point
+        - is_active
+        - is_perishable
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        sku:
+          type: string
+          minLength: 1
+          maxLength: 50
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+        category_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        brand_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        volume_ml:
+          type: integer
+          minimum: 1
+          nullable: true
+        weight_kg:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+        dimensions_cm:
+          type: string
+          maxLength: 50
+          nullable: true
+        standard_cost:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+        standard_price:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+        markup_percentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1000
+          nullable: true
+        reorder_point:
+          type: integer
+          minimum: 0
+          nullable: true
+        primary_supplier_id:
+          $ref: "#/components/schemas/UUID"
+          nullable: true
+        supplier_sku:
+          type: string
+          maxLength: 50
+          nullable: true
+        is_active:
+          type: boolean
+          nullable: true
+        is_perishable:
+          type: boolean
+          nullable: true
+        notes:
+          type: string
+          maxLength: 500
+          nullable: true
+
+    # Auth Schemas
+    ProfileResponse:
+      type: object
+      description: Clerk user profile data
+      additionalProperties: true
+
+    SessionClaimsResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+        session_id:
+          type: string
+        expires_at:
+          type: integer
+          format: int64
+        issued_at:
+          type: integer
+          format: int64
+      required:
+        - user_id
+        - session_id
+        - expires_at
+        - issued_at
+
+security:
+  - BearerAuth: []
+
+paths:
+  /health-check:
+    get:
+      tags:
+        - Health
+      summary: Health check endpoint
+      description: Returns the health status of the API
+      operationId: healthCheck
+      security: []
+      responses:
+        "200":
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+
+  /api/v1/auth/profile:
+    get:
+      tags:
+        - Auth
+      summary: Get user profile
+      description: Returns the authenticated user's profile from Clerk
+      operationId: getProfile
+      responses:
+        "200":
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileResponse"
+        "401":
+          description: Unauthorized - no valid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/auth/session:
+    get:
+      tags:
+        - Auth
+      summary: Get session claims
+      description: Returns the session claims from the current authenticated request
+      operationId: getSessionClaims
+      responses:
+        "200":
+          description: Session claims retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionClaimsResponse"
+        "401":
+          description: Unauthorized - no valid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      summary: List all users
+      description: Retrieves a list of all users with optional filtering
+      operationId: listUsers
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [ADMIN, WAREHOUSE_MANAGER, PICKER, SALES]
+          description: Filter users by role
+        - name: active
+          in: query
+          schema:
+            type: boolean
+          description: Filter users by active status
+      responses:
+        "200":
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      description: Creates a new user in the system
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: User already exists (email conflict)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Retrieves a specific user by their UUID
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: User UUID
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: Updates an existing user
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: User UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Email conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Deletes a user from the system
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: User UUID
+      responses:
+        "200":
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/users/{id}/activate:
+    post:
+      tags:
+        - Users
+      summary: Activate user
+      description: Activates a user (sets is_active to true)
+      operationId: activateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: User UUID
+      responses:
+        "200":
+          description: User activated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/users/{id}/deactivate:
+    post:
+      tags:
+        - Users
+      summary: Deactivate user
+      description: Deactivates a user (sets is_active to false)
+      operationId: deactivateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: User UUID
+      responses:
+        "200":
+          description: User deactivated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/users/search:
+    get:
+      tags:
+        - Users
+      summary: Search users by name
+      description: Searches for users by name (partial match)
+      operationId: searchUsers
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Missing search query
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/categories:
+    get:
+      tags:
+        - Categories
+      summary: List all categories
+      description: Retrieves all product categories with their child categories
+      operationId: listCategories
+      responses:
+        "200":
+          description: Categories retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryWithChildrenResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      tags:
+        - Categories
+      summary: Create category
+      description: Creates a new product category
+      operationId: createCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryRequest"
+      responses:
+        "201":
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/categories/{id}:
+    put:
+      tags:
+        - Categories
+      summary: Update category
+      description: Updates an existing product category
+      operationId: updateCategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: Category UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCategoryRequest"
+      responses:
+        "200":
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Categories
+      summary: Delete category
+      description: Deletes a product category
+      operationId: deleteCategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: Category UUID
+      responses:
+        "200":
+          description: Category deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/products:
+    get:
+      tags:
+        - Products
+      summary: List all products
+      description: Retrieves all products in the catalog
+      operationId: listProducts
+      responses:
+        "200":
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      tags:
+        - Products
+      summary: Create product
+      description: Creates a new product in the catalog
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      description: Retrieves a specific product by UUID
+      operationId: getProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: Product UUID
+      responses:
+        "200":
+          description: Product retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      tags:
+        - Products
+      summary: Update product
+      description: Updates an existing product
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: Product UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductRequest"
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Products
+      summary: Delete product
+      description: Deletes a product from the catalog
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: Product UUID
+      responses:
+        "200":
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/products/category/{categoryId}:
+    get:
+      tags:
+        - Products
+      summary: Get products by category
+      description: Retrieves all products in a specific category
+      operationId: getProductsByCategory
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: Category UUID
+      responses:
+        "200":
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/products/category/{categoryId}/tree:
+    get:
+      tags:
+        - Products
+      summary: Get products by category tree
+      description: Retrieves all products in a category and its child categories
+      operationId: getProductsByCategoryTree
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+          description: Category UUID
+      responses:
+        "200":
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Invalid UUID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

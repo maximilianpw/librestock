@@ -19,6 +19,11 @@ func BuildRouter(r *gin.Engine, db *database.DB, cfg *config.Config) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
+	// Serve OpenAPI spec from workspace root
+	r.GET("/openapi.yaml", func(ctx *gin.Context) {
+		ctx.File("../../openapi.yaml")
+	})
+
 	// Protected API routes
 	v1 := r.Group("/api/v1")
 	v1.Use(middleware.AuthMiddleware(cfg)) // Apply auth middleware to all /api/v1 routes
