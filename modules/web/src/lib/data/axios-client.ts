@@ -1,4 +1,3 @@
-// src/lib/data/axios-client.ts
 import axios, { type AxiosRequestConfig } from 'axios'
 
 import { env } from '@/lib/env'
@@ -29,7 +28,11 @@ export async function getAxiosInstance<T>(
   if (getToken) {
     try {
       const token = await getToken()
-      if (token !== null && token.length > 0 && config.headers !== undefined) {
+      if (token !== null && token.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        config.headers ??= {
+          'Content-Type': 'application/json',
+        }
         // eslint-disable-next-line no-param-reassign
         config.headers.Authorization = `Bearer ${token}`
       }
