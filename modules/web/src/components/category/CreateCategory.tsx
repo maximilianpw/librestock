@@ -1,6 +1,6 @@
 import { CategoryForm } from './CategoryForm'
 import { Button } from '@/components/ui/button'
-import type { CategoryWithChildrenResponse } from '@/lib/data/generated'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/generated'
 import {
   Dialog,
   DialogClose,
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 
 interface CreateCategoryProps {
-  categories?: CategoryWithChildrenResponse[]
+  categories?: CategoryWithChildrenResponseDto[]
 }
 
 export function CreateCategory({

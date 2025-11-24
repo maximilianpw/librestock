@@ -1,7 +1,7 @@
-import type { CategoryResponse } from '@/lib/data/generated'
+import type { CategoryResponseDto } from '@/lib/data/generated'
 
 interface CategoryCardProps {
-  category: CategoryResponse
+  category: CategoryResponseDto
 }
 
 export function CategoryCard({

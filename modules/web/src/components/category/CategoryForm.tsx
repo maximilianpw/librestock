@@ -11,11 +11,14 @@ import {
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { CategorySelector } from './CategorySelector'
-import { useCreateCategory, type CategoryResponse } from '@/lib/data/generated'
+import {
+  useCreateCategory,
+  type CategoryResponseDto,
+} from '@/lib/data/generated'
 import { Button } from '../ui/button'
 
 interface CategoryFormProps {
-  categories?: CategoryResponse[]
+  categories?: CategoryResponseDto[]
 }
 
 const formSchema = z.object({

@@ -5,13 +5,13 @@ import { Card, CardContent } from '../ui/card'
 import { ImagePlaceholder } from '@/components/items/ImagePlaceholder'
 import { DisplayType } from '@/lib/enums/display-type.enum'
 
-import type { ProductResponse } from '@/lib/data/generated'
+import type { ProductResponseDto } from '@/lib/data/generated'
 
 export function ItemCard({
   item,
   displayType,
 }: {
-  item: ProductResponse
+  item: ProductResponseDto
   displayType: DisplayType
 }): React.JSX.Element {
   const { t } = useTranslation()

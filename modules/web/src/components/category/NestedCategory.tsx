@@ -1,10 +1,10 @@
 import * as React from 'react'
 
 import { CategoryCard } from './CategoryCard'
-import type { CategoryWithChildrenResponse } from '@/lib/data/generated'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/generated'
 
 interface NestedCategoryProps {
-  category: CategoryWithChildrenResponse
+  category: CategoryWithChildrenResponseDto
   depth?: number
 }
 
