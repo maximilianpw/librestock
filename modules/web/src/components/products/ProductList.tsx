@@ -1,9 +1,34 @@
 'use client'
 import { Spinner } from '../ui/spinner'
-import { useListProducts } from '@/lib/data/generated'
+import {
+  useListProducts,
+  useGetProductsByCategory,
+} from '@/lib/data/generated'
 
-export function ProductList(): React.JSX.Element {
-  const { data: products, isLoading, error } = useListProducts()
+interface ProductListProps {
+  categoryId?: string | null
+}
+
+export function ProductList({ categoryId }: ProductListProps): React.JSX.Element {
+  const {
+    data: allProducts,
+    isLoading: isLoadingAll,
+    error: errorAll,
+  } = useListProducts({
+    query: { enabled: !categoryId },
+  })
+
+  const {
+    data: categoryProducts,
+    isLoading: isLoadingCategory,
+    error: errorCategory,
+  } = useGetProductsByCategory(categoryId ?? '', {
+    query: { enabled: !!categoryId },
+  })
+
+  const products = categoryId !== null && categoryId !== undefined ? categoryProducts : allProducts
+  const isLoading = categoryId !== null && categoryId !== undefined ? isLoadingCategory : isLoadingAll
+  const error = categoryId !== null && categoryId !== undefined ? errorCategory : errorAll
 
   if (isLoading === true) {
     return (

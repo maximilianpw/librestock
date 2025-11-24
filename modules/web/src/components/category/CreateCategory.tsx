@@ -22,7 +22,9 @@ export function CreateCategory({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create Category</Button>
+        <Button className="rounded-t-none" variant="outline">
+          Create Category
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
