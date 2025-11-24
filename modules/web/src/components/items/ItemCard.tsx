@@ -51,13 +51,11 @@ export function ItemCard({
         <p className="mb-2 text-xs text-gray-500">{item.sku}</p>
         <div className="space-y-1 text-sm text-gray-600">
           <p className="font-medium text-gray-900">${price.toLocaleString()}</p>
-          {item.description !== null &&
-            item.description !== undefined &&
-            item.description.length > 0 && (
-              <p className="line-clamp-2 text-xs text-gray-500">
-                {item.description}
-              </p>
-            )}
+          {item.description !== null && item.description.length > 0 && (
+            <p className="line-clamp-2 text-xs text-gray-500">
+              {item.description}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

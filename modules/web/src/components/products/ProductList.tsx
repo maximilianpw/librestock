@@ -29,11 +29,9 @@ export function ProductList(): React.JSX.Element {
         <div key={product.id} className="rounded-lg border p-4">
           <h3 className="font-semibold">{product.name}</h3>
           <p className="text-muted-foreground text-sm">{product.sku}</p>
-          {product.description !== null &&
-            product.description !== undefined &&
-            product.description.length > 0 && (
-              <p className="mt-2 text-sm">{product.description}</p>
-            )}
+          {product.description !== null && product.description.length > 0 && (
+            <p className="mt-2 text-sm">{product.description}</p>
+          )}
         </div>
       ))}
     </div>

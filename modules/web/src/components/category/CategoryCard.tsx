@@ -12,13 +12,11 @@ export function CategoryCard({
       <h4 className="text-sm font-medium text-gray-900 group-hover:text-gray-700">
         {category.name}
       </h4>
-      {category.description !== null &&
-        category.description !== undefined &&
-        category.description.length > 0 && (
-          <p className="mt-1 line-clamp-2 text-xs text-gray-500">
-            {category.description}
-          </p>
-        )}
+      {category.description !== null && category.description.length > 0 && (
+        <p className="mt-1 line-clamp-2 text-xs text-gray-500">
+          {category.description}
+        </p>
+      )}
     </div>
   )
 }

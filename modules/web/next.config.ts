@@ -1,12 +1,12 @@
+import path from 'node:path'
 import { withSentryConfig } from '@sentry/nextjs'
-import path from 'path'
 
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   /* config options here */
   turbopack: {
-    root: path.resolve(__dirname, '../../'),
+    root: path.resolve(import.meta.dirname, '../../'),
   },
 }
 
