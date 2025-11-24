@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "openapi:generate": "ts-node -r tsconfig-paths/register src/generate-openapi.ts"
+    "openapi:generate": "ts-node -r tsconfig-paths/register src/generate-openapi.ts",
+    "import:sortly": "ts-node -r tsconfig-paths/register src/scripts/import-sortly.ts"
   },
   "dependencies": {
     "@clerk/backend": "^2.22.0",
@@ -30,6 +31,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "csv-parse": "^6.1.0",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
