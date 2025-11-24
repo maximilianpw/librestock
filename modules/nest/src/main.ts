@@ -20,6 +20,11 @@ async function bootstrap() {
     origin: '*',
   });
 
+  // Set global prefix for all routes
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['health-check'], // Exclude health check from prefix
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
