@@ -9,10 +9,10 @@ import {
 import { createClerkClient } from '@clerk/backend';
 import { ProfileResponseDto } from './dto/profile-response.dto';
 import { SessionClaimsResponseDto } from './dto/session-claims-response.dto';
-import { ErrorResponseDto } from '../common/dto/error-response.dto';
-import { ClerkAuthGuard } from '../common/guards/clerk-auth.guard';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { ClerkClaims } from '../common/decorators/clerk-claims.decorator';
+import { ErrorResponseDto } from '../../common/dto/error-response.dto';
+import { ClerkAuthGuard } from '../../common/guards/clerk-auth.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { ClerkClaims } from '../../common/decorators/clerk-claims.decorator';
 
 @ApiTags('Auth')
 @ApiBearerAuth()
