@@ -2,7 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { Client } from './clients/entities/client.entity';
+import { Client } from './routes/clients/entities/client.entity';
 import { AuditLog } from './routes/audit-logs/entities/audit-log.entity';
 import { Inventory } from './routes/inventory/entities/inventory.entity';
 import { Location } from './routes/locations/entities/location.entity';
@@ -12,6 +12,7 @@ import { Photo } from './routes/photos/entities/photo.entity';
 import { StockMovement } from './routes/stock-movements/entities/stock-movement.entity';
 import { SupplierProduct } from './routes/suppliers/entities/supplier-product.entity';
 import { Supplier } from './routes/suppliers/entities/supplier.entity';
+import { Product } from './routes/products/entities/product.entity';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -63,6 +64,7 @@ async function bootstrap() {
       OrderItem,
       Photo,
       StockMovement,
+      Product,
     ],
   });
   SwaggerModule.setup('api/docs', app, document);

@@ -1,6 +1,7 @@
 import { Routes } from '@nestjs/core';
 import { AuthModule } from './routes/auth/auth.module';
 import { HealthModule } from './routes/health/health.module';
+import { ProductsModule } from './routes/products/products.module';
 
 /**
  * Application routes configuration
@@ -15,5 +16,9 @@ export const routes: Routes = [
   {
     path: 'auth',
     module: AuthModule,
+  },
+  {
+    path: 'products',
+    module: ProductsModule,
   },
 ];
