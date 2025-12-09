@@ -1,9 +1,3 @@
 packages:
   - 'packages/*'
-  - 'modules/web'
-  - 'modules/nest'
-
-onlyBuiltDependencies:
-  - '@clerk/shared'
-packages:
   - 'modules/*'

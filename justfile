@@ -1,13 +1,13 @@
 # Bootstrap all modules
 bootstrap:
   just modules/web/bootstrap
-  cd modules/nest && pnpm install
-  just modules/nest/bootstrap
+  cd modules/api && pnpm install
+  just modules/api/bootstrap
 
 # Decrypt environment variables for all apps
 decrypt:
   just modules/web/decrypt
-  just modules/nest/decrypt
+  just modules/api/decrypt
 
 # Start all services (PostgreSQL, NestJS, Next.js)
 dev:
@@ -19,17 +19,13 @@ web:
 
 # NestJS API commands
 nest:
-  cd modules/nest && pnpm start:dev
+  cd modules/api && pnpm start:dev
 
 nest-build:
-  cd modules/nest && pnpm build
+  cd modules/api && pnpm build
 
 nest-test:
-  cd modules/nest && pnpm test
-
-# Legacy Go API commands
-api:
-  just modules/api/run
+  cd modules/api && pnpm test
 
 # Linting
 lint:
@@ -37,7 +33,7 @@ lint:
 
 lint-all:
   just modules/web/lint
-  cd modules/nest && pnpm lint
+  cd modules/api && pnpm lint
 
 # Testing
 wtest:
@@ -45,7 +41,7 @@ wtest:
 
 test-all:
   just modules/web/test
-  cd modules/nest && pnpm test
+  cd modules/api && pnpm test
 
 # API client generation from OpenAPI spec
 api-gen:
@@ -62,16 +58,16 @@ migrate-status:
   just modules/api/migrate-status
 # Backend commands
 api:
-  just modules/nest/dev
+  just modules/api/dev
 
 build-api:
-  just modules/nest/build
+  just modules/api/build
 
 start-api:
-  just modules/nest/start
+  just modules/api/start
 
 api-lint:
-  just modules/nest/lint
+  just modules/api/lint
 
 api-test:
-  just modules/nest/test
+  just modules/api/test

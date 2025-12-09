@@ -1,6 +1,6 @@
 # Install dependencies
 bootstrap:
-  npm install
+  pnpm install
 
 # Decrypt environment variables
 decrypt:
@@ -8,36 +8,36 @@ decrypt:
 
 # Run development server
 dev:
-  npm run start:dev
+  pnpm start:dev
 
 # Build for production
 build:
-  npm run build
+  pnpm build
 
 # Run production server
 start:
-  npm run start:prod
+  pnpm start:prod
 
 # Lint and fix code
 lint:
-  npm run lint
+  pnpm lint
 
 # Format code
 format:
-  npm run format
+  pnpm format
 
 # Run tests
 test:
-  npm run test
+  pnpm test
 
 # Run tests in watch mode
 test-watch:
-  npm run test:watch
+  pnpm test:watch
 
 # Run tests with coverage
 test-coverage:
-  npm run test:cov
+  pnpm test:cov
 
 # Run e2e tests
 test-e2e:
-  npm run test:e2e
+  pnpm test:e2e

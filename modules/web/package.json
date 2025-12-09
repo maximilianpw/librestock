@@ -81,17 +81,5 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^7.18.0",
     "zod": "^4.1.12"
-  },
-  "pnpm": {
-    "overrides": {
-      "import-in-the-middle": "1.15.0",
-      "require-in-the-middle": "7.5.2"
-    },
-    "peerDependencyRules": {
-      "ignoreMissing": [],
-      "allowedVersions": {
-        "eslint-config-next>eslint": "8"
-      }
-    }
   }
 }

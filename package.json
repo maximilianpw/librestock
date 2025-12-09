@@ -24,14 +24,24 @@
     "node": ">=20.0.0",
     "pnpm": ">=10.0.0"
   },
-  "packageManager": "pnpm@10.0.0"
-}
-{
-  "name": "rbi-monorepo",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "openapi:generate": "pnpm --filter rbi-api openapi:generate",
-    "api:generate": "pnpm openapi:generate && pnpm --filter next api:gen"
+  "packageManager": "pnpm@10.0.0",
+  "pnpm": {
+    "overrides": {
+      "import-in-the-middle": "1.15.0",
+      "require-in-the-middle": "7.5.2"
+    },
+    "peerDependencyRules": {
+      "ignoreMissing": [],
+      "allowedVersions": {
+        "eslint-config-next>eslint": "8"
+      }
+    },
+    "onlyBuiltDependencies": [
+      "@clerk/shared",
+      "@nestjs/core",
+      "@sentry/cli",
+      "esbuild",
+      "sharp"
+    ]
   }
 }
