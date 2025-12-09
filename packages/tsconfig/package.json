@@ -1,0 +1,11 @@
+{
+  "name": "@rbi/tsconfig",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared TypeScript configurations for RBI Inventory monorepo",
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "nestjs.json"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "rbi-inventory",
+  "version": "0.0.1",
+  "private": true,
+  "description": "RBI Inventory Management System - Monorepo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maximilianpw/rbi-inventory.git"
+  },
+  "scripts": {
+    "dev": "devenv up",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r clean",
+    "bootstrap": "pnpm install",
+    "api:gen": "pnpm --filter @rbi/web api:gen",
+    "types:build": "pnpm --filter @rbi/types build"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.0.0"
+}

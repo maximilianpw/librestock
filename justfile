@@ -1,26 +1,56 @@
-# Bootstrap both frontend and backend
+# Bootstrap all modules
 bootstrap:
   just modules/web/bootstrap
+  cd modules/nest && pnpm install
 
-# Decrypt environment variables for both apps
+# Decrypt environment variables for all apps
 decrypt:
   just modules/web/decrypt
   just modules/api/decrypt
+
+# Start all services (PostgreSQL, NestJS, Next.js)
+dev:
+  devenv up
 
 # Frontend commands
 web:
   just modules/web/dev
 
-lint:
-  just modules/web/lint
+# NestJS API commands
+nest:
+  cd modules/nest && pnpm start:dev
 
-wtest:
-  just modules/web/test
+nest-build:
+  cd modules/nest && pnpm build
 
-# Backend commands
+nest-test:
+  cd modules/nest && pnpm test
+
+# Legacy Go API commands
 api:
   just modules/api/run
 
+# Linting
+lint:
+  just modules/web/lint
+
+lint-all:
+  just modules/web/lint
+  cd modules/nest && pnpm lint
+
+# Testing
+wtest:
+  just modules/web/test
+
+test-all:
+  just modules/web/test
+  cd modules/nest && pnpm test
+
+# API client generation from OpenAPI spec
+api-gen:
+  cd modules/web && pnpm api:gen
+
+# Database migrations (Go API)
 migrate-up:
   just modules/api/migrate-up
 

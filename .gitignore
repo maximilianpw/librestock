@@ -13,4 +13,9 @@ logfile
 
 # PostgreSQL
 .postgres/
+
+# dev env
 .env
+.devenv
+.pre-commit-config.yaml
+
