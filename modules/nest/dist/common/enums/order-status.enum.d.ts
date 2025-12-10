@@ -1,0 +1,11 @@
+export declare enum OrderStatus {
+    DRAFT = "DRAFT",
+    CONFIRMED = "CONFIRMED",
+    SOURCING = "SOURCING",
+    PICKING = "PICKING",
+    PACKED = "PACKED",
+    SHIPPED = "SHIPPED",
+    DELIVERED = "DELIVERED",
+    CANCELLED = "CANCELLED",
+    ON_HOLD = "ON_HOLD"
+}
