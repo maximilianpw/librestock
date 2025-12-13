@@ -907,7 +907,6 @@ components:
         - email
         - role
         - is_active
-        - last_login
         - created_at
         - updated_at
     CreateUserDto:
@@ -992,8 +991,6 @@ components:
       required:
         - id
         - name
-        - parent_id
-        - description
         - created_at
         - updated_at
         - children
@@ -1042,8 +1039,6 @@ components:
       required:
         - id
         - name
-        - parent_id
-        - description
         - created_at
         - updated_at
     UpdateCategoryDto:
@@ -1134,21 +1129,10 @@ components:
         - id
         - sku
         - name
-        - description
         - category_id
-        - brand_id
-        - volume_ml
-        - weight_kg
-        - dimensions_cm
-        - standard_cost
-        - standard_price
-        - markup_percentage
         - reorder_point
-        - primary_supplier_id
-        - supplier_sku
         - is_active
         - is_perishable
-        - notes
         - created_at
         - updated_at
     CreateProductDto:
