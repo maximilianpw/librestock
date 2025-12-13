@@ -10,8 +10,9 @@ import {
   Min,
   Max,
 } from 'class-validator';
+import { Product } from '../entities/product.entity';
 
-export class CreateProductDto {
+export class CreateProductDto implements Partial<Product> {
   @ApiProperty({
     description: 'Product SKU',
     example: 'PROD-001',

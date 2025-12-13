@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Product } from '../entities/product.entity';
 
-export class ProductResponseDto {
+export class ProductResponseDto implements Partial<Product> {
   @ApiProperty({
     description: 'Unique identifier',
     format: 'uuid',

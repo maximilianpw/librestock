@@ -10,8 +10,9 @@ import {
   Min,
   Max,
 } from 'class-validator';
+import { Product } from 'dist/routes/products/entities/product.entity';
 
-export class UpdateProductDto {
+export class UpdateProductDto implements Partial<Product> {
   @ApiProperty({
     description: 'Product SKU',
     minLength: 1,
@@ -55,7 +56,7 @@ export class UpdateProductDto {
   })
   @IsOptional()
   @IsUUID()
-  category_id?: string | null;
+  category_id?: string;
 
   @ApiProperty({
     description: 'Brand ID',

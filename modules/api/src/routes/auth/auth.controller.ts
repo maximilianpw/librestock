@@ -48,7 +48,7 @@ export class AuthController {
     const secretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     const client = createClerkClient({ secretKey });
     const user = await client.users.getUser(userId);
-    return user as any;
+    return user;
   }
 
   @Get('session-claims')

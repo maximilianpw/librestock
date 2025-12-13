@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { HateoasInterceptor } from './common/hateoas';
 import { AuditLog } from './routes/audit-logs/entities/audit-log.entity';
 import { Category } from './routes/categories/entities/category.entity';
 import { Client } from './clients/entities/client.entity';
@@ -32,6 +33,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.useGlobalInterceptors(new HateoasInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder()
     .setTitle('RBI Inventory API')

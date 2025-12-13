@@ -2,94 +2,72 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  OnModuleInit,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductRepository } from './product.repository';
+import { CategoryRepository } from '../categories/category.repository';
 import { Category } from '../categories/entities/category.entity';
+import { ProductResponseDto } from './dto';
 
 @Injectable()
-export class ProductsService {
+export class ProductsService implements OnModuleInit {
+  private categories: Category[] = [];
+
   constructor(
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
+    private readonly productRepository: ProductRepository,
+    private readonly categoryRepository: CategoryRepository,
   ) {}
 
+  async onModuleInit() {
+    await this.loadCategories();
+  }
+
+  private async loadCategories() {
+    this.categories = await this.categoryRepository.findAll();
+  }
+
   async findAll(): Promise<Product[]> {
-    return this.productRepository.find({
-      order: { name: 'ASC' },
-    });
+    return this.productRepository.findAll();
   }
 
   async findOne(id: string): Promise<Product> {
-    const product = await this.productRepository.findOneBy({ id });
-
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
-    return product;
+    return this.getProductOrFail(id);
   }
 
   async findByCategory(categoryId: string): Promise<Product[]> {
-    const categoryExists = await this.categoryRepository.existsBy({
-      id: categoryId,
-    });
-
-    if (!categoryExists) {
-      throw new NotFoundException('Category not found');
-    }
-
-    return this.productRepository.find({
-      where: { category_id: categoryId },
-      order: { name: 'ASC' },
-    });
+    await this.checkCategoryExistence(categoryId, 'NotFound');
+    return this.productRepository.findByCategoryId(categoryId);
   }
 
   async findByCategoryTree(categoryId: string): Promise<Product[]> {
-    const categoryExists = await this.categoryRepository.existsBy({
-      id: categoryId,
-    });
+    await this.checkCategoryExistence(categoryId, 'NotFound');
 
-    if (!categoryExists) {
-      throw new NotFoundException('Category not found');
-    }
-
-    const categoryIds = await this.getAllChildCategoryIds(categoryId);
+    const categoryIds = this.getAllChildCategoryIds(categoryId);
     categoryIds.push(categoryId);
 
-    return this.productRepository.find({
-      where: { category_id: In(categoryIds) },
-      order: { name: 'ASC' },
-    });
+    return this.productRepository.findByCategoryIds(categoryIds);
   }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
-    const categoryExists = await this.categoryRepository.existsBy({
-      id: createProductDto.category_id,
-    });
+    await this.checkCategoryExistence(
+      createProductDto.category_id,
+      'BadRequest',
+    );
 
-    if (!categoryExists) {
-      throw new BadRequestException('Category not found');
-    }
-
-    const existingSku = await this.productRepository.findOneBy({
-      sku: createProductDto.sku,
-    });
+    const existingSku = await this.productRepository.findBySku(
+      createProductDto.sku,
+    );
 
     if (existingSku) {
       throw new BadRequestException('A product with this SKU already exists');
     }
 
-    const product = this.productRepository.create({
-      sku: createProductDto.sku,
-      name: createProductDto.name,
+    return this.productRepository.create({
+      ...createProductDto,
       description: createProductDto.description ?? null,
-      category_id: createProductDto.category_id,
       brand_id: createProductDto.brand_id ?? null,
       volume_ml: createProductDto.volume_ml ?? null,
       weight_kg: createProductDto.weight_kg ?? null,
@@ -97,132 +75,81 @@ export class ProductsService {
       standard_cost: createProductDto.standard_cost ?? null,
       standard_price: createProductDto.standard_price ?? null,
       markup_percentage: createProductDto.markup_percentage ?? null,
-      reorder_point: createProductDto.reorder_point,
       primary_supplier_id: createProductDto.primary_supplier_id ?? null,
       supplier_sku: createProductDto.supplier_sku ?? null,
-      is_active: createProductDto.is_active,
-      is_perishable: createProductDto.is_perishable,
       notes: createProductDto.notes ?? null,
     });
-
-    return this.productRepository.save(product);
   }
 
   async update(
     id: string,
     updateProductDto: UpdateProductDto,
-  ): Promise<Product> {
-    const product = await this.productRepository.findOneBy({ id });
+  ): Promise<ProductResponseDto> {
+    const product = await this.getProductOrFail(id);
 
-    if (!product) {
-      throw new NotFoundException('Product not found');
+    if (updateProductDto.category_id) {
+      await this.checkCategoryExistence(
+        updateProductDto.category_id,
+        'BadRequest',
+      );
     }
 
-    if (
-      updateProductDto.category_id !== undefined &&
-      updateProductDto.category_id !== null
-    ) {
-      const categoryExists = await this.categoryRepository.existsBy({
-        id: updateProductDto.category_id,
-      });
-
-      if (!categoryExists) {
-        throw new BadRequestException('Category not found');
-      }
-    }
-
-    if (
-      updateProductDto.sku !== undefined &&
-      updateProductDto.sku !== product.sku
-    ) {
-      const existingSku = await this.productRepository.findOneBy({
-        sku: updateProductDto.sku,
-      });
+    if (updateProductDto.sku && updateProductDto.sku !== product.sku) {
+      const existingSku = await this.productRepository.findBySku(
+        updateProductDto.sku,
+      );
 
       if (existingSku) {
         throw new BadRequestException('A product with this SKU already exists');
       }
     }
 
-    if (updateProductDto.sku !== undefined) {
-      product.sku = updateProductDto.sku;
-    }
-    if (updateProductDto.name !== undefined) {
-      product.name = updateProductDto.name;
-    }
-    if (updateProductDto.description !== undefined) {
-      product.description = updateProductDto.description;
-    }
-    if (updateProductDto.category_id !== undefined) {
-      product.category_id = updateProductDto.category_id as string;
-    }
-    if (updateProductDto.brand_id !== undefined) {
-      product.brand_id = updateProductDto.brand_id;
-    }
-    if (updateProductDto.volume_ml !== undefined) {
-      product.volume_ml = updateProductDto.volume_ml;
-    }
-    if (updateProductDto.weight_kg !== undefined) {
-      product.weight_kg = updateProductDto.weight_kg;
-    }
-    if (updateProductDto.dimensions_cm !== undefined) {
-      product.dimensions_cm = updateProductDto.dimensions_cm;
-    }
-    if (updateProductDto.standard_cost !== undefined) {
-      product.standard_cost = updateProductDto.standard_cost;
-    }
-    if (updateProductDto.standard_price !== undefined) {
-      product.standard_price = updateProductDto.standard_price;
-    }
-    if (updateProductDto.markup_percentage !== undefined) {
-      product.markup_percentage = updateProductDto.markup_percentage;
-    }
-    if (updateProductDto.reorder_point !== undefined) {
-      product.reorder_point = updateProductDto.reorder_point;
-    }
-    if (updateProductDto.primary_supplier_id !== undefined) {
-      product.primary_supplier_id = updateProductDto.primary_supplier_id;
-    }
-    if (updateProductDto.supplier_sku !== undefined) {
-      product.supplier_sku = updateProductDto.supplier_sku;
-    }
-    if (updateProductDto.is_active !== undefined) {
-      product.is_active = updateProductDto.is_active;
-    }
-    if (updateProductDto.is_perishable !== undefined) {
-      product.is_perishable = updateProductDto.is_perishable;
-    }
-    if (updateProductDto.notes !== undefined) {
-      product.notes = updateProductDto.notes;
+    if (Object.keys(updateProductDto).length === 0) {
+      return product;
     }
 
-    return this.productRepository.save(product);
+    return this.productRepository.update(id, updateProductDto);
   }
 
   async delete(id: string): Promise<void> {
-    const product = await this.productRepository.findOneBy({ id });
-
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
+    await this.getProductOrFail(id);
     await this.productRepository.delete(id);
   }
 
-  private async getAllChildCategoryIds(categoryId: string): Promise<string[]> {
-    const allCategories = await this.categoryRepository.find();
-    const childIds: string[] = [];
+  private async getProductOrFail(id: string): Promise<Product> {
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    return product;
+  }
 
-    const findChildren = (parentId: string) => {
-      for (const category of allCategories) {
-        if (category.parent_id === parentId) {
+  private async checkCategoryExistence(
+    categoryId: string,
+    errorType: 'NotFound' | 'BadRequest',
+  ): Promise<void> {
+    const exists =
+      this.categories.some((c) => c.id === categoryId) ||
+      (await this.categoryRepository.existsById(categoryId));
+
+    if (!exists) {
+      throw errorType === 'NotFound'
+        ? new NotFoundException('Category not found')
+        : new BadRequestException('Category not found');
+    }
+  }
+
+  private getAllChildCategoryIds(parentId: string): string[] {
+    const childIds: string[] = [];
+    const findChildren = (currentParentId: string) => {
+      for (const category of this.categories) {
+        if (category.parent_id === currentParentId) {
           childIds.push(category.id);
           findChildren(category.id);
         }
       }
     };
-
-    findChildren(categoryId);
+    findChildren(parentId);
     return childIds;
   }
 }

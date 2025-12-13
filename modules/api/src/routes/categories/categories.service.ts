@@ -3,52 +3,43 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryWithChildrenResponseDto } from './dto/category-with-children-response.dto';
+import { CategoryRepository } from './category.repository';
 
 @Injectable()
 export class CategoriesService {
-  constructor(
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
-  ) {}
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async findAll(): Promise<CategoryWithChildrenResponseDto[]> {
-    const categories = await this.categoryRepository.find({
-      order: { name: 'ASC' },
-    });
-
+    const categories = await this.categoryRepository.findAll();
     return this.buildTree(categories);
   }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     if (createCategoryDto.parent_id) {
-      const parentExists = await this.categoryRepository.existsBy({
-        id: createCategoryDto.parent_id,
-      });
+      const parentExists = await this.categoryRepository.existsById(
+        createCategoryDto.parent_id,
+      );
       if (!parentExists) {
         throw new BadRequestException('Parent category not found');
       }
     }
 
-    const category = this.categoryRepository.create({
+    return this.categoryRepository.create({
       name: createCategoryDto.name,
       parent_id: createCategoryDto.parent_id ?? null,
       description: createCategoryDto.description ?? null,
     });
-
-    return this.categoryRepository.save(category);
   }
 
   async update(
     id: string,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {
-    const category = await this.categoryRepository.findOneBy({ id });
+    const category = await this.categoryRepository.findById(id);
 
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -60,9 +51,9 @@ export class CategoriesService {
       }
 
       if (updateCategoryDto.parent_id) {
-        const parentExists = await this.categoryRepository.existsBy({
-          id: updateCategoryDto.parent_id,
-        });
+        const parentExists = await this.categoryRepository.existsById(
+          updateCategoryDto.parent_id,
+        );
         if (!parentExists) {
           throw new BadRequestException('Parent category not found');
         }
@@ -79,21 +70,22 @@ export class CategoriesService {
       }
     }
 
+    const updateData: Partial<Category> = {};
     if (updateCategoryDto.name !== undefined) {
-      category.name = updateCategoryDto.name;
+      updateData.name = updateCategoryDto.name;
     }
     if (updateCategoryDto.parent_id !== undefined) {
-      category.parent_id = updateCategoryDto.parent_id;
+      updateData.parent_id = updateCategoryDto.parent_id;
     }
     if (updateCategoryDto.description !== undefined) {
-      category.description = updateCategoryDto.description;
+      updateData.description = updateCategoryDto.description;
     }
 
-    return this.categoryRepository.save(category);
+    return this.categoryRepository.update(id, updateData) as Promise<Category>;
   }
 
   async delete(id: string): Promise<void> {
-    const category = await this.categoryRepository.findOneBy({ id });
+    const category = await this.categoryRepository.findById(id);
 
     if (!category) {
       throw new NotFoundException('Category not found');
