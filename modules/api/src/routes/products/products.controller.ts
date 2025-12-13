@@ -138,7 +138,8 @@ export class ProductsController {
   @Get('category/:categoryId/tree')
   @ApiOperation({
     summary: 'Get products by category tree',
-    description: 'Retrieves all products in a category and its child categories',
+    description:
+      'Retrieves all products in a category and its child categories',
     operationId: 'getProductsByCategoryTree',
   })
   @ApiParam({

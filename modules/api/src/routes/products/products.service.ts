@@ -108,14 +108,20 @@ export class ProductsService {
     return this.productRepository.save(product);
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
     const product = await this.productRepository.findOneBy({ id });
 
     if (!product) {
       throw new NotFoundException('Product not found');
     }
 
-    if (updateProductDto.category_id !== undefined && updateProductDto.category_id !== null) {
+    if (
+      updateProductDto.category_id !== undefined &&
+      updateProductDto.category_id !== null
+    ) {
       const categoryExists = await this.categoryRepository.existsBy({
         id: updateProductDto.category_id,
       });
@@ -125,7 +131,10 @@ export class ProductsService {
       }
     }
 
-    if (updateProductDto.sku !== undefined && updateProductDto.sku !== product.sku) {
+    if (
+      updateProductDto.sku !== undefined &&
+      updateProductDto.sku !== product.sku
+    ) {
       const existingSku = await this.productRepository.findOneBy({
         sku: updateProductDto.sku,
       });
