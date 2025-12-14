@@ -81,7 +81,14 @@ export class CategoriesService {
       updateData.description = updateCategoryDto.description;
     }
 
-    return this.categoryRepository.update(id, updateData) as Promise<Category>;
+    if (Object.keys(updateData).length === 0) {
+      return category;
+    }
+
+    await this.categoryRepository.update(id, updateData);
+
+    const updatedCategory = await this.categoryRepository.findById(id);
+    return updatedCategory!;
   }
 
   async delete(id: string): Promise<void> {

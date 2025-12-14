@@ -29,16 +29,14 @@ export class CategoryRepository {
     return this.repository.save(category);
   }
 
-  async update(
-    id: string,
-    updateData: Partial<Category>,
-  ): Promise<Category | null> {
-    const category = await this.repository.findOneBy({ id });
-    if (category) {
-      Object.assign(category, updateData);
-      return this.repository.save(category);
-    }
-    return null;
+  async update(id: string, updateData: Partial<Category>): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Category)
+      .set(updateData)
+      .where('id = :id', { id })
+      .execute();
+    return result.affected || 0;
   }
 
   async delete(id: string): Promise<void> {

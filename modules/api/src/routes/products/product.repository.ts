@@ -240,16 +240,15 @@ export class ProductRepository {
     return this.repository.save(products);
   }
 
-  async update(
-    id: string,
-    updateData: Partial<Product>,
-  ): Promise<Product | null> {
-    const product = await this.findById(id);
-    if (product) {
-      Object.assign(product, updateData);
-      return this.repository.save(product);
-    }
-    return null;
+  async update(id: string, updateData: Partial<Product>): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Product)
+      .set(updateData)
+      .where('id = :id', { id })
+      .andWhere('deleted_at IS NULL')
+      .execute();
+    return result.affected || 0;
   }
 
   async updateMany(
