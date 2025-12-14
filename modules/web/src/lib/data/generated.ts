@@ -37,303 +37,844 @@ export interface SessionClaimsResponseDto {
   issued_at: number
 }
 
-export type UserResponseDtoRole =
-  (typeof UserResponseDtoRole)[keyof typeof UserResponseDtoRole]
+/**
+ * Parent category ID
+ * @nullable
+ */
+export type CategoryWithChildrenResponseDtoParentId = {
+  [key: string]: unknown
+} | null
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const UserResponseDtoRole = {
-  ADMIN: 'ADMIN',
-  WAREHOUSE_MANAGER: 'WAREHOUSE_MANAGER',
-  PICKER: 'PICKER',
-  SALES: 'SALES',
-} as const
+/**
+ * Category description
+ * @nullable
+ */
+export type CategoryWithChildrenResponseDtoDescription = {
+  [key: string]: unknown
+} | null
 
-export interface UserResponseDto {
-  id: string
-  name: string
-  email: string
-  role: UserResponseDtoRole
-  is_active: boolean
-  /** @nullable */
-  last_login: string | null
+export interface CategoryWithChildrenResponseDto {
+  /** Creation timestamp */
   created_at: string
+  /** Last update timestamp */
   updated_at: string
+  /** Unique identifier */
+  id: string
+  /** Category name */
+  name: string
+  /**
+   * Parent category ID
+   * @nullable
+   */
+  parent_id: CategoryWithChildrenResponseDtoParentId
+  /**
+   * Category description
+   * @nullable
+   */
+  description: CategoryWithChildrenResponseDtoDescription
+  /** Child categories */
+  children: CategoryWithChildrenResponseDto[]
 }
 
-export type CreateUserDtoRole =
-  (typeof CreateUserDtoRole)[keyof typeof CreateUserDtoRole]
+/**
+ * Parent category ID
+ * @nullable
+ */
+export type CreateCategoryDtoParentId = { [key: string]: unknown } | null
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateUserDtoRole = {
-  ADMIN: 'ADMIN',
-  WAREHOUSE_MANAGER: 'WAREHOUSE_MANAGER',
-  PICKER: 'PICKER',
-  SALES: 'SALES',
-} as const
+/**
+ * Category description
+ * @maxLength 500
+ * @nullable
+ */
+export type CreateCategoryDtoDescription = { [key: string]: unknown } | null
 
-export interface CreateUserDto {
+export interface CreateCategoryDto {
   /**
-   * @minLength 2
+   * Category name
+   * @minLength 1
    * @maxLength 100
    */
   name: string
-  email: string
-  role: CreateUserDtoRole
+  /**
+   * Parent category ID
+   * @nullable
+   */
+  parent_id?: CreateCategoryDtoParentId
+  /**
+   * Category description
+   * @maxLength 500
+   * @nullable
+   */
+  description?: CreateCategoryDtoDescription
 }
 
-export type UpdateUserDtoRole =
-  (typeof UpdateUserDtoRole)[keyof typeof UpdateUserDtoRole]
+/**
+ * Parent category ID
+ * @nullable
+ */
+export type CategoryResponseDtoParentId = { [key: string]: unknown } | null
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const UpdateUserDtoRole = {
-  ADMIN: 'ADMIN',
-  WAREHOUSE_MANAGER: 'WAREHOUSE_MANAGER',
-  PICKER: 'PICKER',
-  SALES: 'SALES',
-} as const
+/**
+ * Category description
+ * @nullable
+ */
+export type CategoryResponseDtoDescription = { [key: string]: unknown } | null
 
-export interface UpdateUserDto {
+export interface CategoryResponseDto {
+  /** Creation timestamp */
+  created_at: string
+  /** Last update timestamp */
+  updated_at: string
+  /** Unique identifier */
+  id: string
+  /** Category name */
+  name: string
   /**
-   * @minLength 2
+   * Parent category ID
+   * @nullable
+   */
+  parent_id: CategoryResponseDtoParentId
+  /**
+   * Category description
+   * @nullable
+   */
+  description: CategoryResponseDtoDescription
+}
+
+/**
+ * Parent category ID
+ * @nullable
+ */
+export type UpdateCategoryDtoParentId = { [key: string]: unknown } | null
+
+/**
+ * Category description
+ * @maxLength 500
+ * @nullable
+ */
+export type UpdateCategoryDtoDescription = { [key: string]: unknown } | null
+
+export interface UpdateCategoryDto {
+  /**
+   * Category name
+   * @minLength 1
    * @maxLength 100
    */
   name?: string
-  email?: string
-  role?: UpdateUserDtoRole
-  is_active?: boolean
+  /**
+   * Parent category ID
+   * @nullable
+   */
+  parent_id?: UpdateCategoryDtoParentId
+  /**
+   * Category description
+   * @maxLength 500
+   * @nullable
+   */
+  description?: UpdateCategoryDtoDescription
 }
 
 export interface MessageResponseDto {
   message: string
 }
 
-export interface CategoryWithChildrenResponseDto {
-  id: string
-  name: string
-  /** @nullable */
-  parent_id: string | null
-  /** @nullable */
-  description: string | null
-  created_at: string
-  updated_at: string
-  children: CategoryWithChildrenResponseDto[]
-}
+/**
+ * Parent category ID
+ * @nullable
+ */
+export type CategorySummaryDtoParentId = { [key: string]: unknown } | null
 
-export interface CreateCategoryDto {
-  /**
-   * @minLength 1
-   * @maxLength 100
-   */
+export interface CategorySummaryDto {
+  /** Category ID */
+  id: string
+  /** Category name */
   name: string
-  /** @nullable */
-  parent_id?: string | null
   /**
-   * @maxLength 500
+   * Parent category ID
    * @nullable
    */
-  description?: string | null
+  parent_id: CategorySummaryDtoParentId
 }
 
-export interface CategoryResponseDto {
+export interface SupplierSummaryDto {
+  /** Supplier ID */
   id: string
+  /** Supplier name */
   name: string
-  /** @nullable */
-  parent_id: string | null
-  /** @nullable */
-  description: string | null
-  created_at: string
-  updated_at: string
 }
 
-export interface UpdateCategoryDto {
-  /**
-   * @minLength 1
-   * @maxLength 100
-   */
-  name?: string
-  /** @nullable */
-  parent_id?: string | null
-  /**
-   * @maxLength 500
-   * @nullable
-   */
-  description?: string | null
+/**
+ * HTTP method for this link
+ */
+export type HateoasLinkMethod =
+  (typeof HateoasLinkMethod)[keyof typeof HateoasLinkMethod]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const HateoasLinkMethod = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  PATCH: 'PATCH',
+  DELETE: 'DELETE',
+} as const
+
+export interface HateoasLink {
+  /** The URL of the linked resource */
+  href: string
+  /** HTTP method for this link */
+  method?: HateoasLinkMethod
 }
+
+export interface ProductLinksDto {
+  /** Link to this product */
+  self: HateoasLink
+  /** Link to update this product */
+  update: HateoasLink
+  /** Link to delete this product */
+  delete: HateoasLink
+  /** Link to the product category */
+  category: HateoasLink
+}
+
+/**
+ * Deletion timestamp (for soft-deleted records)
+ * @nullable
+ */
+export type ProductResponseDtoDeletedAt = { [key: string]: unknown } | null
+
+/**
+ * User ID who created the record
+ * @nullable
+ */
+export type ProductResponseDtoCreatedBy = { [key: string]: unknown } | null
+
+/**
+ * User ID who last updated the record
+ * @nullable
+ */
+export type ProductResponseDtoUpdatedBy = { [key: string]: unknown } | null
+
+/**
+ * User ID who deleted the record
+ * @nullable
+ */
+export type ProductResponseDtoDeletedBy = { [key: string]: unknown } | null
+
+/**
+ * Product description
+ * @nullable
+ */
+export type ProductResponseDtoDescription = { [key: string]: unknown } | null
+
+/**
+ * Nested category information
+ * @nullable
+ */
+export type ProductResponseDtoCategory = CategorySummaryDto | null
+
+/**
+ * Brand ID
+ * @nullable
+ */
+export type ProductResponseDtoBrandId = { [key: string]: unknown } | null
+
+/**
+ * Volume in milliliters
+ * @nullable
+ */
+export type ProductResponseDtoVolumeMl = { [key: string]: unknown } | null
+
+/**
+ * Weight in kilograms
+ * @nullable
+ */
+export type ProductResponseDtoWeightKg = { [key: string]: unknown } | null
+
+/**
+ * Dimensions in cm (format: LxWxH)
+ * @nullable
+ */
+export type ProductResponseDtoDimensionsCm = { [key: string]: unknown } | null
+
+/**
+ * Standard cost
+ * @nullable
+ */
+export type ProductResponseDtoStandardCost = { [key: string]: unknown } | null
+
+/**
+ * Standard price
+ * @nullable
+ */
+export type ProductResponseDtoStandardPrice = { [key: string]: unknown } | null
+
+/**
+ * Markup percentage
+ * @nullable
+ */
+export type ProductResponseDtoMarkupPercentage = {
+  [key: string]: unknown
+} | null
+
+/**
+ * Primary supplier ID
+ * @nullable
+ */
+export type ProductResponseDtoPrimarySupplierId = {
+  [key: string]: unknown
+} | null
+
+/**
+ * Nested supplier information
+ * @nullable
+ */
+export type ProductResponseDtoPrimarySupplier = SupplierSummaryDto | null
+
+/**
+ * Supplier SKU
+ * @nullable
+ */
+export type ProductResponseDtoSupplierSku = { [key: string]: unknown } | null
+
+/**
+ * Additional notes
+ * @nullable
+ */
+export type ProductResponseDtoNotes = { [key: string]: unknown } | null
 
 export interface ProductResponseDto {
-  id: string
-  sku: string
-  name: string
-  /** @nullable */
-  description: string | null
-  category_id: string
-  /** @nullable */
-  brand_id: string | null
-  /** @nullable */
-  volume_ml: number | null
-  /** @nullable */
-  weight_kg: number | null
-  /** @nullable */
-  dimensions_cm: string | null
-  /** @nullable */
-  standard_cost: number | null
-  /** @nullable */
-  standard_price: number | null
-  /** @nullable */
-  markup_percentage: number | null
-  reorder_point: number
-  /** @nullable */
-  primary_supplier_id: string | null
-  /** @nullable */
-  supplier_sku: string | null
-  is_active: boolean
-  is_perishable: boolean
-  /** @nullable */
-  notes: string | null
+  /** Creation timestamp */
   created_at: string
+  /** Last update timestamp */
   updated_at: string
+  /**
+   * Deletion timestamp (for soft-deleted records)
+   * @nullable
+   */
+  deleted_at?: ProductResponseDtoDeletedAt
+  /**
+   * User ID who created the record
+   * @nullable
+   */
+  created_by?: ProductResponseDtoCreatedBy
+  /**
+   * User ID who last updated the record
+   * @nullable
+   */
+  updated_by?: ProductResponseDtoUpdatedBy
+  /**
+   * User ID who deleted the record
+   * @nullable
+   */
+  deleted_by?: ProductResponseDtoDeletedBy
+  /** Unique identifier */
+  id: string
+  /** Product SKU */
+  sku: string
+  /** Product name */
+  name: string
+  /**
+   * Product description
+   * @nullable
+   */
+  description: ProductResponseDtoDescription
+  /** Category ID */
+  category_id: string
+  /**
+   * Nested category information
+   * @nullable
+   */
+  category?: ProductResponseDtoCategory
+  /**
+   * Brand ID
+   * @nullable
+   */
+  brand_id: ProductResponseDtoBrandId
+  /**
+   * Volume in milliliters
+   * @nullable
+   */
+  volume_ml: ProductResponseDtoVolumeMl
+  /**
+   * Weight in kilograms
+   * @nullable
+   */
+  weight_kg: ProductResponseDtoWeightKg
+  /**
+   * Dimensions in cm (format: LxWxH)
+   * @nullable
+   */
+  dimensions_cm: ProductResponseDtoDimensionsCm
+  /**
+   * Standard cost
+   * @nullable
+   */
+  standard_cost: ProductResponseDtoStandardCost
+  /**
+   * Standard price
+   * @nullable
+   */
+  standard_price: ProductResponseDtoStandardPrice
+  /**
+   * Markup percentage
+   * @nullable
+   */
+  markup_percentage: ProductResponseDtoMarkupPercentage
+  /** Reorder point threshold */
+  reorder_point: number
+  /**
+   * Primary supplier ID
+   * @nullable
+   */
+  primary_supplier_id: ProductResponseDtoPrimarySupplierId
+  /**
+   * Nested supplier information
+   * @nullable
+   */
+  primary_supplier?: ProductResponseDtoPrimarySupplier
+  /**
+   * Supplier SKU
+   * @nullable
+   */
+  supplier_sku: ProductResponseDtoSupplierSku
+  /** Whether the product is active */
+  is_active: boolean
+  /** Whether the product is perishable */
+  is_perishable: boolean
+  /**
+   * Additional notes
+   * @nullable
+   */
+  notes: ProductResponseDtoNotes
+  /** HATEOAS links */
+  _links?: ProductLinksDto
 }
+
+export interface PaginationMeta {
+  /** Current page number */
+  page: number
+  /** Number of items per page */
+  limit: number
+  /** Total number of items */
+  total: number
+  /** Total number of pages */
+  total_pages: number
+  /** Whether there is a next page */
+  has_next: boolean
+  /** Whether there is a previous page */
+  has_previous: boolean
+}
+
+export interface PaginatedProductsResponseDto {
+  /** List of products */
+  data: ProductResponseDto[]
+  /** Pagination metadata */
+  meta: PaginationMeta
+}
+
+/**
+ * Product description
+ * @maxLength 1000
+ * @nullable
+ */
+export type CreateProductDtoDescription = { [key: string]: unknown } | null
+
+/**
+ * Brand ID
+ * @nullable
+ */
+export type CreateProductDtoBrandId = { [key: string]: unknown } | null
+
+/**
+ * Volume in milliliters
+ * @minimum 1
+ * @nullable
+ */
+export type CreateProductDtoVolumeMl = { [key: string]: unknown } | null
+
+/**
+ * Weight in kilograms
+ * @minimum 0
+ * @nullable
+ */
+export type CreateProductDtoWeightKg = { [key: string]: unknown } | null
+
+/**
+ * Dimensions in cm (format: LxWxH, e.g., 10x20x5)
+ * @maxLength 50
+ * @nullable
+ */
+export type CreateProductDtoDimensionsCm = { [key: string]: unknown } | null
+
+/**
+ * Standard cost
+ * @minimum 0
+ * @nullable
+ */
+export type CreateProductDtoStandardCost = { [key: string]: unknown } | null
+
+/**
+ * Standard price (must be >= standard_cost)
+ * @minimum 0
+ * @nullable
+ */
+export type CreateProductDtoStandardPrice = { [key: string]: unknown } | null
+
+/**
+ * Markup percentage
+ * @minimum 0
+ * @maximum 1000
+ * @nullable
+ */
+export type CreateProductDtoMarkupPercentage = { [key: string]: unknown } | null
+
+/**
+ * Primary supplier ID
+ * @nullable
+ */
+export type CreateProductDtoPrimarySupplierId = {
+  [key: string]: unknown
+} | null
+
+/**
+ * Supplier SKU
+ * @maxLength 50
+ * @nullable
+ */
+export type CreateProductDtoSupplierSku = { [key: string]: unknown } | null
+
+/**
+ * Additional notes
+ * @maxLength 500
+ * @nullable
+ */
+export type CreateProductDtoNotes = { [key: string]: unknown } | null
 
 export interface CreateProductDto {
   /**
+   * Product SKU
    * @minLength 1
    * @maxLength 50
    */
   sku: string
   /**
+   * Product name
    * @minLength 1
    * @maxLength 200
    */
   name: string
   /**
+   * Product description
    * @maxLength 1000
    * @nullable
    */
-  description?: string | null
+  description?: CreateProductDtoDescription
+  /** Category ID */
   category_id: string
-  /** @nullable */
-  brand_id?: string | null
   /**
+   * Brand ID
+   * @nullable
+   */
+  brand_id?: CreateProductDtoBrandId
+  /**
+   * Volume in milliliters
    * @minimum 1
    * @nullable
    */
-  volume_ml?: number | null
+  volume_ml?: CreateProductDtoVolumeMl
   /**
+   * Weight in kilograms
    * @minimum 0
    * @nullable
    */
-  weight_kg?: number | null
+  weight_kg?: CreateProductDtoWeightKg
   /**
+   * Dimensions in cm (format: LxWxH, e.g., 10x20x5)
    * @maxLength 50
    * @nullable
    */
-  dimensions_cm?: string | null
+  dimensions_cm?: CreateProductDtoDimensionsCm
   /**
+   * Standard cost
    * @minimum 0
    * @nullable
    */
-  standard_cost?: number | null
+  standard_cost?: CreateProductDtoStandardCost
   /**
+   * Standard price (must be >= standard_cost)
    * @minimum 0
    * @nullable
    */
-  standard_price?: number | null
+  standard_price?: CreateProductDtoStandardPrice
   /**
+   * Markup percentage
    * @minimum 0
    * @maximum 1000
    * @nullable
    */
-  markup_percentage?: number | null
-  /** @minimum 0 */
-  reorder_point: number
-  /** @nullable */
-  primary_supplier_id?: string | null
+  markup_percentage?: CreateProductDtoMarkupPercentage
   /**
+   * Reorder point threshold
+   * @minimum 0
+   */
+  reorder_point: number
+  /**
+   * Primary supplier ID
+   * @nullable
+   */
+  primary_supplier_id?: CreateProductDtoPrimarySupplierId
+  /**
+   * Supplier SKU
    * @maxLength 50
    * @nullable
    */
-  supplier_sku?: string | null
+  supplier_sku?: CreateProductDtoSupplierSku
+  /** Whether the product is active */
   is_active: boolean
+  /** Whether the product is perishable */
   is_perishable: boolean
   /**
+   * Additional notes
    * @maxLength 500
    * @nullable
    */
-  notes?: string | null
+  notes?: CreateProductDtoNotes
 }
+
+export interface BulkCreateProductsDto {
+  /**
+   * Array of products to create
+   * @minItems 1
+   * @maxItems 100
+   */
+  products: CreateProductDto[]
+}
+
+export type BulkOperationResultDtoFailuresItem = {
+  id?: string
+  error?: string
+}
+
+export interface BulkOperationResultDto {
+  /** Number of successfully processed items */
+  success_count: number
+  /** Number of failed items */
+  failure_count: number
+  /** IDs that were successfully processed */
+  succeeded: string[]
+  /** Details of failed operations */
+  failures: BulkOperationResultDtoFailuresItem[]
+}
+
+/**
+ * Product description
+ * @maxLength 1000
+ * @nullable
+ */
+export type UpdateProductDtoDescription = { [key: string]: unknown } | null
+
+/**
+ * Brand ID
+ * @nullable
+ */
+export type UpdateProductDtoBrandId = { [key: string]: unknown } | null
+
+/**
+ * Volume in milliliters
+ * @minimum 1
+ * @nullable
+ */
+export type UpdateProductDtoVolumeMl = { [key: string]: unknown } | null
+
+/**
+ * Weight in kilograms
+ * @minimum 0
+ * @nullable
+ */
+export type UpdateProductDtoWeightKg = { [key: string]: unknown } | null
+
+/**
+ * Dimensions in cm (format: LxWxH, e.g., 10x20x5)
+ * @maxLength 50
+ * @nullable
+ */
+export type UpdateProductDtoDimensionsCm = { [key: string]: unknown } | null
+
+/**
+ * Standard cost
+ * @minimum 0
+ * @nullable
+ */
+export type UpdateProductDtoStandardCost = { [key: string]: unknown } | null
+
+/**
+ * Standard price (must be >= standard_cost)
+ * @minimum 0
+ * @nullable
+ */
+export type UpdateProductDtoStandardPrice = { [key: string]: unknown } | null
+
+/**
+ * Markup percentage
+ * @minimum 0
+ * @maximum 1000
+ * @nullable
+ */
+export type UpdateProductDtoMarkupPercentage = { [key: string]: unknown } | null
+
+/**
+ * Primary supplier ID
+ * @nullable
+ */
+export type UpdateProductDtoPrimarySupplierId = {
+  [key: string]: unknown
+} | null
+
+/**
+ * Supplier SKU
+ * @maxLength 50
+ * @nullable
+ */
+export type UpdateProductDtoSupplierSku = { [key: string]: unknown } | null
+
+/**
+ * Additional notes
+ * @maxLength 500
+ * @nullable
+ */
+export type UpdateProductDtoNotes = { [key: string]: unknown } | null
 
 export interface UpdateProductDto {
   /**
+   * Product SKU
    * @minLength 1
    * @maxLength 50
    */
   sku?: string
   /**
+   * Product name
    * @minLength 1
    * @maxLength 200
    */
   name?: string
   /**
+   * Product description
    * @maxLength 1000
    * @nullable
    */
-  description?: string | null
-  /** @nullable */
-  category_id?: string | null
-  /** @nullable */
-  brand_id?: string | null
+  description?: UpdateProductDtoDescription
   /**
+   * Category ID
+   * @nullable
+   */
+  category_id?: string | null
+  /**
+   * Brand ID
+   * @nullable
+   */
+  brand_id?: UpdateProductDtoBrandId
+  /**
+   * Volume in milliliters
    * @minimum 1
    * @nullable
    */
-  volume_ml?: number | null
+  volume_ml?: UpdateProductDtoVolumeMl
   /**
+   * Weight in kilograms
    * @minimum 0
    * @nullable
    */
-  weight_kg?: number | null
+  weight_kg?: UpdateProductDtoWeightKg
   /**
+   * Dimensions in cm (format: LxWxH, e.g., 10x20x5)
    * @maxLength 50
    * @nullable
    */
-  dimensions_cm?: string | null
+  dimensions_cm?: UpdateProductDtoDimensionsCm
   /**
+   * Standard cost
    * @minimum 0
    * @nullable
    */
-  standard_cost?: number | null
+  standard_cost?: UpdateProductDtoStandardCost
   /**
+   * Standard price (must be >= standard_cost)
    * @minimum 0
    * @nullable
    */
-  standard_price?: number | null
+  standard_price?: UpdateProductDtoStandardPrice
   /**
+   * Markup percentage
    * @minimum 0
    * @maximum 1000
    * @nullable
    */
-  markup_percentage?: number | null
+  markup_percentage?: UpdateProductDtoMarkupPercentage
   /**
+   * Reorder point threshold
    * @minimum 0
    * @nullable
    */
   reorder_point?: number | null
-  /** @nullable */
-  primary_supplier_id?: string | null
   /**
+   * Primary supplier ID
+   * @nullable
+   */
+  primary_supplier_id?: UpdateProductDtoPrimarySupplierId
+  /**
+   * Supplier SKU
    * @maxLength 50
    * @nullable
    */
-  supplier_sku?: string | null
-  /** @nullable */
+  supplier_sku?: UpdateProductDtoSupplierSku
+  /**
+   * Whether the product is active
+   * @nullable
+   */
   is_active?: boolean | null
-  /** @nullable */
+  /**
+   * Whether the product is perishable
+   * @nullable
+   */
   is_perishable?: boolean | null
   /**
+   * Additional notes
    * @maxLength 500
    * @nullable
    */
-  notes?: string | null
+  notes?: UpdateProductDtoNotes
+}
+
+export interface BulkUpdateStatusDto {
+  /**
+   * Array of product IDs to update
+   * @minItems 1
+   * @maxItems 100
+   */
+  ids: string[]
+  /** New active status */
+  is_active: boolean
+}
+
+export interface BulkDeleteDto {
+  /**
+   * Array of product IDs to delete
+   * @minItems 1
+   * @maxItems 100
+   */
+  ids: string[]
+  /** Permanently delete (hard delete) instead of soft delete */
+  permanent?: boolean
+}
+
+export interface BulkRestoreDto {
+  /**
+   * Array of product IDs to restore
+   * @minItems 1
+   * @maxItems 100
+   */
+  ids: string[]
 }
 
 export type HealthCheck200 = {
@@ -341,148 +882,101 @@ export type HealthCheck200 = {
   timestamp?: string
 }
 
-export type SearchUsersParams = {
+export type ListProductsParams = {
   /**
-   * Search query
+   * Page number (1-based)
+   * @minimum 1
    */
-  q: string
+  page?: number
+  /**
+   * Number of items per page
+   * @minimum 1
+   * @maximum 100
+   */
+  limit?: number
+  /**
+   * Search term for name or SKU
+   */
+  search?: string
+  /**
+   * Filter by category ID
+   */
+  category_id?: string
+  /**
+   * Filter by brand ID
+   */
+  brand_id?: string
+  /**
+   * Filter by primary supplier ID
+   */
+  primary_supplier_id?: string
+  /**
+   * Filter by active status
+   */
+  is_active?: boolean
+  /**
+   * Filter by perishable status
+   */
+  is_perishable?: boolean
+  /**
+   * Minimum price filter
+   * @minimum 0
+   */
+  min_price?: number
+  /**
+   * Maximum price filter
+   * @minimum 0
+   */
+  max_price?: number
+  /**
+   * Include soft-deleted products
+   */
+  include_deleted?: boolean
+  /**
+   * Field to sort by
+   */
+  sort_by?: ListProductsSortBy
+  /**
+   * Sort order
+   */
+  sort_order?: ListProductsSortOrder
 }
 
-export const appControllerGetHello = (signal?: AbortSignal) => {
-  return getAxiosInstance<void>({ url: `/`, method: 'GET', signal })
+export type ListProductsSortBy =
+  (typeof ListProductsSortBy)[keyof typeof ListProductsSortBy]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ListProductsSortBy = {
+  name: 'name',
+  sku: 'sku',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  standard_price: 'standard_price',
+  standard_cost: 'standard_cost',
+  reorder_point: 'reorder_point',
+} as const
+
+export type ListProductsSortOrder =
+  (typeof ListProductsSortOrder)[keyof typeof ListProductsSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ListProductsSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type GetProductParams = {
+  /**
+   * Include soft-deleted products
+   */
+  include_deleted?: boolean
 }
 
-export const getAppControllerGetHelloQueryKey = () => {
-  return [`/`] as const
-}
-
-export const getAppControllerGetHelloQueryOptions = <
-  TData = Awaited<ReturnType<typeof appControllerGetHello>>,
-  TError = unknown,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof appControllerGetHello>>,
-      TError,
-      TData
-    >
-  >
-}) => {
-  const { query: queryOptions } = options ?? {}
-
-  const queryKey = queryOptions?.queryKey ?? getAppControllerGetHelloQueryKey()
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof appControllerGetHello>>
-  > = ({ signal }) => appControllerGetHello(signal)
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof appControllerGetHello>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type AppControllerGetHelloQueryResult = NonNullable<
-  Awaited<ReturnType<typeof appControllerGetHello>>
->
-export type AppControllerGetHelloQueryError = unknown
-
-export function useAppControllerGetHello<
-  TData = Awaited<ReturnType<typeof appControllerGetHello>>,
-  TError = unknown,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof appControllerGetHello>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof appControllerGetHello>>,
-          TError,
-          Awaited<ReturnType<typeof appControllerGetHello>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useAppControllerGetHello<
-  TData = Awaited<ReturnType<typeof appControllerGetHello>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof appControllerGetHello>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof appControllerGetHello>>,
-          TError,
-          Awaited<ReturnType<typeof appControllerGetHello>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useAppControllerGetHello<
-  TData = Awaited<ReturnType<typeof appControllerGetHello>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof appControllerGetHello>>,
-        TError,
-        TData
-      >
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-
-export function useAppControllerGetHello<
-  TData = Awaited<ReturnType<typeof appControllerGetHello>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof appControllerGetHello>>,
-        TError,
-        TData
-      >
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getAppControllerGetHelloQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
+export type DeleteProductParams = {
+  /**
+   * Permanently delete instead of soft delete
+   */
+  permanent?: boolean
 }
 
 /**
@@ -619,14 +1113,14 @@ export function useHealthCheck<
  */
 export const getProfile = (signal?: AbortSignal) => {
   return getAxiosInstance<ProfileResponseDto>({
-    url: `/api/v1/auth/profile`,
+    url: `/auth/auth/profile`,
     method: 'GET',
     signal,
   })
 }
 
 export const getGetProfileQueryKey = () => {
-  return [`/api/v1/auth/profile`] as const
+  return [`/auth/auth/profile`] as const
 }
 
 export const getGetProfileQueryOptions = <
@@ -747,14 +1241,14 @@ export function useGetProfile<
  */
 export const getSessionClaims = (signal?: AbortSignal) => {
   return getAxiosInstance<SessionClaimsResponseDto>({
-    url: `/api/v1/auth/session-claims`,
+    url: `/auth/auth/session-claims`,
     method: 'GET',
     signal,
   })
 }
 
 export const getGetSessionClaimsQueryKey = () => {
-  return [`/api/v1/auth/session-claims`] as const
+  return [`/auth/auth/session-claims`] as const
 }
 
 export const getGetSessionClaimsQueryOptions = <
@@ -886,666 +1380,19 @@ export function useGetSessionClaims<
 }
 
 /**
- * Retrieves all users in the system
- * @summary List all users
- */
-export const listUsers = (signal?: AbortSignal) => {
-  return getAxiosInstance<UserResponseDto[]>({
-    url: `/api/v1/users`,
-    method: 'GET',
-    signal,
-  })
-}
-
-export const getListUsersQueryKey = () => {
-  return [`/api/v1/users`] as const
-}
-
-export const getListUsersQueryOptions = <
-  TData = Awaited<ReturnType<typeof listUsers>>,
-  TError = ErrorResponseDto,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
-  >
-}) => {
-  const { query: queryOptions } = options ?? {}
-
-  const queryKey = queryOptions?.queryKey ?? getListUsersQueryKey()
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof listUsers>>> = ({
-    signal,
-  }) => listUsers(signal)
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof listUsers>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ListUsersQueryResult = NonNullable<
-  Awaited<ReturnType<typeof listUsers>>
->
-export type ListUsersQueryError = ErrorResponseDto
-
-export function useListUsers<
-  TData = Awaited<ReturnType<typeof listUsers>>,
-  TError = ErrorResponseDto,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listUsers>>,
-          TError,
-          Awaited<ReturnType<typeof listUsers>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useListUsers<
-  TData = Awaited<ReturnType<typeof listUsers>>,
-  TError = ErrorResponseDto,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listUsers>>,
-          TError,
-          Awaited<ReturnType<typeof listUsers>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useListUsers<
-  TData = Awaited<ReturnType<typeof listUsers>>,
-  TError = ErrorResponseDto,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary List all users
- */
-
-export function useListUsers<
-  TData = Awaited<ReturnType<typeof listUsers>>,
-  TError = ErrorResponseDto,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getListUsersQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
- * Creates a new user in the system
- * @summary Create user
- */
-export const createUser = (
-  createUserDto: CreateUserDto,
-  signal?: AbortSignal,
-) => {
-  return getAxiosInstance<UserResponseDto>({
-    url: `/api/v1/users`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: createUserDto,
-    signal,
-  })
-}
-
-export const getCreateUserMutationOptions = <
-  TError = ErrorResponseDto,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createUser>>,
-    TError,
-    { data: CreateUserDto },
-    TContext
-  >
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createUser>>,
-  TError,
-  { data: CreateUserDto },
-  TContext
-> => {
-  const mutationKey = ['createUser']
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createUser>>,
-    { data: CreateUserDto }
-  > = (props) => {
-    const { data } = props ?? {}
-
-    return createUser(data)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type CreateUserMutationResult = NonNullable<
-  Awaited<ReturnType<typeof createUser>>
->
-export type CreateUserMutationBody = CreateUserDto
-export type CreateUserMutationError = ErrorResponseDto
-
-/**
- * @summary Create user
- */
-export const useCreateUser = <TError = ErrorResponseDto, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createUser>>,
-      TError,
-      { data: CreateUserDto },
-      TContext
-    >
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof createUser>>,
-  TError,
-  { data: CreateUserDto },
-  TContext
-> => {
-  const mutationOptions = getCreateUserMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-
-/**
- * Searches for users by name (partial match)
- * @summary Search users by name
- */
-export const searchUsers = (
-  params: SearchUsersParams,
-  signal?: AbortSignal,
-) => {
-  return getAxiosInstance<UserResponseDto[]>({
-    url: `/api/v1/users/search`,
-    method: 'GET',
-    params,
-    signal,
-  })
-}
-
-export const getSearchUsersQueryKey = (params?: SearchUsersParams) => {
-  return [`/api/v1/users/search`, ...(params ? [params] : [])] as const
-}
-
-export const getSearchUsersQueryOptions = <
-  TData = Awaited<ReturnType<typeof searchUsers>>,
-  TError = ErrorResponseDto,
->(
-  params: SearchUsersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>
-    >
-  },
-) => {
-  const { query: queryOptions } = options ?? {}
-
-  const queryKey = queryOptions?.queryKey ?? getSearchUsersQueryKey(params)
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof searchUsers>>> = ({
-    signal,
-  }) => searchUsers(params, signal)
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof searchUsers>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type SearchUsersQueryResult = NonNullable<
-  Awaited<ReturnType<typeof searchUsers>>
->
-export type SearchUsersQueryError = ErrorResponseDto
-
-export function useSearchUsers<
-  TData = Awaited<ReturnType<typeof searchUsers>>,
-  TError = ErrorResponseDto,
->(
-  params: SearchUsersParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof searchUsers>>,
-          TError,
-          Awaited<ReturnType<typeof searchUsers>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useSearchUsers<
-  TData = Awaited<ReturnType<typeof searchUsers>>,
-  TError = ErrorResponseDto,
->(
-  params: SearchUsersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof searchUsers>>,
-          TError,
-          Awaited<ReturnType<typeof searchUsers>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useSearchUsers<
-  TData = Awaited<ReturnType<typeof searchUsers>>,
-  TError = ErrorResponseDto,
->(
-  params: SearchUsersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary Search users by name
- */
-
-export function useSearchUsers<
-  TData = Awaited<ReturnType<typeof searchUsers>>,
-  TError = ErrorResponseDto,
->(
-  params: SearchUsersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getSearchUsersQueryOptions(params, options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
- * Retrieves a specific user by UUID
- * @summary Get user by ID
- */
-export const getUser = (id: string, signal?: AbortSignal) => {
-  return getAxiosInstance<UserResponseDto>({
-    url: `/api/v1/users/${id}`,
-    method: 'GET',
-    signal,
-  })
-}
-
-export const getGetUserQueryKey = (id?: string) => {
-  return [`/api/v1/users/${id}`] as const
-}
-
-export const getGetUserQueryOptions = <
-  TData = Awaited<ReturnType<typeof getUser>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>
-    >
-  },
-) => {
-  const { query: queryOptions } = options ?? {}
-
-  const queryKey = queryOptions?.queryKey ?? getGetUserQueryKey(id)
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUser>>> = ({
-    signal,
-  }) => getUser(id, signal)
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!id,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>
-  }
-}
-
-export type GetUserQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getUser>>
->
-export type GetUserQueryError = ErrorResponseDto
-
-export function useGetUser<
-  TData = Awaited<ReturnType<typeof getUser>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUser>>,
-          TError,
-          Awaited<ReturnType<typeof getUser>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useGetUser<
-  TData = Awaited<ReturnType<typeof getUser>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUser>>,
-          TError,
-          Awaited<ReturnType<typeof getUser>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useGetUser<
-  TData = Awaited<ReturnType<typeof getUser>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary Get user by ID
- */
-
-export function useGetUser<
-  TData = Awaited<ReturnType<typeof getUser>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getGetUserQueryOptions(id, options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
- * Updates an existing user
- * @summary Update user
- */
-export const updateUser = (id: string, updateUserDto: UpdateUserDto) => {
-  return getAxiosInstance<UserResponseDto>({
-    url: `/api/v1/users/${id}`,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    data: updateUserDto,
-  })
-}
-
-export const getUpdateUserMutationOptions = <
-  TError = ErrorResponseDto,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateUser>>,
-    TError,
-    { id: string; data: UpdateUserDto },
-    TContext
-  >
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof updateUser>>,
-  TError,
-  { id: string; data: UpdateUserDto },
-  TContext
-> => {
-  const mutationKey = ['updateUser']
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateUser>>,
-    { id: string; data: UpdateUserDto }
-  > = (props) => {
-    const { id, data } = props ?? {}
-
-    return updateUser(id, data)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type UpdateUserMutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateUser>>
->
-export type UpdateUserMutationBody = UpdateUserDto
-export type UpdateUserMutationError = ErrorResponseDto
-
-/**
- * @summary Update user
- */
-export const useUpdateUser = <TError = ErrorResponseDto, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateUser>>,
-      TError,
-      { id: string; data: UpdateUserDto },
-      TContext
-    >
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof updateUser>>,
-  TError,
-  { id: string; data: UpdateUserDto },
-  TContext
-> => {
-  const mutationOptions = getUpdateUserMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-
-/**
- * Deletes a user from the system
- * @summary Delete user
- */
-export const deleteUser = (id: string) => {
-  return getAxiosInstance<MessageResponseDto>({
-    url: `/api/v1/users/${id}`,
-    method: 'DELETE',
-  })
-}
-
-export const getDeleteUserMutationOptions = <
-  TError = ErrorResponseDto,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteUser>>,
-    TError,
-    { id: string },
-    TContext
-  >
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteUser>>,
-  TError,
-  { id: string },
-  TContext
-> => {
-  const mutationKey = ['deleteUser']
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteUser>>,
-    { id: string }
-  > = (props) => {
-    const { id } = props ?? {}
-
-    return deleteUser(id)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type DeleteUserMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteUser>>
->
-
-export type DeleteUserMutationError = ErrorResponseDto
-
-/**
- * @summary Delete user
- */
-export const useDeleteUser = <TError = ErrorResponseDto, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteUser>>,
-      TError,
-      { id: string },
-      TContext
-    >
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteUser>>,
-  TError,
-  { id: string },
-  TContext
-> => {
-  const mutationOptions = getDeleteUserMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-
-/**
  * Retrieves all product categories with their child categories
  * @summary List all categories
  */
 export const listCategories = (signal?: AbortSignal) => {
   return getAxiosInstance<CategoryWithChildrenResponseDto[]>({
-    url: `/api/v1/categories`,
+    url: `/categories`,
     method: 'GET',
     signal,
   })
 }
 
 export const getListCategoriesQueryKey = () => {
-  return [`/api/v1/categories`] as const
+  return [`/categories`] as const
 }
 
 export const getListCategoriesQueryOptions = <
@@ -1669,7 +1516,7 @@ export const createCategory = (
   signal?: AbortSignal,
 ) => {
   return getAxiosInstance<CategoryResponseDto>({
-    url: `/api/v1/categories`,
+    url: `/categories`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: createCategoryDto,
@@ -1756,7 +1603,7 @@ export const updateCategory = (
   updateCategoryDto: UpdateCategoryDto,
 ) => {
   return getAxiosInstance<CategoryResponseDto>({
-    url: `/api/v1/categories/${id}`,
+    url: `/categories/${id}`,
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     data: updateCategoryDto,
@@ -1839,7 +1686,7 @@ export const useUpdateCategory = <
  */
 export const deleteCategory = (id: string) => {
   return getAxiosInstance<MessageResponseDto>({
-    url: `/api/v1/categories/${id}`,
+    url: `/categories/${id}`,
     method: 'DELETE',
   })
 }
@@ -1915,36 +1762,43 @@ export const useDeleteCategory = <
 }
 
 /**
- * Retrieves all products in the catalog
- * @summary List all products
+ * Retrieves products with pagination, filtering by various fields, and sorting options
+ * @summary List products with pagination and filtering
  */
-export const listProducts = (signal?: AbortSignal) => {
-  return getAxiosInstance<ProductResponseDto[]>({
-    url: `/api/v1/products`,
+export const listProducts = (
+  params?: ListProductsParams,
+  signal?: AbortSignal,
+) => {
+  return getAxiosInstance<PaginatedProductsResponseDto>({
+    url: `/products`,
     method: 'GET',
+    params,
     signal,
   })
 }
 
-export const getListProductsQueryKey = () => {
-  return [`/api/v1/products`] as const
+export const getListProductsQueryKey = (params?: ListProductsParams) => {
+  return [`/products`, ...(params ? [params] : [])] as const
 }
 
 export const getListProductsQueryOptions = <
   TData = Awaited<ReturnType<typeof listProducts>>,
   TError = ErrorResponseDto,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof listProducts>>, TError, TData>
-  >
-}) => {
+>(
+  params?: ListProductsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof listProducts>>, TError, TData>
+    >
+  },
+) => {
   const { query: queryOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getListProductsQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getListProductsQueryKey(params)
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof listProducts>>> = ({
     signal,
-  }) => listProducts(signal)
+  }) => listProducts(params, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof listProducts>>,
@@ -1962,6 +1816,7 @@ export function useListProducts<
   TData = Awaited<ReturnType<typeof listProducts>>,
   TError = ErrorResponseDto,
 >(
+  params: undefined | ListProductsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listProducts>>, TError, TData>
@@ -1983,6 +1838,7 @@ export function useListProducts<
   TData = Awaited<ReturnType<typeof listProducts>>,
   TError = ErrorResponseDto,
 >(
+  params?: ListProductsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listProducts>>, TError, TData>
@@ -2004,6 +1860,7 @@ export function useListProducts<
   TData = Awaited<ReturnType<typeof listProducts>>,
   TError = ErrorResponseDto,
 >(
+  params?: ListProductsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listProducts>>, TError, TData>
@@ -2014,13 +1871,14 @@ export function useListProducts<
   queryKey: DataTag<QueryKey, TData, TError>
 }
 /**
- * @summary List all products
+ * @summary List products with pagination and filtering
  */
 
 export function useListProducts<
   TData = Awaited<ReturnType<typeof listProducts>>,
   TError = ErrorResponseDto,
 >(
+  params?: ListProductsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listProducts>>, TError, TData>
@@ -2030,7 +1888,7 @@ export function useListProducts<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getListProductsQueryOptions(options)
+  const queryOptions = getListProductsQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -2051,7 +1909,7 @@ export const createProduct = (
   signal?: AbortSignal,
 ) => {
   return getAxiosInstance<ProductResponseDto>({
-    url: `/api/v1/products`,
+    url: `/products`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: createProductDto,
@@ -2127,6 +1985,465 @@ export const useCreateProduct = <TError = ErrorResponseDto, TContext = unknown>(
 }
 
 /**
+ * Retrieves all products in the catalog without pagination
+ * @summary List all products without pagination
+ */
+export const listAllProducts = (signal?: AbortSignal) => {
+  return getAxiosInstance<ProductResponseDto[]>({
+    url: `/products/all`,
+    method: 'GET',
+    signal,
+  })
+}
+
+export const getListAllProductsQueryKey = () => {
+  return [`/products/all`] as const
+}
+
+export const getListAllProductsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listAllProducts>>,
+  TError = ErrorResponseDto,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof listAllProducts>>, TError, TData>
+  >
+}) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getListAllProductsQueryKey()
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listAllProducts>>> = ({
+    signal,
+  }) => listAllProducts(signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listAllProducts>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListAllProductsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listAllProducts>>
+>
+export type ListAllProductsQueryError = ErrorResponseDto
+
+export function useListAllProducts<
+  TData = Awaited<ReturnType<typeof listAllProducts>>,
+  TError = ErrorResponseDto,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listAllProducts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAllProducts>>,
+          TError,
+          Awaited<ReturnType<typeof listAllProducts>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useListAllProducts<
+  TData = Awaited<ReturnType<typeof listAllProducts>>,
+  TError = ErrorResponseDto,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listAllProducts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAllProducts>>,
+          TError,
+          Awaited<ReturnType<typeof listAllProducts>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useListAllProducts<
+  TData = Awaited<ReturnType<typeof listAllProducts>>,
+  TError = ErrorResponseDto,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listAllProducts>>,
+        TError,
+        TData
+      >
+    >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+/**
+ * @summary List all products without pagination
+ */
+
+export function useListAllProducts<
+  TData = Awaited<ReturnType<typeof listAllProducts>>,
+  TError = ErrorResponseDto,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listAllProducts>>,
+        TError,
+        TData
+      >
+    >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+} {
+  const queryOptions = getListAllProductsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+/**
+ * Retrieves a specific product by UUID
+ * @summary Get product by ID
+ */
+export const getProduct = (
+  id: string,
+  params?: GetProductParams,
+  signal?: AbortSignal,
+) => {
+  return getAxiosInstance<ProductResponseDto>({
+    url: `/products/${id}`,
+    method: 'GET',
+    params,
+    signal,
+  })
+}
+
+export const getGetProductQueryKey = (
+  id?: string,
+  params?: GetProductParams,
+) => {
+  return [`/products/${id}`, ...(params ? [params] : [])] as const
+}
+
+export const getGetProductQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProduct>>,
+  TError = ErrorResponseDto,
+>(
+  id: string,
+  params?: GetProductParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
+    >
+  },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getGetProductQueryKey(id, params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProduct>>> = ({
+    signal,
+  }) => getProduct(id, params, signal)
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getProduct>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetProductQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProduct>>
+>
+export type GetProductQueryError = ErrorResponseDto
+
+export function useGetProduct<
+  TData = Awaited<ReturnType<typeof getProduct>>,
+  TError = ErrorResponseDto,
+>(
+  id: string,
+  params: undefined | GetProductParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProduct>>,
+          TError,
+          Awaited<ReturnType<typeof getProduct>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useGetProduct<
+  TData = Awaited<ReturnType<typeof getProduct>>,
+  TError = ErrorResponseDto,
+>(
+  id: string,
+  params?: GetProductParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProduct>>,
+          TError,
+          Awaited<ReturnType<typeof getProduct>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useGetProduct<
+  TData = Awaited<ReturnType<typeof getProduct>>,
+  TError = ErrorResponseDto,
+>(
+  id: string,
+  params?: GetProductParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
+    >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+/**
+ * @summary Get product by ID
+ */
+
+export function useGetProduct<
+  TData = Awaited<ReturnType<typeof getProduct>>,
+  TError = ErrorResponseDto,
+>(
+  id: string,
+  params?: GetProductParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
+    >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+} {
+  const queryOptions = getGetProductQueryOptions(id, params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+/**
+ * Updates an existing product
+ * @summary Update product
+ */
+export const updateProduct = (
+  id: string,
+  updateProductDto: UpdateProductDto,
+) => {
+  return getAxiosInstance<ProductResponseDto>({
+    url: `/products/${id}`,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    data: updateProductDto,
+  })
+}
+
+export const getUpdateProductMutationOptions = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateProduct>>,
+    TError,
+    { id: string; data: UpdateProductDto },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateProduct>>,
+  TError,
+  { id: string; data: UpdateProductDto },
+  TContext
+> => {
+  const mutationKey = ['updateProduct']
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateProduct>>,
+    { id: string; data: UpdateProductDto }
+  > = (props) => {
+    const { id, data } = props ?? {}
+
+    return updateProduct(id, data)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UpdateProductMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateProduct>>
+>
+export type UpdateProductMutationBody = UpdateProductDto
+export type UpdateProductMutationError = ErrorResponseDto
+
+/**
+ * @summary Update product
+ */
+export const useUpdateProduct = <TError = ErrorResponseDto, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateProduct>>,
+      TError,
+      { id: string; data: UpdateProductDto },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateProduct>>,
+  TError,
+  { id: string; data: UpdateProductDto },
+  TContext
+> => {
+  const mutationOptions = getUpdateProductMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
+ * Soft deletes a product from the catalog (use permanent=true for hard delete)
+ * @summary Delete product
+ */
+export const deleteProduct = (id: string, params?: DeleteProductParams) => {
+  return getAxiosInstance<MessageResponseDto>({
+    url: `/products/${id}`,
+    method: 'DELETE',
+    params,
+  })
+}
+
+export const getDeleteProductMutationOptions = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProduct>>,
+    TError,
+    { id: string; params?: DeleteProductParams },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteProduct>>,
+  TError,
+  { id: string; params?: DeleteProductParams },
+  TContext
+> => {
+  const mutationKey = ['deleteProduct']
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteProduct>>,
+    { id: string; params?: DeleteProductParams }
+  > = (props) => {
+    const { id, params } = props ?? {}
+
+    return deleteProduct(id, params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteProductMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteProduct>>
+>
+
+export type DeleteProductMutationError = ErrorResponseDto
+
+/**
+ * @summary Delete product
+ */
+export const useDeleteProduct = <TError = ErrorResponseDto, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteProduct>>,
+      TError,
+      { id: string; params?: DeleteProductParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteProduct>>,
+  TError,
+  { id: string; params?: DeleteProductParams },
+  TContext
+> => {
+  const mutationOptions = getDeleteProductMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
  * Retrieves all products in a specific category
  * @summary Get products by category
  */
@@ -2135,14 +2452,14 @@ export const getProductsByCategory = (
   signal?: AbortSignal,
 ) => {
   return getAxiosInstance<ProductResponseDto[]>({
-    url: `/api/v1/products/category/${categoryId}`,
+    url: `/products/category/${categoryId}`,
     method: 'GET',
     signal,
   })
 }
 
 export const getGetProductsByCategoryQueryKey = (categoryId?: string) => {
-  return [`/api/v1/products/category/${categoryId}`] as const
+  return [`/products/category/${categoryId}`] as const
 }
 
 export const getGetProductsByCategoryQueryOptions = <
@@ -2299,14 +2616,14 @@ export const getProductsByCategoryTree = (
   signal?: AbortSignal,
 ) => {
   return getAxiosInstance<ProductResponseDto[]>({
-    url: `/api/v1/products/category/${categoryId}/tree`,
+    url: `/products/category/${categoryId}/tree`,
     method: 'GET',
     signal,
   })
 }
 
 export const getGetProductsByCategoryTreeQueryKey = (categoryId?: string) => {
-  return [`/api/v1/products/category/${categoryId}/tree`] as const
+  return [`/products/category/${categoryId}/tree`] as const
 }
 
 export const getGetProductsByCategoryTreeQueryOptions = <
@@ -2458,178 +2775,39 @@ export function useGetProductsByCategoryTree<
 }
 
 /**
- * Retrieves a specific product by UUID
- * @summary Get product by ID
+ * Creates multiple products in a single request
+ * @summary Bulk create products
  */
-export const getProduct = (id: string, signal?: AbortSignal) => {
-  return getAxiosInstance<ProductResponseDto>({
-    url: `/api/v1/products/${id}`,
-    method: 'GET',
-    signal,
-  })
-}
-
-export const getGetProductQueryKey = (id?: string) => {
-  return [`/api/v1/products/${id}`] as const
-}
-
-export const getGetProductQueryOptions = <
-  TData = Awaited<ReturnType<typeof getProduct>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
-    >
-  },
+export const bulkCreateProducts = (
+  bulkCreateProductsDto: BulkCreateProductsDto,
+  signal?: AbortSignal,
 ) => {
-  const { query: queryOptions } = options ?? {}
-
-  const queryKey = queryOptions?.queryKey ?? getGetProductQueryKey(id)
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProduct>>> = ({
-    signal,
-  }) => getProduct(id, signal)
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!id,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getProduct>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetProductQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getProduct>>
->
-export type GetProductQueryError = ErrorResponseDto
-
-export function useGetProduct<
-  TData = Awaited<ReturnType<typeof getProduct>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProduct>>,
-          TError,
-          Awaited<ReturnType<typeof getProduct>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useGetProduct<
-  TData = Awaited<ReturnType<typeof getProduct>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProduct>>,
-          TError,
-          Awaited<ReturnType<typeof getProduct>>
-        >,
-        'initialData'
-      >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useGetProduct<
-  TData = Awaited<ReturnType<typeof getProduct>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary Get product by ID
- */
-
-export function useGetProduct<
-  TData = Awaited<ReturnType<typeof getProduct>>,
-  TError = ErrorResponseDto,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProduct>>, TError, TData>
-    >
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getGetProductQueryOptions(id, options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
- * Updates an existing product
- * @summary Update product
- */
-export const updateProduct = (
-  id: string,
-  updateProductDto: UpdateProductDto,
-) => {
-  return getAxiosInstance<ProductResponseDto>({
-    url: `/api/v1/products/${id}`,
-    method: 'PUT',
+  return getAxiosInstance<BulkOperationResultDto>({
+    url: `/products/bulk`,
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    data: updateProductDto,
+    data: bulkCreateProductsDto,
+    signal,
   })
 }
 
-export const getUpdateProductMutationOptions = <
+export const getBulkCreateProductsMutationOptions = <
   TError = ErrorResponseDto,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateProduct>>,
+    Awaited<ReturnType<typeof bulkCreateProducts>>,
     TError,
-    { id: string; data: UpdateProductDto },
+    { data: BulkCreateProductsDto },
     TContext
   >
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof updateProduct>>,
+  Awaited<ReturnType<typeof bulkCreateProducts>>,
   TError,
-  { id: string; data: UpdateProductDto },
+  { data: BulkCreateProductsDto },
   TContext
 > => {
-  const mutationKey = ['updateProduct']
+  const mutationKey = ['bulkCreateProducts']
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -2639,75 +2817,80 @@ export const getUpdateProductMutationOptions = <
     : { mutation: { mutationKey } }
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateProduct>>,
-    { id: string; data: UpdateProductDto }
+    Awaited<ReturnType<typeof bulkCreateProducts>>,
+    { data: BulkCreateProductsDto }
   > = (props) => {
-    const { id, data } = props ?? {}
+    const { data } = props ?? {}
 
-    return updateProduct(id, data)
+    return bulkCreateProducts(data)
   }
 
   return { mutationFn, ...mutationOptions }
 }
 
-export type UpdateProductMutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateProduct>>
+export type BulkCreateProductsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof bulkCreateProducts>>
 >
-export type UpdateProductMutationBody = UpdateProductDto
-export type UpdateProductMutationError = ErrorResponseDto
+export type BulkCreateProductsMutationBody = BulkCreateProductsDto
+export type BulkCreateProductsMutationError = ErrorResponseDto
 
 /**
- * @summary Update product
+ * @summary Bulk create products
  */
-export const useUpdateProduct = <TError = ErrorResponseDto, TContext = unknown>(
+export const useBulkCreateProducts = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateProduct>>,
+      Awaited<ReturnType<typeof bulkCreateProducts>>,
       TError,
-      { id: string; data: UpdateProductDto },
+      { data: BulkCreateProductsDto },
       TContext
     >
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof updateProduct>>,
+  Awaited<ReturnType<typeof bulkCreateProducts>>,
   TError,
-  { id: string; data: UpdateProductDto },
+  { data: BulkCreateProductsDto },
   TContext
 > => {
-  const mutationOptions = getUpdateProductMutationOptions(options)
+  const mutationOptions = getBulkCreateProductsMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
 
 /**
- * Deletes a product from the catalog
- * @summary Delete product
+ * Deletes multiple products in a single request
+ * @summary Bulk delete products
  */
-export const deleteProduct = (id: string) => {
-  return getAxiosInstance<MessageResponseDto>({
-    url: `/api/v1/products/${id}`,
+export const bulkDeleteProducts = (bulkDeleteDto: BulkDeleteDto) => {
+  return getAxiosInstance<BulkOperationResultDto>({
+    url: `/products/bulk`,
     method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    data: bulkDeleteDto,
   })
 }
 
-export const getDeleteProductMutationOptions = <
+export const getBulkDeleteProductsMutationOptions = <
   TError = ErrorResponseDto,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteProduct>>,
+    Awaited<ReturnType<typeof bulkDeleteProducts>>,
     TError,
-    { id: string },
+    { data: BulkDeleteDto },
     TContext
   >
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteProduct>>,
+  Awaited<ReturnType<typeof bulkDeleteProducts>>,
   TError,
-  { id: string },
+  { data: BulkDeleteDto },
   TContext
 > => {
-  const mutationKey = ['deleteProduct']
+  const mutationKey = ['bulkDeleteProducts']
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -2717,30 +2900,199 @@ export const getDeleteProductMutationOptions = <
     : { mutation: { mutationKey } }
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteProduct>>,
-    { id: string }
+    Awaited<ReturnType<typeof bulkDeleteProducts>>,
+    { data: BulkDeleteDto }
   > = (props) => {
-    const { id } = props ?? {}
+    const { data } = props ?? {}
 
-    return deleteProduct(id)
+    return bulkDeleteProducts(data)
   }
 
   return { mutationFn, ...mutationOptions }
 }
 
-export type DeleteProductMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteProduct>>
+export type BulkDeleteProductsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof bulkDeleteProducts>>
 >
-
-export type DeleteProductMutationError = ErrorResponseDto
+export type BulkDeleteProductsMutationBody = BulkDeleteDto
+export type BulkDeleteProductsMutationError = ErrorResponseDto
 
 /**
- * @summary Delete product
+ * @summary Bulk delete products
  */
-export const useDeleteProduct = <TError = ErrorResponseDto, TContext = unknown>(
+export const useBulkDeleteProducts = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteProduct>>,
+      Awaited<ReturnType<typeof bulkDeleteProducts>>,
+      TError,
+      { data: BulkDeleteDto },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof bulkDeleteProducts>>,
+  TError,
+  { data: BulkDeleteDto },
+  TContext
+> => {
+  const mutationOptions = getBulkDeleteProductsMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
+ * Updates the active status of multiple products
+ * @summary Bulk update product status
+ */
+export const bulkUpdateProductStatus = (
+  bulkUpdateStatusDto: BulkUpdateStatusDto,
+) => {
+  return getAxiosInstance<BulkOperationResultDto>({
+    url: `/products/bulk/status`,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    data: bulkUpdateStatusDto,
+  })
+}
+
+export const getBulkUpdateProductStatusMutationOptions = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof bulkUpdateProductStatus>>,
+    TError,
+    { data: BulkUpdateStatusDto },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof bulkUpdateProductStatus>>,
+  TError,
+  { data: BulkUpdateStatusDto },
+  TContext
+> => {
+  const mutationKey = ['bulkUpdateProductStatus']
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof bulkUpdateProductStatus>>,
+    { data: BulkUpdateStatusDto }
+  > = (props) => {
+    const { data } = props ?? {}
+
+    return bulkUpdateProductStatus(data)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type BulkUpdateProductStatusMutationResult = NonNullable<
+  Awaited<ReturnType<typeof bulkUpdateProductStatus>>
+>
+export type BulkUpdateProductStatusMutationBody = BulkUpdateStatusDto
+export type BulkUpdateProductStatusMutationError = ErrorResponseDto
+
+/**
+ * @summary Bulk update product status
+ */
+export const useBulkUpdateProductStatus = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof bulkUpdateProductStatus>>,
+      TError,
+      { data: BulkUpdateStatusDto },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof bulkUpdateProductStatus>>,
+  TError,
+  { data: BulkUpdateStatusDto },
+  TContext
+> => {
+  const mutationOptions = getBulkUpdateProductStatusMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
+ * Restores a soft-deleted product
+ * @summary Restore deleted product
+ */
+export const restoreProduct = (id: string) => {
+  return getAxiosInstance<ProductResponseDto>({
+    url: `/products/${id}/restore`,
+    method: 'PATCH',
+  })
+}
+
+export const getRestoreProductMutationOptions = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof restoreProduct>>,
+    TError,
+    { id: string },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof restoreProduct>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ['restoreProduct']
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof restoreProduct>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {}
+
+    return restoreProduct(id)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type RestoreProductMutationResult = NonNullable<
+  Awaited<ReturnType<typeof restoreProduct>>
+>
+
+export type RestoreProductMutationError = ErrorResponseDto
+
+/**
+ * @summary Restore deleted product
+ */
+export const useRestoreProduct = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof restoreProduct>>,
       TError,
       { id: string },
       TContext
@@ -2748,12 +3100,175 @@ export const useDeleteProduct = <TError = ErrorResponseDto, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof deleteProduct>>,
+  Awaited<ReturnType<typeof restoreProduct>>,
   TError,
   { id: string },
   TContext
 > => {
-  const mutationOptions = getDeleteProductMutationOptions(options)
+  const mutationOptions = getRestoreProductMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
+ * Restores multiple soft-deleted products
+ * @summary Bulk restore products
+ */
+export const bulkRestoreProducts = (bulkRestoreDto: BulkRestoreDto) => {
+  return getAxiosInstance<BulkOperationResultDto>({
+    url: `/products/bulk/restore`,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    data: bulkRestoreDto,
+  })
+}
+
+export const getBulkRestoreProductsMutationOptions = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof bulkRestoreProducts>>,
+    TError,
+    { data: BulkRestoreDto },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof bulkRestoreProducts>>,
+  TError,
+  { data: BulkRestoreDto },
+  TContext
+> => {
+  const mutationKey = ['bulkRestoreProducts']
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof bulkRestoreProducts>>,
+    { data: BulkRestoreDto }
+  > = (props) => {
+    const { data } = props ?? {}
+
+    return bulkRestoreProducts(data)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type BulkRestoreProductsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof bulkRestoreProducts>>
+>
+export type BulkRestoreProductsMutationBody = BulkRestoreDto
+export type BulkRestoreProductsMutationError = ErrorResponseDto
+
+/**
+ * @summary Bulk restore products
+ */
+export const useBulkRestoreProducts = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof bulkRestoreProducts>>,
+      TError,
+      { data: BulkRestoreDto },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof bulkRestoreProducts>>,
+  TError,
+  { data: BulkRestoreDto },
+  TContext
+> => {
+  const mutationOptions = getBulkRestoreProductsMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
+ * Manually refresh the category cache used for product queries
+ * @summary Refresh category cache
+ */
+export const refreshCategoryCache = (signal?: AbortSignal) => {
+  return getAxiosInstance<MessageResponseDto>({
+    url: `/products/cache/refresh`,
+    method: 'POST',
+    signal,
+  })
+}
+
+export const getRefreshCategoryCacheMutationOptions = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof refreshCategoryCache>>,
+    TError,
+    void,
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof refreshCategoryCache>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['refreshCategoryCache']
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof refreshCategoryCache>>,
+    void
+  > = () => {
+    return refreshCategoryCache()
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type RefreshCategoryCacheMutationResult = NonNullable<
+  Awaited<ReturnType<typeof refreshCategoryCache>>
+>
+
+export type RefreshCategoryCacheMutationError = ErrorResponseDto
+
+/**
+ * @summary Refresh category cache
+ */
+export const useRefreshCategoryCache = <
+  TError = ErrorResponseDto,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof refreshCategoryCache>>,
+      TError,
+      void,
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof refreshCategoryCache>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getRefreshCategoryCacheMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
