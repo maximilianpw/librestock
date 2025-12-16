@@ -15,7 +15,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from '@/components/ui/sidebar'
 
 function useRoutes(): {
@@ -56,7 +55,7 @@ export default function AppSidebar(): React.JSX.Element {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link className="inline-flex items-center gap-2 px-2" href="/">
+        <Link className="inline-flex items-center gap-2" href="/">
           <span className="text-base font-bold tracking-tight">
             RBI Inventory
           </span>
@@ -84,8 +83,6 @@ export default function AppSidebar(): React.JSX.Element {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarSeparator />
-
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -97,7 +94,6 @@ export default function AppSidebar(): React.JSX.Element {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <SidebarSeparator />
         <SignedOut>
           <SignInButton mode="modal" />
         </SignedOut>

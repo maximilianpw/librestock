@@ -3,6 +3,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "items": "Artikel",
+    "auditLogs": "Audit Logs",
     "search": "Suchen",
     "deliveries": "Lieferungen",
     "tags": "Tags",
