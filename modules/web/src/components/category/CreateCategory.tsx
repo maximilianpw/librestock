@@ -8,13 +8,39 @@ import { FormDialog } from '@/components/common/FormDialog'
 
 interface CreateCategoryProps {
   categories?: CategoryWithChildrenResponseDto[]
+  defaultParentId?: string | null
+  trigger?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function CreateCategory({
   categories,
+  defaultParentId,
+  trigger,
+  open: controlledOpen,
+  onOpenChange,
 }: CreateCategoryProps): React.JSX.Element {
   const { t } = useTranslation()
-  const [open, setOpen] = React.useState(false)
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)
+
+  const open = controlledOpen ?? uncontrolledOpen
+
+  const handleOpenChange = React.useCallback(
+    (nextOpen: boolean) => {
+      if (controlledOpen === undefined) {
+        setUncontrolledOpen(nextOpen)
+      }
+      onOpenChange?.(nextOpen)
+    },
+    [controlledOpen, onOpenChange],
+  )
+
+  const defaultTrigger = (
+    <Button className="rounded-t-none" variant="outline">
+      {t('form.createCategoryTitle')}
+    </Button>
+  )
 
   return (
     <FormDialog
@@ -24,14 +50,15 @@ export function CreateCategory({
       open={open}
       submitLabel={t('form.create')}
       title={t('form.createCategoryTitle')}
-      trigger={
-        <Button className="rounded-t-none" variant="outline">
-          {t('form.createCategoryTitle')}
-        </Button>
-      }
-      onOpenChange={setOpen}
+      trigger={trigger ?? defaultTrigger}
+      onOpenChange={handleOpenChange}
     >
-      <CategoryForm categories={categories} onSuccess={() => setOpen(false)} />
+      <CategoryForm
+        key={defaultParentId ?? ''}
+        categories={categories}
+        defaultParentId={defaultParentId}
+        onSuccess={() => handleOpenChange(false)}
+      />
     </FormDialog>
   )
 }

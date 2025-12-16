@@ -15,15 +15,17 @@ import { useCategoryForm } from '@/hooks/forms/use-category-form'
 
 interface CategoryFormProps {
   categories?: CategoryWithChildrenResponseDto[]
+  defaultParentId?: string | null
   onSuccess?: () => void
 }
 
 export function CategoryForm({
   categories,
+  defaultParentId,
   onSuccess,
 }: CategoryFormProps): React.JSX.Element {
   const { t } = useTranslation()
-  const form = useCategoryForm(categories, onSuccess)
+  const form = useCategoryForm(categories, defaultParentId, onSuccess)
 
   return (
     <form
@@ -65,9 +67,9 @@ export function CategoryForm({
               <FieldContent>
                 {!!categories && (
                   <CategoryPathSelector
-                    value={field.state.value}
                     categories={categories}
                     emptyOptionLabel={t('form.noParent')}
+                    value={field.state.value}
                     onValueChange={field.handleChange}
                   />
                 )}

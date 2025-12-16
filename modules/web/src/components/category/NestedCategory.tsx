@@ -10,6 +10,7 @@ interface NestedCategoryProps {
   selectedId: string | null
   onToggle: (id: string) => void
   onSelect: (id: string) => void
+  onCreateChild: (parentId: string) => void
 }
 
 export function NestedCategory({
@@ -19,6 +20,7 @@ export function NestedCategory({
   selectedId,
   onToggle,
   onSelect,
+  onCreateChild,
 }: NestedCategoryProps): React.JSX.Element {
   const paddingClass =
     {
@@ -42,6 +44,7 @@ export function NestedCategory({
           isExpanded={isExpanded}
           isSelected={isSelected}
           onClick={() => onSelect(category.id)}
+          onCreateChild={() => onCreateChild(category.id)}
           onToggle={() => onToggle(category.id)}
         />
       </div>
@@ -54,6 +57,7 @@ export function NestedCategory({
               depth={depth + 1}
               expandedIds={expandedIds}
               selectedId={selectedId}
+              onCreateChild={onCreateChild}
               onSelect={onSelect}
               onToggle={onToggle}
             />

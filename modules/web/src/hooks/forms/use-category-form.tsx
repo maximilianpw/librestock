@@ -23,6 +23,7 @@ const formSchema = z.object({
 
 export function useCategoryForm(
   categories: CategoryWithChildrenResponseDto[] | undefined,
+  defaultParentId?: string | null,
   onSuccess?: () => void,
 ) {
   const { t } = useTranslation()
@@ -79,7 +80,7 @@ export function useCategoryForm(
   return useForm({
     defaultValues: {
       name: '',
-      parent_id: '',
+      parent_id: defaultParentId ?? '',
       description: '',
     },
     validators: {

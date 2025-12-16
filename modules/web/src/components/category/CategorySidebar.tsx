@@ -20,6 +20,10 @@ export default function CategorySidebar({
   const { t } = useTranslation()
   const { data, isLoading, error } = useListCategories()
   const [expandedIds, setExpandedIds] = React.useState<Set<string>>(new Set())
+  const [createOpen, setCreateOpen] = React.useState(false)
+  const [createParentId, setCreateParentId] = React.useState<string | null>(
+    null,
+  )
 
   const handleToggle = (id: string): void => {
     setExpandedIds((prev) => {
@@ -37,9 +41,22 @@ export default function CategorySidebar({
     onSelectCategory(id)
   }
 
+  const handleCreateCategory = (parentId: string | null): void => {
+    setCreateParentId(parentId)
+    setCreateOpen(true)
+  }
+
   return (
     <aside className="bg-background flex h-full w-64 flex-col border-r">
-      {<CreateCategory categories={data} />}
+      <CreateCategory
+        categories={data}
+        defaultParentId={createParentId}
+        open={createOpen}
+        onOpenChange={(nextOpen) => {
+          setCreateOpen(nextOpen)
+          if (!nextOpen) setCreateParentId(null)
+        }}
+      />
       <div className="border-b p-4">
         <h2 className="text-sm font-semibold">{t('folders.title')}</h2>
       </div>
@@ -67,6 +84,7 @@ export default function CategorySidebar({
                 category={category}
                 expandedIds={expandedIds}
                 selectedId={selectedCategoryId}
+                onCreateChild={(parentId) => handleCreateCategory(parentId)}
                 onSelect={handleSelect}
                 onToggle={handleToggle}
               />
