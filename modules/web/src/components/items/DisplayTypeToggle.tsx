@@ -19,13 +19,13 @@ export function DisplayTypeToggle({
 
   return (
     <div
-      className={`flex overflow-hidden rounded-md border border-gray-300 ${className}`}
+      className={`flex overflow-hidden rounded-md border border-border ${className}`}
     >
       <button
         aria-label={t('view.grid')}
         className={clsx(
-          'p-2 hover:bg-gray-100',
-          value === DisplayType.GRID && 'bg-gray-100',
+          'p-2 hover:bg-accent',
+          value === DisplayType.GRID && 'bg-accent',
         )}
         onClick={() => onChange(DisplayType.GRID)}
       >
@@ -34,8 +34,8 @@ export function DisplayTypeToggle({
       <button
         aria-label={t('view.list')}
         className={clsx(
-          'p-2 hover:bg-gray-100',
-          value === DisplayType.LIST && 'bg-gray-100',
+          'p-2 hover:bg-accent',
+          value === DisplayType.LIST && 'bg-accent',
         )}
         onClick={() => onChange(DisplayType.LIST)}
       >

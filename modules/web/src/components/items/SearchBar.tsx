@@ -17,7 +17,7 @@ export function SearchBar({
 }: SearchBarProps): React.JSX.Element {
   return (
     <div className={`relative flex-1 ${className}`}>
-      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500" />
+      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         className="pl-10"
         placeholder={placeholder}

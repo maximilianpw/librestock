@@ -50,12 +50,12 @@ export default function CategorySidebar({
           </div>
         )}
         {error != null && (
-          <div className="p-4 text-center text-sm text-red-600">
+          <div className="p-4 text-center text-sm text-destructive">
             {t('folders.error')}
           </div>
         )}
         {data?.length === 0 && (
-          <div className="p-4 text-center text-sm text-gray-500">
+          <div className="p-4 text-center text-sm text-muted-foreground">
             {t('folders.empty')}
           </div>
         )}

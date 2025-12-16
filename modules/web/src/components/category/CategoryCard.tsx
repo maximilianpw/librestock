@@ -20,8 +20,8 @@ export function CategoryCard({
 }: CategoryCardProps): React.JSX.Element {
   return (
     <div
-      className={`group mb-1 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-all hover:bg-gray-100 ${
-        isSelected ? 'bg-gray-100' : ''
+      className={`group mb-1 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-all hover:bg-accent ${
+        isSelected ? 'bg-accent' : ''
       }`}
       onClick={(e) => {
         e.stopPropagation()
@@ -30,16 +30,16 @@ export function CategoryCard({
     >
       {hasChildren ? (
         <button
-          className="flex-shrink-0 rounded p-0.5 hover:bg-gray-200"
+          className="flex-shrink-0 rounded p-0.5 hover:bg-accent"
           onClick={(e) => {
             e.stopPropagation()
             onToggle()
           }}
         >
           {isExpanded ? (
-            <ChevronDown className="size-4 text-gray-500" />
+            <ChevronDown className="size-4 text-muted-foreground" />
           ) : (
-            <ChevronRight className="size-4 text-gray-500" />
+            <ChevronRight className="size-4 text-muted-foreground" />
           )}
         </button>
       ) : (
@@ -47,14 +47,12 @@ export function CategoryCard({
       )}
       <Folder
         className={`size-4 shrink-0 ${
-          isSelected ? 'text-blue-600' : 'text-gray-600'
+          isSelected ? 'text-primary' : 'text-muted-foreground'
         }`}
       />
       <span
         className={`truncate text-sm ${
-          isSelected
-            ? 'font-semibold text-gray-900'
-            : 'font-medium text-gray-700'
+          isSelected ? 'font-semibold text-foreground' : 'font-medium'
         }`}
       >
         {category.name}
