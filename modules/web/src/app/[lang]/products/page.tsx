@@ -1,6 +1,7 @@
 'use client'
 import * as React from 'react'
 import CategorySidebar from '@/components/category/CategorySidebar'
+import { CreateProductButton } from '@/components/products/CreateProductButton'
 import { ProductList } from '@/components/products/ProductList'
 
 export default function ProductPage(): React.JSX.Element {
@@ -15,6 +16,9 @@ export default function ProductPage(): React.JSX.Element {
         onSelectCategory={setSelectedCategoryId}
       />
       <div className="flex-1 overflow-auto p-4">
+        <div className="flex justify-end pb-4">
+          <CreateProductButton defaultCategoryId={selectedCategoryId} />
+        </div>
         <ProductList categoryId={selectedCategoryId} />
       </div>
     </div>
