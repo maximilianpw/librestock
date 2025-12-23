@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { ScannerStatus } from '@/lib/enums/scanner-status.enum'
 
 interface QrCodeScannerDialogProps {
   open: boolean
@@ -34,8 +35,6 @@ function createBarcodeDetector(): BarcodeDetectorInstance | null {
   return ctor ? new ctor({ formats: ['qr_code'] }) : null
 }
 
-type ScannerStatus = 'idle' | 'starting' | 'scanning' | 'error'
-
 function useQrScanner(
   open: boolean,
   videoRef: React.RefObject<HTMLVideoElement | null>,
@@ -43,7 +42,7 @@ function useQrScanner(
 ): { status: ScannerStatus; errorMessage: string | null } {
   const streamRef = React.useRef<MediaStream | null>(null)
   const intervalRef = React.useRef<number | null>(null)
-  const [status, setStatus] = React.useState<ScannerStatus>('idle')
+  const [status, setStatus] = React.useState<ScannerStatus>(ScannerStatus.IDLE)
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
   const { t } = useTranslation()
 
@@ -62,12 +61,12 @@ function useQrScanner(
   }, [videoRef])
 
   const start = React.useCallback(async () => {
-    setStatus('starting')
+    setStatus(ScannerStatus.STARTING)
     setErrorMessage(null)
 
     const detector = createBarcodeDetector()
     if (!detector) {
-      setStatus('error')
+      setStatus(ScannerStatus.ERROR)
       setErrorMessage(t('form.qrNotSupported'))
       return
     }
@@ -83,7 +82,7 @@ function useQrScanner(
 
       video.srcObject = stream
       await video.play()
-      setStatus('scanning')
+      setStatus(ScannerStatus.SCANNING)
 
       intervalRef.current = window.setInterval(() => {
         if (video.readyState < 2) return
@@ -103,7 +102,7 @@ function useQrScanner(
           })
       }, 250)
     } catch (error) {
-      setStatus('error')
+      setStatus(ScannerStatus.ERROR)
       setErrorMessage(t('form.qrPermissionDenied'))
       console.error('QR scanner error:', error)
       stop()
@@ -112,7 +111,7 @@ function useQrScanner(
 
   React.useEffect(() => {
     if (!open) {
-      setStatus('idle')
+      setStatus(ScannerStatus.IDLE)
       setErrorMessage(null)
       stop()
       return
@@ -187,17 +186,17 @@ function ScannerStatusMessage({
   errorMessage: string | null
   t: (key: string) => string
 }): React.JSX.Element | null {
-  if (status === 'starting') {
+  if (status === ScannerStatus.STARTING) {
     return (
       <p className="text-muted-foreground text-sm">{t('form.qrStarting')}</p>
     )
   }
-  if (status === 'scanning') {
+  if (status === ScannerStatus.SCANNING) {
     return (
       <p className="text-muted-foreground text-sm">{t('form.qrScanning')}</p>
     )
   }
-  if (status === 'error') {
+  if (status === ScannerStatus.ERROR) {
     return (
       <p className="text-destructive text-sm">
         {errorMessage ?? t('form.qrError')}

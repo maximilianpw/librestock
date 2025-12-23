@@ -16,6 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { ClerkAuthMode } from '@/lib/enums/clerk-auth-mode.enum'
 
 function useRoutes(): {
   name: string
@@ -95,7 +96,7 @@ export default function AppSidebar(): React.JSX.Element {
           </SidebarMenuItem>
         </SidebarMenu>
         <SignedOut>
-          <SignInButton mode="modal" />
+          <SignInButton mode={ClerkAuthMode.MODAL} />
         </SignedOut>
       </SidebarFooter>
     </Sidebar>
