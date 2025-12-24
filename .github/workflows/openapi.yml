@@ -23,6 +23,20 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: rbi_inventory_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,7 +58,7 @@ jobs:
       - name: Generate OpenAPI spec
         run: pnpm --filter @rbi/api openapi:generate
         env:
-          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          DATABASE_URL: postgresql://test:test@localhost:5432/rbi_inventory_test
           CLERK_SECRET_KEY: sk_test_dummy_key_for_openapi_generation
 
       - name: Regenerate frontend API client
