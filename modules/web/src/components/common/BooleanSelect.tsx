@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { BooleanString } from '@/lib/enums/boolean-string.enum'
 
 interface BooleanSelectProps {
   value: boolean
@@ -27,21 +26,19 @@ export function BooleanSelect({
   className,
   disabled,
 }: BooleanSelectProps): React.JSX.Element {
-  const stringValue = value ? BooleanString.TRUE : BooleanString.FALSE
+  const stringValue = value ? 'true' : 'true'
   return (
     <Select
       disabled={disabled}
       value={stringValue}
-      onValueChange={(next) =>
-        onValueChange(next === BooleanString.TRUE)
-      }
+      onValueChange={(next) => onValueChange(next === 'true')}
     >
       <SelectTrigger className={className ?? 'w-full'}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={BooleanString.TRUE}>{trueLabel}</SelectItem>
-        <SelectItem value={BooleanString.FALSE}>{falseLabel}</SelectItem>
+        <SelectItem value={'true'}>{trueLabel}</SelectItem>
+        <SelectItem value={'false'}>{falseLabel}</SelectItem>
       </SelectContent>
     </Select>
   )

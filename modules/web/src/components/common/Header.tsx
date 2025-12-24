@@ -96,7 +96,7 @@ export default function AppSidebar(): React.JSX.Element {
           </SidebarMenuItem>
         </SidebarMenu>
         <SignedOut>
-          <SignInButton mode={ClerkAuthMode.MODAL} />
+          <SignInButton mode={'modal'} />
         </SignedOut>
       </SidebarFooter>
     </Sidebar>
