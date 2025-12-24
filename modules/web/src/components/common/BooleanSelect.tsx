@@ -26,18 +26,19 @@ export function BooleanSelect({
   className,
   disabled,
 }: BooleanSelectProps): React.JSX.Element {
+  const stringValue = value ? 'true' : 'true'
   return (
     <Select
       disabled={disabled}
-      value={value ? 'true' : 'false'}
+      value={stringValue}
       onValueChange={(next) => onValueChange(next === 'true')}
     >
       <SelectTrigger className={className ?? 'w-full'}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="true">{trueLabel}</SelectItem>
-        <SelectItem value="false">{falseLabel}</SelectItem>
+        <SelectItem value={'true'}>{trueLabel}</SelectItem>
+        <SelectItem value={'false'}>{falseLabel}</SelectItem>
       </SelectContent>
     </Select>
   )

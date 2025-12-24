@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Theme } from '@/lib/enums/theme.enum'
 
 export function ThemeToggle(): React.JSX.Element {
   const { setTheme } = useTheme()
@@ -24,13 +25,13 @@ export function ThemeToggle(): React.JSX.Element {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>
+        <DropdownMenuItem onClick={() => setTheme(Theme.LIGHT)}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
+        <DropdownMenuItem onClick={() => setTheme(Theme.DARK)}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
+        <DropdownMenuItem onClick={() => setTheme(Theme.SYSTEM)}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
