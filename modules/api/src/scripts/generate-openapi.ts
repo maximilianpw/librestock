@@ -8,7 +8,7 @@ import { AppModule } from 'src/app.module';
 
 async function generateOpenApi() {
   const app = await NestFactory.create(AppModule, {
-    logger: false,
+    logger: ['error', 'warn'],
   });
 
   app.useGlobalPipes(
