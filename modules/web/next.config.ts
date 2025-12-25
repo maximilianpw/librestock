@@ -4,9 +4,25 @@ import { withSentryConfig } from '@sentry/nextjs'
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
   turbopack: {
     root: path.resolve(import.meta.dirname, '../../'),
+  },
+  headers() {
+    return [
+      {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/javascript; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+        ],
+      },
+    ]
   },
 }
 
@@ -16,6 +32,10 @@ export default withSentryConfig(nextConfig, {
   silent: process.env.CI !== 'true',
   widenClientFileUpload: true,
   tunnelRoute: '/monitoring',
-  disableLogger: true,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
   automaticVercelMonitors: true,
 })
