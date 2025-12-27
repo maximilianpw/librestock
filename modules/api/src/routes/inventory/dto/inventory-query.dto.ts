@@ -70,6 +70,15 @@ export class InventoryQueryDto {
   location_id?: string;
 
   @ApiProperty({
+    description: 'Filter by area ID',
+    format: 'uuid',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  area_id?: string;
+
+  @ApiProperty({
     description: 'Search term for batch number',
     required: false,
   })

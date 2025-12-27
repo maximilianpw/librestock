@@ -41,7 +41,8 @@ async function generateOpenApi() {
     .addTag('Categories', 'Product category management')
     .addTag('Products', 'Product catalog management')
     .addTag('Locations', 'Location management (warehouses, suppliers, etc.)')
-    .addTag('Inventory', 'Inventory management (stock levels by location)')
+    .addTag('Areas', 'Area management (zones, shelves, bins within locations)')
+    .addTag('Inventory', 'Inventory management (stock levels by location/area)')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

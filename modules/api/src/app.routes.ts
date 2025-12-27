@@ -4,6 +4,7 @@ import { CategoriesModule } from './routes/categories/categories.module';
 import { HealthModule } from './routes/health/health.module';
 import { ProductsModule } from './routes/products/products.module';
 import { LocationsModule } from './routes/locations/locations.module';
+import { AreasModule } from './routes/areas/areas.module';
 import { InventoryModule } from './routes/inventory/inventory.module';
 import { AuditLogsModule } from './routes/audit-logs/audit-logs.module';
 
@@ -32,6 +33,10 @@ export const routes: Routes = [
   {
     path: 'locations',
     module: LocationsModule,
+  },
+  {
+    path: 'areas',
+    module: AreasModule,
   },
   {
     path: 'inventory',

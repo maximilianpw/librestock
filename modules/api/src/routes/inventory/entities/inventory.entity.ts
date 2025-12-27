@@ -11,11 +11,14 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Location } from '../../locations/entities/location.entity';
 import { Product } from '../../products/entities/product.entity';
+import { Area } from '../../areas/entities/area.entity';
 
 @Entity('inventory')
 @Index(['product_id'])
 @Index(['location_id'])
+@Index(['area_id'])
 @Index(['product_id', 'location_id'])
+@Index(['product_id', 'location_id', 'area_id'])
 export class Inventory {
   @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
@@ -38,6 +41,23 @@ export class Inventory {
   @ManyToOne(() => Location)
   @JoinColumn({ name: 'location_id' })
   location: Location;
+
+  @ApiProperty({
+    description: 'Area ID (optional, for specific placement within location)',
+    format: 'uuid',
+    nullable: true,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  area_id: string | null;
+
+  @ApiProperty({
+    description: 'Area relation (specific placement within location)',
+    type: () => Area,
+    nullable: true,
+  })
+  @ManyToOne(() => Area, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'area_id' })
+  area: Area | null;
 
   @ApiProperty({ description: 'Quantity in stock', default: 0 })
   @Column({ type: 'int', default: 0 })

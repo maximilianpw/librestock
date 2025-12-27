@@ -26,6 +26,17 @@ export class LocationSummaryDto {
   type: string;
 }
 
+export class AreaSummaryDto {
+  @ApiProperty({ description: 'Area ID', format: 'uuid' })
+  id: string;
+
+  @ApiProperty({ description: 'Area name' })
+  name: string;
+
+  @ApiProperty({ description: 'Area code', nullable: true })
+  code: string | null;
+}
+
 export class InventoryResponseDto extends BaseResponseDto {
   @ApiProperty({
     description: 'Unique identifier',
@@ -59,6 +70,20 @@ export class InventoryResponseDto extends BaseResponseDto {
     nullable: true,
   })
   location: LocationSummaryDto | null;
+
+  @ApiProperty({
+    description: 'Area ID (specific placement within location)',
+    format: 'uuid',
+    nullable: true,
+  })
+  area_id: string | null;
+
+  @ApiProperty({
+    description: 'Area details',
+    type: AreaSummaryDto,
+    nullable: true,
+  })
+  area: AreaSummaryDto | null;
 
   @ApiProperty({
     description: 'Quantity in stock',

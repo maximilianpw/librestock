@@ -27,6 +27,7 @@ export class InventoryRepository {
       limit = 20,
       product_id,
       location_id,
+      area_id,
       search,
       low_stock,
       expiring_soon,
@@ -41,7 +42,8 @@ export class InventoryRepository {
     const queryBuilder = this.repository
       .createQueryBuilder('inventory')
       .leftJoinAndSelect('inventory.product', 'product')
-      .leftJoinAndSelect('inventory.location', 'location');
+      .leftJoinAndSelect('inventory.location', 'location')
+      .leftJoinAndSelect('inventory.area', 'area');
 
     // Product filter
     if (product_id) {
@@ -54,6 +56,13 @@ export class InventoryRepository {
     if (location_id) {
       queryBuilder.andWhere('inventory.location_id = :location_id', {
         location_id,
+      });
+    }
+
+    // Area filter
+    if (area_id) {
+      queryBuilder.andWhere('inventory.area_id = :area_id', {
+        area_id,
       });
     }
 
@@ -118,6 +127,7 @@ export class InventoryRepository {
       .createQueryBuilder('inventory')
       .leftJoinAndSelect('inventory.product', 'product')
       .leftJoinAndSelect('inventory.location', 'location')
+      .leftJoinAndSelect('inventory.area', 'area')
       .orderBy('inventory.updated_at', 'DESC')
       .getMany();
   }
@@ -127,6 +137,7 @@ export class InventoryRepository {
       .createQueryBuilder('inventory')
       .leftJoinAndSelect('inventory.product', 'product')
       .leftJoinAndSelect('inventory.location', 'location')
+      .leftJoinAndSelect('inventory.area', 'area')
       .where('inventory.id = :id', { id })
       .getOne();
   }
@@ -136,6 +147,7 @@ export class InventoryRepository {
       .createQueryBuilder('inventory')
       .leftJoinAndSelect('inventory.product', 'product')
       .leftJoinAndSelect('inventory.location', 'location')
+      .leftJoinAndSelect('inventory.area', 'area')
       .where('inventory.product_id = :productId', { productId })
       .orderBy('inventory.updated_at', 'DESC')
       .getMany();
@@ -146,7 +158,19 @@ export class InventoryRepository {
       .createQueryBuilder('inventory')
       .leftJoinAndSelect('inventory.product', 'product')
       .leftJoinAndSelect('inventory.location', 'location')
+      .leftJoinAndSelect('inventory.area', 'area')
       .where('inventory.location_id = :locationId', { locationId })
+      .orderBy('inventory.updated_at', 'DESC')
+      .getMany();
+  }
+
+  async findByAreaId(areaId: string): Promise<Inventory[]> {
+    return this.repository
+      .createQueryBuilder('inventory')
+      .leftJoinAndSelect('inventory.product', 'product')
+      .leftJoinAndSelect('inventory.location', 'location')
+      .leftJoinAndSelect('inventory.area', 'area')
+      .where('inventory.area_id = :areaId', { areaId })
       .orderBy('inventory.updated_at', 'DESC')
       .getMany();
   }
@@ -154,14 +178,23 @@ export class InventoryRepository {
   async findByProductAndLocation(
     productId: string,
     locationId: string,
+    areaId?: string | null,
   ): Promise<Inventory | null> {
-    return this.repository
+    const qb = this.repository
       .createQueryBuilder('inventory')
       .leftJoinAndSelect('inventory.product', 'product')
       .leftJoinAndSelect('inventory.location', 'location')
+      .leftJoinAndSelect('inventory.area', 'area')
       .where('inventory.product_id = :productId', { productId })
-      .andWhere('inventory.location_id = :locationId', { locationId })
-      .getOne();
+      .andWhere('inventory.location_id = :locationId', { locationId });
+
+    if (areaId) {
+      qb.andWhere('inventory.area_id = :areaId', { areaId });
+    } else {
+      qb.andWhere('inventory.area_id IS NULL');
+    }
+
+    return qb.getOne();
   }
 
   async existsById(id: string): Promise<boolean> {

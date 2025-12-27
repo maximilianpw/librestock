@@ -15,6 +15,7 @@ import {
 import { InventoryRepository } from './inventory.repository';
 import { ProductRepository } from '../products/product.repository';
 import { LocationRepository } from '../locations/location.repository';
+import { AreaRepository } from '../areas/area.repository';
 
 @Injectable()
 export class InventoryService {
@@ -22,6 +23,7 @@ export class InventoryService {
     private readonly inventoryRepository: InventoryRepository,
     private readonly productRepository: ProductRepository,
     private readonly locationRepository: LocationRepository,
+    private readonly areaRepository: AreaRepository,
   ) {}
 
   async findAllPaginated(
@@ -94,20 +96,35 @@ export class InventoryService {
       throw new BadRequestException('Location not found');
     }
 
-    // Check if inventory for this product/location already exists
+    // Validate area exists and belongs to the location
+    if (createInventoryDto.area_id) {
+      const area = await this.areaRepository.findById(
+        createInventoryDto.area_id,
+      );
+      if (!area) {
+        throw new BadRequestException('Area not found');
+      }
+      if (area.location_id !== createInventoryDto.location_id) {
+        throw new BadRequestException('Area must belong to the specified location');
+      }
+    }
+
+    // Check if inventory for this product/location/area already exists
     const existing = await this.inventoryRepository.findByProductAndLocation(
       createInventoryDto.product_id,
       createInventoryDto.location_id,
+      createInventoryDto.area_id,
     );
     if (existing) {
       throw new BadRequestException(
-        'Inventory for this product at this location already exists. Use the update or adjust endpoint instead.',
+        'Inventory for this product at this location/area already exists. Use the update or adjust endpoint instead.',
       );
     }
 
     const inventory = await this.inventoryRepository.create({
       product_id: createInventoryDto.product_id,
       location_id: createInventoryDto.location_id,
+      area_id: createInventoryDto.area_id ?? null,
       quantity: createInventoryDto.quantity,
       batch_number: createInventoryDto.batch_number ?? null,
       expiry_date: createInventoryDto.expiry_date
@@ -132,6 +149,11 @@ export class InventoryService {
   ): Promise<InventoryResponseDto> {
     const inventory = await this.getInventoryOrFail(id);
 
+    const newLocationId = updateInventoryDto.location_id ?? inventory.location_id;
+    const newAreaId = updateInventoryDto.area_id !== undefined
+      ? updateInventoryDto.area_id
+      : inventory.area_id;
+
     // Validate location if changing
     if (
       updateInventoryDto.location_id &&
@@ -143,15 +165,32 @@ export class InventoryService {
       if (!location) {
         throw new BadRequestException('Location not found');
       }
+    }
 
-      // Check if inventory for this product at new location already exists
+    // Validate area if provided
+    if (newAreaId) {
+      const area = await this.areaRepository.findById(newAreaId);
+      if (!area) {
+        throw new BadRequestException('Area not found');
+      }
+      if (area.location_id !== newLocationId) {
+        throw new BadRequestException('Area must belong to the specified location');
+      }
+    }
+
+    // Check if changing location or area would create a duplicate
+    const locationChanged = updateInventoryDto.location_id && updateInventoryDto.location_id !== inventory.location_id;
+    const areaChanged = updateInventoryDto.area_id !== undefined && updateInventoryDto.area_id !== inventory.area_id;
+
+    if (locationChanged || areaChanged) {
       const existing = await this.inventoryRepository.findByProductAndLocation(
         inventory.product_id,
-        updateInventoryDto.location_id,
+        newLocationId,
+        newAreaId,
       );
-      if (existing) {
+      if (existing && existing.id !== id) {
         throw new BadRequestException(
-          'Inventory for this product at the target location already exists',
+          'Inventory for this product at the target location/area already exists',
         );
       }
     }
@@ -164,6 +203,9 @@ export class InventoryService {
 
     if (updateInventoryDto.location_id !== undefined) {
       updateData.location_id = updateInventoryDto.location_id;
+    }
+    if (updateInventoryDto.area_id !== undefined) {
+      updateData.area_id = updateInventoryDto.area_id;
     }
     if (updateInventoryDto.quantity !== undefined) {
       updateData.quantity = updateInventoryDto.quantity;
@@ -250,6 +292,14 @@ export class InventoryService {
             id: inventory.location.id,
             name: inventory.location.name,
             type: inventory.location.type,
+          }
+        : null,
+      area_id: inventory.area_id,
+      area: inventory.area
+        ? {
+            id: inventory.area.id,
+            name: inventory.area.name,
+            code: inventory.area.code,
           }
         : null,
       quantity: inventory.quantity,

@@ -21,6 +21,16 @@ export class UpdateInventoryDto {
   location_id?: string;
 
   @ApiProperty({
+    description: 'Area ID (optional, specific placement within location)',
+    format: 'uuid',
+    nullable: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  area_id?: string | null;
+
+  @ApiProperty({
     description: 'Quantity in stock',
     minimum: 0,
     required: false,
