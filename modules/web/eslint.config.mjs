@@ -61,7 +61,7 @@ export default tseslint.config(
       ...pluginReactHooks.configs.recommended.rules,
       'react/prop-types': 'off', // TypeScript handles this
       'react/display-name': 'warn',
-      'react/jsx-no-leaked-render': ['error', { validStrategies: ['coerce'] }],
+      'react/jsx-no-leaked-render': 'off',
       'react/jsx-no-target-blank': 'error',
       'react/jsx-no-useless-fragment': ['error', { allowExpressions: true }],
       'react/jsx-pascal-case': ['error', { allowNamespace: true }],

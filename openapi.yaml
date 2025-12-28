@@ -2865,6 +2865,10 @@ components:
           format: date-time
           type: string
           description: Last update timestamp
+        id:
+          type: string
+          description: Unique identifier
+          format: uuid
         location_id:
           type: string
           description: Location ID
@@ -2894,6 +2898,7 @@ components:
       required:
         - created_at
         - updated_at
+        - id
         - location_id
         - parent_id
         - name
@@ -3025,7 +3030,7 @@ components:
           type: number
           description: Quantity in stock
           example: 100
-        batch_number:
+        batchNumber:
           type: string
           description: Batch number
           example: BATCH-2024-001
@@ -3055,7 +3060,7 @@ components:
         - area_id
         - area
         - quantity
-        - batch_number
+        - batchNumber
         - expiry_date
         - cost_per_unit
         - received_date
@@ -3095,7 +3100,7 @@ components:
           description: Quantity in stock
           minimum: 0
           default: 0
-        batch_number:
+        batchNumber:
           type: string
           description: Batch number
           maxLength: 100
@@ -3133,7 +3138,7 @@ components:
           type: number
           description: Quantity in stock
           minimum: 0
-        batch_number:
+        batchNumber:
           type: string
           description: Batch number
           maxLength: 100

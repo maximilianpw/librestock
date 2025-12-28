@@ -1071,6 +1071,8 @@ export interface AreaResponseDto {
   created_at: string
   /** Last update timestamp */
   updated_at: string
+  /** Unique identifier */
+  id: string
   /** Location ID */
   location_id: string
   /**
@@ -1222,7 +1224,7 @@ export interface InventoryResponseDto {
   /** Quantity in stock */
   quantity: number
   /** Batch number */
-  batch_number: string
+  batchNumber: string
   /**
    * Expiry date
    * @nullable
@@ -1272,7 +1274,7 @@ export interface CreateInventoryDto {
    * Batch number
    * @maxLength 100
    */
-  batch_number?: string
+  batchNumber?: string
   /**
    * Expiry date
    * @nullable
@@ -1313,7 +1315,7 @@ export interface UpdateInventoryDto {
    * Batch number
    * @maxLength 100
    */
-  batch_number?: string
+  batchNumber?: string
   /**
    * Expiry date
    * @nullable

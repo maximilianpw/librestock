@@ -95,7 +95,7 @@ export class InventoryResponseDto extends BaseResponseDto {
     description: 'Batch number',
     example: 'BATCH-2024-001',
   })
-  batch_number: string;
+  batchNumber: string;
 
   @ApiProperty({
     description: 'Expiry date',
