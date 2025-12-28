@@ -4,10 +4,6 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   ChevronRight,
-  Warehouse,
-  Building2,
-  Truck,
-  Users,
   FolderOpen,
   Folder,
 } from 'lucide-react'
@@ -19,19 +15,14 @@ import {
   type LocationResponseDto,
   type AreaResponseDto,
 } from '@/lib/data/generated'
+import { LocationType } from '@/lib/enums/location-type.enum'
+import { LOCATION_TYPE_ICONS } from '@/lib/location-type.utils'
 
 interface LocationAreaSidebarProps {
   selectedLocationId: string | null
   selectedAreaId: string | null
   onSelect: (locationId: string | null, areaId: string | null) => void
 }
-
-const LOCATION_ICONS = {
-  WAREHOUSE: Warehouse,
-  SUPPLIER: Building2,
-  IN_TRANSIT: Truck,
-  CLIENT: Users,
-} as const
 
 interface AreaItemProps {
   area: AreaResponseDto
@@ -134,7 +125,7 @@ function LocationItem({
   onToggle,
   onSelectArea,
 }: LocationItemProps): React.JSX.Element {
-  const Icon = LOCATION_ICONS[location.type]
+  const Icon = LOCATION_TYPE_ICONS[location.type as LocationType]
   const [expandedAreaIds, setExpandedAreaIds] = React.useState<Set<string>>(
     new Set()
   )

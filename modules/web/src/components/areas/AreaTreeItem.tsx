@@ -7,9 +7,6 @@ import { toast } from 'sonner'
 import {
   ChevronRight,
   ChevronDown,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
   Plus,
   FolderOpen,
   Folder,
@@ -19,23 +16,9 @@ import { AreaForm } from './AreaForm'
 import { CreateArea } from './CreateArea'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { FormDialog } from '@/components/common/FormDialog'
+import { CrudDropdownMenu } from '@/components/common/CrudDropdownMenu'
+import { DeleteConfirmationDialog } from '@/components/common/DeleteConfirmationDialog'
 import {
   type AreaResponseDto,
   useAreasControllerDelete,
@@ -146,26 +129,10 @@ export function AreaTreeItem({
             <Plus className="size-4" />
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="size-7" size="icon" variant="ghost">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                <Pencil className="mr-2 size-4" />
-                {t('actions.edit') ?? 'Edit'}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => setDeleteOpen(true)}
-              >
-                <Trash2 className="mr-2 size-4" />
-                {t('actions.delete') ?? 'Delete'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CrudDropdownMenu
+            onDelete={() => setDeleteOpen(true)}
+            onEdit={() => setEditOpen(true)}
+          />
         </div>
       </div>
 
@@ -211,28 +178,13 @@ export function AreaTreeItem({
       />
 
       {/* Delete Confirmation */}
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('areas.deleteTitle') ?? 'Delete Area'}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('areas.deleteDescription') ??
-                'Are you sure you want to delete this area? All child areas will also be deleted.'}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('form.cancel') ?? 'Cancel'}</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleDelete}
-            >
-              {t('actions.delete') ?? 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmationDialog
+        description={t('areas.deleteDescription') ?? 'Are you sure you want to delete this area? All child areas will also be deleted.'}
+        open={deleteOpen}
+        title={t('areas.deleteTitle') ?? 'Delete Area'}
+        onConfirm={handleDelete}
+        onOpenChange={setDeleteOpen}
+      />
     </div>
   )
 }

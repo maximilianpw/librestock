@@ -5,6 +5,8 @@ import { FolderTree } from 'lucide-react'
 import { AreaTreeItem } from './AreaTreeItem'
 import { CreateArea } from './CreateArea'
 import { Spinner } from '@/components/ui/spinner'
+import { EmptyState } from '@/components/common/EmptyState'
+import { ErrorState } from '@/components/common/ErrorState'
 import { useAreasControllerFindAll } from '@/lib/data/generated'
 
 interface AreaTreeProps {
@@ -32,9 +34,7 @@ export function AreaTree({ locationId }: AreaTreeProps): React.JSX.Element {
 
   if (error) {
     return (
-      <div className="text-destructive py-8 text-center">
-        {t('areas.errorLoading') || 'Error loading areas'}
-      </div>
+      <ErrorState message={t('areas.errorLoading') || 'Error loading areas'} />
     )
   }
 
@@ -52,13 +52,12 @@ export function AreaTree({ locationId }: AreaTreeProps): React.JSX.Element {
       </div>
 
       {rootAreas.length === 0 ? (
-        <div className="text-muted-foreground py-8 text-center border rounded-lg bg-muted/20">
-          <FolderTree className="mx-auto size-12 opacity-40 mb-3" />
-          <p>{t('areas.noAreas') || 'No areas found'}</p>
-          <p className="text-sm mt-1">
-            {t('areas.createDescription') || 'Add a new area within this location.'}
-          </p>
-        </div>
+        <EmptyState
+          description={t('areas.createDescription') || 'Add a new area within this location.'}
+          icon={FolderTree}
+          message={t('areas.noAreas') || 'No areas found'}
+          variant="bordered"
+        />
       ) : (
         <div className="border rounded-lg p-2">
           {rootAreas.map((area) => (

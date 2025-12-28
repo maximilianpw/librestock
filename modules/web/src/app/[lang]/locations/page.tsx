@@ -14,14 +14,15 @@ import {
 } from '@/components/ui/select'
 import { CreateLocation } from '@/components/locations/CreateLocation'
 import { LocationList } from '@/components/locations/LocationList'
+import { LocationType } from '@/lib/enums/location-type.enum'
 
 const LOCATION_TYPES = [
   { value: 'ALL', label: 'All Types' },
-  { value: 'WAREHOUSE', label: 'Warehouse' },
-  { value: 'SUPPLIER', label: 'Supplier' },
-  { value: 'IN_TRANSIT', label: 'In Transit' },
-  { value: 'CLIENT', label: 'Client' },
-] as const
+  { value: LocationType.WAREHOUSE, label: 'Warehouse' },
+  { value: LocationType.SUPPLIER, label: 'Supplier' },
+  { value: LocationType.IN_TRANSIT, label: 'In Transit' },
+  { value: LocationType.CLIENT, label: 'Client' },
+]
 
 export default function LocationsPage(): React.JSX.Element {
   const { t } = useTranslation()

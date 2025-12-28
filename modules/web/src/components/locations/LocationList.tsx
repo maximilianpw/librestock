@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { LocationCard } from './LocationCard'
 import { LocationCardSkeleton } from './LocationCardSkeleton'
+import { EmptyState } from '@/components/common/EmptyState'
+import { ErrorState } from '@/components/common/ErrorState'
 import {
   useListAllLocations,
   type LocationResponseDto,
@@ -36,9 +38,7 @@ export function LocationList({
 
   if (error) {
     return (
-      <div className="text-destructive py-8 text-center">
-        {t('locations.errorLoading') || 'Error loading locations'}
-      </div>
+      <ErrorState message={t('locations.errorLoading') || 'Error loading locations'} />
     )
   }
 
@@ -64,9 +64,7 @@ export function LocationList({
 
   if (filteredLocations.length === 0) {
     return (
-      <div className="text-muted-foreground py-8 text-center">
-        {t('locations.noLocations') || 'No locations found'}
-      </div>
+      <EmptyState message={t('locations.noLocations') || 'No locations found'} />
     )
   }
 

@@ -3,6 +3,8 @@
 import { useTranslation } from 'react-i18next'
 import { InventoryCard } from './InventoryCard'
 import { Spinner } from '@/components/ui/spinner'
+import { EmptyState } from '@/components/common/EmptyState'
+import { ErrorState } from '@/components/common/ErrorState'
 import { useListInventory, type ListInventoryParams } from '@/lib/data/generated'
 
 interface InventoryListProps {
@@ -28,9 +30,7 @@ export function InventoryList({ filters }: InventoryListProps): React.JSX.Elemen
 
   if (error) {
     return (
-      <div className="text-destructive py-8 text-center">
-        {t('inventory.errorLoading') || 'Error loading inventory'}
-      </div>
+      <ErrorState message={t('inventory.errorLoading') || 'Error loading inventory'} />
     )
   }
 
@@ -38,9 +38,7 @@ export function InventoryList({ filters }: InventoryListProps): React.JSX.Elemen
 
   if (inventoryItems.length === 0) {
     return (
-      <div className="text-muted-foreground py-8 text-center">
-        {t('inventory.noInventory') || 'No inventory found'}
-      </div>
+      <EmptyState message={t('inventory.noInventory') || 'No inventory found'} />
     )
   }
 

@@ -20,6 +20,7 @@ import {
 import { FormErrorBanner } from '@/components/common/FormErrorBanner'
 import { BooleanSelect } from '@/components/common/BooleanSelect'
 import type { LocationResponseDto } from '@/lib/data/generated'
+import { LocationType } from '@/lib/enums/location-type.enum'
 import { useLocationForm } from '@/hooks/forms/use-location-form'
 
 interface LocationFormProps {
@@ -29,11 +30,11 @@ interface LocationFormProps {
 }
 
 const LOCATION_TYPES = [
-  { value: 'WAREHOUSE', label: 'Warehouse' },
-  { value: 'SUPPLIER', label: 'Supplier' },
-  { value: 'IN_TRANSIT', label: 'In Transit' },
-  { value: 'CLIENT', label: 'Client' },
-] as const
+  { value: LocationType.WAREHOUSE, label: 'Warehouse' },
+  { value: LocationType.SUPPLIER, label: 'Supplier' },
+  { value: LocationType.IN_TRANSIT, label: 'In Transit' },
+  { value: LocationType.CLIENT, label: 'Client' },
+]
 
 export function LocationForm({
   location,

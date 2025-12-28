@@ -4,14 +4,8 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  AlertTriangle,
-} from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -22,23 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { FormDialog } from '@/components/common/FormDialog'
+import { CrudDropdownMenu } from '@/components/common/CrudDropdownMenu'
+import { DeleteConfirmationDialog } from '@/components/common/DeleteConfirmationDialog'
+import { EmptyState } from '@/components/common/EmptyState'
+import { ErrorState } from '@/components/common/ErrorState'
 import { InventoryForm } from './InventoryForm'
 import { AdjustQuantity } from './AdjustQuantity'
 import {
@@ -48,8 +30,8 @@ import {
   type ListInventoryParams,
   type InventoryResponseDto,
 } from '@/lib/data/generated'
-
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
+import { useExpiryDateStatus } from '@/hooks/useExpiryDateStatus'
+import { useLowStockStatus } from '@/hooks/useLowStockStatus'
 
 interface InventoryTableProps {
   filters?: Partial<ListInventoryParams>
@@ -120,30 +102,8 @@ function InventoryRow({ inventory, showLocation = true }: InventoryRowProps): Re
     setDeleteOpen(false)
   }
 
-  const isLowStock =
-    product &&
-    'reorder_point' in product &&
-    quantity <= (product.reorder_point as number)
-
-  const expiryDate = React.useMemo(() => {
-    if (typeof expiryDateRaw === 'string' && expiryDateRaw) {
-      return new Date(expiryDateRaw)
-    }
-    return null
-  }, [expiryDateRaw])
-
-  const [currentTime] = React.useState(() => Date.now())
-
-  const { isExpired, isExpiringSoon } = React.useMemo(() => {
-    if (!expiryDate) {
-      return { isExpired: false, isExpiringSoon: false }
-    }
-    const expiryTime = expiryDate.getTime()
-    return {
-      isExpired: expiryTime < currentTime,
-      isExpiringSoon: expiryTime - currentTime < THIRTY_DAYS_MS && expiryTime > currentTime,
-    }
-  }, [expiryDate, currentTime])
+  const isLowStock = useLowStockStatus(product, quantity)
+  const { expiryDate, isExpired, isExpiringSoon } = useExpiryDateStatus(expiryDateRaw)
 
   const formId = `edit-inventory-form-${id}`
 
@@ -197,26 +157,10 @@ function InventoryRow({ inventory, showLocation = true }: InventoryRowProps): Re
         <TableCell>
           <div className="flex items-center justify-end gap-1">
             <AdjustQuantity inventory={inventory} />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="ghost" className="size-8">
-                  <MoreHorizontal className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                  <Pencil className="mr-2 size-4" />
-                  {t('actions.edit') ?? 'Edit'}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-destructive"
-                  onClick={() => setDeleteOpen(true)}
-                >
-                  <Trash2 className="mr-2 size-4" />
-                  {t('actions.delete') ?? 'Delete'}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <CrudDropdownMenu
+              onDelete={() => setDeleteOpen(true)}
+              onEdit={() => setEditOpen(true)}
+            />
           </div>
         </TableCell>
       </TableRow>
@@ -237,28 +181,13 @@ function InventoryRow({ inventory, showLocation = true }: InventoryRowProps): Re
         />
       </FormDialog>
 
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('inventory.deleteTitle') ?? 'Delete Inventory'}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('inventory.deleteDescription') ??
-                'Are you sure you want to delete this inventory record?'}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('form.cancel') ?? 'Cancel'}</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleDelete}
-            >
-              {t('actions.delete') ?? 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmationDialog
+        description={t('inventory.deleteDescription') ?? 'Are you sure you want to delete this inventory record?'}
+        open={deleteOpen}
+        title={t('inventory.deleteTitle') ?? 'Delete Inventory'}
+        onConfirm={handleDelete}
+        onOpenChange={setDeleteOpen}
+      />
     </>
   )
 }
@@ -277,17 +206,19 @@ export function InventoryTable({ filters }: InventoryTableProps): React.JSX.Elem
 
   if (error) {
     return (
-      <div className="rounded-lg border p-8 text-center text-destructive">
-        {t('inventory.errorLoading') || 'Error loading inventory'}
-      </div>
+      <ErrorState
+        message={t('inventory.errorLoading') || 'Error loading inventory'}
+        variant="bordered"
+      />
     )
   }
 
   if (!isLoading && inventoryItems.length === 0) {
     return (
-      <div className="rounded-lg border p-8 text-center text-muted-foreground">
-        {t('inventory.noInventory') || 'No inventory found'}
-      </div>
+      <EmptyState
+        message={t('inventory.noInventory') || 'No inventory found'}
+        variant="bordered"
+      />
     )
   }
 

@@ -7,10 +7,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
   ArrowLeft,
-  Building2,
-  Truck,
-  Users,
-  Warehouse,
   MapPin,
   Phone,
   User,
@@ -27,17 +23,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { FormDialog } from '@/components/common/FormDialog'
+import { DeleteConfirmationDialog } from '@/components/common/DeleteConfirmationDialog'
 import { LocationForm } from '@/components/locations/LocationForm'
 import { AreaTree } from '@/components/areas/AreaTree'
 import { Spinner } from '@/components/ui/spinner'
@@ -47,20 +34,11 @@ import {
   getListLocationsQueryKey,
   getListAllLocationsQueryKey,
 } from '@/lib/data/generated'
-
-const TYPE_ICONS = {
-  WAREHOUSE: Warehouse,
-  SUPPLIER: Building2,
-  IN_TRANSIT: Truck,
-  CLIENT: Users,
-} as const
-
-const TYPE_COLORS = {
-  WAREHOUSE: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-  SUPPLIER: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-  IN_TRANSIT: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-  CLIENT: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-} as const
+import { LocationType } from '@/lib/enums/location-type.enum'
+import {
+  LOCATION_TYPE_ICONS,
+  LOCATION_TYPE_COLORS,
+} from '@/lib/location-type.utils'
 
 const LOCATIONS_ROUTE = '/locations'
 const BACK_TO_LOCATIONS = 'Back to Locations'
@@ -134,8 +112,8 @@ export default function LocationDetailPage(): React.JSX.Element {
     )
   }
 
-  const Icon = TYPE_ICONS[location.type]
-  const typeColor = TYPE_COLORS[location.type]
+  const Icon = LOCATION_TYPE_ICONS[location.type as LocationType]
+  const typeColor = LOCATION_TYPE_COLORS[location.type as LocationType]
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -268,28 +246,13 @@ export default function LocationDetailPage(): React.JSX.Element {
       </FormDialog>
 
       {/* Delete Confirmation */}
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('locations.deleteTitle') || 'Delete Location'}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('locations.deleteDescription') ||
-                'Are you sure you want to delete this location? This action cannot be undone.'}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('form.cancel') || 'Cancel'}</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleDelete}
-            >
-              {t('actions.delete') || 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmationDialog
+        description={t('locations.deleteDescription') || 'Are you sure you want to delete this location? This action cannot be undone.'}
+        open={deleteOpen}
+        title={t('locations.deleteTitle') || 'Delete Location'}
+        onConfirm={handleDelete}
+        onOpenChange={setDeleteOpen}
+      />
     </div>
   )
 }

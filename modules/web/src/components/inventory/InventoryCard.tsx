@@ -4,18 +4,9 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-  Package,
-  MapPin,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  AlertTriangle,
-  Clock,
-} from 'lucide-react'
+import { Package, MapPin, AlertTriangle, Clock } from 'lucide-react'
 import { InventoryForm } from './InventoryForm'
 import { AdjustQuantity } from './AdjustQuantity'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -23,40 +14,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { FormDialog } from '@/components/common/FormDialog'
+import { CrudDropdownMenu } from '@/components/common/CrudDropdownMenu'
+import { DeleteConfirmationDialog } from '@/components/common/DeleteConfirmationDialog'
 import {
   type InventoryResponseDto,
   useDeleteInventoryItem,
   getListInventoryQueryKey,
 } from '@/lib/data/generated'
-
-// Constants for time calculations
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
-
-// Helper to parse expiry date from nullable field
-const parseExpiryDate = (expiryDate: unknown): Date | null => {
-  if (typeof expiryDate === 'string' && expiryDate) {
-    return new Date(expiryDate)
-  }
-  return null
-}
+import { useExpiryDateStatus } from '@/hooks/useExpiryDateStatus'
+import { useLowStockStatus } from '@/hooks/useLowStockStatus'
 
 interface InventoryCardProps {
   inventory: InventoryResponseDto
@@ -90,31 +58,8 @@ export function InventoryCard({ inventory }: InventoryCardProps): React.JSX.Elem
     setDeleteOpen(false)
   }
 
-  // Check if low stock (below reorder point)
-  const isLowStock =
-    product &&
-    'reorder_point' in product &&
-    quantity <= (product.reorder_point as number)
-
-  // Parse expiry date and compute status
-  const expiryDate = React.useMemo(
-    () => parseExpiryDate(expiryDateRaw),
-    [expiryDateRaw]
-  )
-
-  // Store current time on mount to avoid impure function calls during render
-  const [currentTime] = React.useState(() => Date.now())
-
-  const { isExpired, isExpiringSoon } = React.useMemo(() => {
-    if (!expiryDate) {
-      return { isExpired: false, isExpiringSoon: false }
-    }
-    const expiryTime = expiryDate.getTime()
-    return {
-      isExpired: expiryTime < currentTime,
-      isExpiringSoon: expiryTime - currentTime < THIRTY_DAYS_MS && expiryTime > currentTime,
-    }
-  }, [expiryDate, currentTime])
+  const isLowStock = useLowStockStatus(product, quantity)
+  const { expiryDate, isExpired, isExpiringSoon } = useExpiryDateStatus(expiryDateRaw)
 
   const formId = `edit-inventory-form-${id}`
 
@@ -139,26 +84,10 @@ export function InventoryCard({ inventory }: InventoryCardProps): React.JSX.Elem
               </CardDescription>
             </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="size-8" size="icon" variant="ghost">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                <Pencil className="mr-2 size-4" />
-                {t('actions.edit') ?? 'Edit'}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => setDeleteOpen(true)}
-              >
-                <Trash2 className="mr-2 size-4" />
-                {t('actions.delete') ?? 'Delete'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CrudDropdownMenu
+            onDelete={() => setDeleteOpen(true)}
+            onEdit={() => setEditOpen(true)}
+          />
         </CardHeader>
         <CardContent className="space-y-3">
           {/* Location and Area */}
@@ -234,28 +163,13 @@ export function InventoryCard({ inventory }: InventoryCardProps): React.JSX.Elem
       </FormDialog>
 
       {/* Delete Confirmation */}
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('inventory.deleteTitle') ?? 'Delete Inventory'}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('inventory.deleteDescription') ??
-                'Are you sure you want to delete this inventory record?'}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('form.cancel') ?? 'Cancel'}</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleDelete}
-            >
-              {t('actions.delete') ?? 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmationDialog
+        description={t('inventory.deleteDescription') ?? 'Are you sure you want to delete this inventory record?'}
+        open={deleteOpen}
+        title={t('inventory.deleteTitle') ?? 'Delete Inventory'}
+        onConfirm={handleDelete}
+        onOpenChange={setDeleteOpen}
+      />
     </>
   )
 }
