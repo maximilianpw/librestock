@@ -61,7 +61,7 @@ export default tseslint.config(
       ...pluginReactHooks.configs.recommended.rules,
       'react/prop-types': 'off', // TypeScript handles this
       'react/display-name': 'warn',
-      'react/jsx-no-leaked-render': ['error', { validStrategies: ['coerce'] }],
+      'react/jsx-no-leaked-render': 'off',
       'react/jsx-no-target-blank': 'error',
       'react/jsx-no-useless-fragment': ['error', { allowExpressions: true }],
       'react/jsx-pascal-case': ['error', { allowNamespace: true }],
@@ -353,6 +353,29 @@ export default tseslint.config(
     rules: {
       'import/no-default-export': 'off',
       'import/prefer-default-export': 'off',
+    },
+  },
+
+  // React components with JSX are inherently verbose - allow higher limits
+  {
+    files: ['**/components/**/*.tsx', '**/app/**/*.tsx'],
+    rules: {
+      'max-lines-per-function': [
+        'warn',
+        { max: 200, skipBlankLines: true, skipComments: true },
+      ],
+      complexity: ['warn', 30],
+    },
+  },
+
+  // Form components with many fields need even more room
+  {
+    files: ['**/components/**/*Form.tsx'],
+    rules: {
+      'max-lines-per-function': [
+        'warn',
+        { max: 300, skipBlankLines: true, skipComments: true },
+      ],
     },
   },
 

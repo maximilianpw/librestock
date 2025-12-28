@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponseDto } from '../../../common/dto/base-response.dto';
 
 export class AreaResponseDto extends BaseResponseDto {
+  @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
+  id: string;
+
   @ApiProperty({ description: 'Location ID', format: 'uuid' })
   location_id: string;
 

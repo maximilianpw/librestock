@@ -64,8 +64,8 @@ export class Inventory {
   quantity: number;
 
   @ApiProperty({ description: 'Batch number' })
-  @Column({ type: 'varchar', default: '' })
-  batch_number: string;
+  @Column({ name: 'batch_number', type: 'varchar', default: '' })
+  batchNumber: string;
 
   @ApiProperty({ description: 'Expiry date', nullable: true })
   @Column({ type: 'timestamptz', nullable: true })

@@ -126,7 +126,7 @@ export class InventoryService {
       location_id: createInventoryDto.location_id,
       area_id: createInventoryDto.area_id ?? null,
       quantity: createInventoryDto.quantity,
-      batch_number: createInventoryDto.batch_number ?? '',
+      batchNumber: createInventoryDto.batchNumber ?? '',
       expiry_date: createInventoryDto.expiry_date
         ? new Date(createInventoryDto.expiry_date)
         : null,
@@ -210,8 +210,8 @@ export class InventoryService {
     if (updateInventoryDto.quantity !== undefined) {
       updateData.quantity = updateInventoryDto.quantity;
     }
-    if (updateInventoryDto.batch_number !== undefined) {
-      updateData.batch_number = updateInventoryDto.batch_number ?? '';
+    if (updateInventoryDto.batchNumber !== undefined) {
+      updateData.batchNumber = updateInventoryDto.batchNumber ?? '';
     }
     if (updateInventoryDto.expiry_date !== undefined) {
       updateData.expiry_date = updateInventoryDto.expiry_date
@@ -303,7 +303,7 @@ export class InventoryService {
           }
         : null,
       quantity: inventory.quantity,
-      batch_number: inventory.batch_number,
+      batchNumber: inventory.batchNumber,
       expiry_date: inventory.expiry_date,
       cost_per_unit: inventory.cost_per_unit
         ? Number(inventory.cost_per_unit)

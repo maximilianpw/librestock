@@ -53,7 +53,7 @@ export class CreateInventoryDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  batch_number?: string;
+  batchNumber?: string;
 
   @ApiProperty({
     description: 'Expiry date',
