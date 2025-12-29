@@ -35,6 +35,15 @@ export default tseslint.config(
     files: ['**/*.spec.ts', '**/*.e2e-spec.ts', '**/test/**/*.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      'no-console': 'off',
+    },
+  },
+
+  // Script file overrides
+  {
+    files: ['**/scripts/**/*.ts'],
+    rules: {
       'no-console': 'off',
     },
   },

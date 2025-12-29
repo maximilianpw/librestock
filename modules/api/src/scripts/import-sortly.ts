@@ -61,11 +61,11 @@ async function createDataSource(): Promise<DataSource> {
   if (process.env.DATABASE_URL) {
     dataSourceConfig.url = process.env.DATABASE_URL;
   } else {
-    dataSourceConfig.host = process.env.PGHOST || 'localhost';
-    dataSourceConfig.port = Number.parseInt(process.env.PGPORT || '5432');
+    dataSourceConfig.host = process.env.PGHOST ?? 'localhost';
+    dataSourceConfig.port = Number.parseInt(process.env.PGPORT ?? '5432');
     dataSourceConfig.username = process.env.PGUSER;
     dataSourceConfig.password = process.env.PGPASSWORD;
-    dataSourceConfig.database = process.env.PGDATABASE || 'rbi_inventory';
+    dataSourceConfig.database = process.env.PGDATABASE ?? 'rbi_inventory';
   }
 
   const dataSource = new DataSource(dataSourceConfig);
@@ -102,7 +102,7 @@ function parseDate(dateStr: string): Date | null {
       minutes,
     );
   } catch (error) {
-    console.warn(`Failed to parse date: ${dateStr}, error: ${error}`);
+    console.warn(`Failed to parse date: ${dateStr}, error: ${String(error)}`);
     return null;
   }
 }
@@ -317,7 +317,7 @@ async function importSortlyData(
           notes:
             record['Transaction Note'] ||
             `${transactionType} from Sortly import`,
-          created_at: transactionDate || new Date(),
+          created_at: transactionDate ?? new Date(),
         });
 
         await stockMovementRepo.save(stockMovement);
@@ -442,4 +442,4 @@ async function main() {
   }
 }
 
-main();
+void main();

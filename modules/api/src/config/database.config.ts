@@ -14,16 +14,16 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
   }
 
   // Otherwise use PG* env vars (devenv sets these)
-  const host = process.env.PGHOST || 'localhost';
+  const host = process.env.PGHOST ?? 'localhost';
   const isSocket = host.startsWith('/');
 
   return {
     type: 'postgres',
     host,
-    ...(isSocket ? {} : { port: Number.parseInt(process.env.PGPORT || '5432', 10) }),
-    username: process.env.PGUSER || process.env.USER,
-    password: process.env.PGPASSWORD || '',
-    database: process.env.PGDATABASE || 'rbi_inventory',
+    ...(isSocket ? {} : { port: Number.parseInt(process.env.PGPORT ?? '5432', 10) }),
+    username: process.env.PGUSER ?? process.env.USER,
+    password: process.env.PGPASSWORD ?? '',
+    database: process.env.PGDATABASE ?? 'rbi_inventory',
     entities: [`${__dirname  }/../**/*.entity{.ts,.js}`],
     synchronize: process.env.NODE_ENV !== 'production',
     logging: process.env.NODE_ENV === 'development',
