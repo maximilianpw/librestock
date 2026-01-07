@@ -1,0 +1,68 @@
+// React 19 has useSyncExternalStore built-in, so we re-export from React
+// This shim handles packages that still import from use-sync-external-store/shim
+import { useSyncExternalStore, useRef, useCallback } from 'react'
+
+export { useSyncExternalStore }
+
+// For with-selector, we provide an implementation using the built-in hook
+export function useSyncExternalStoreWithSelector<Snapshot, Selection>(
+  subscribe: (onStoreChange: () => void) => () => void,
+  getSnapshot: () => Snapshot,
+  getServerSnapshot: undefined | null | (() => Snapshot),
+  selector: (snapshot: Snapshot) => Selection,
+  isEqual?: (a: Selection, b: Selection) => boolean,
+): Selection {
+  const instRef = useRef<{
+    hasValue: boolean
+    value: Selection
+    getSnapshot: () => Snapshot
+    selector: (snapshot: Snapshot) => Selection
+    isEqual: (a: Selection, b: Selection) => boolean
+  } | null>(null)
+
+  const equalityFn = isEqual ?? Object.is
+
+  // Initialize or update the ref
+  if (instRef.current === null) {
+    instRef.current = {
+      hasValue: false,
+      value: undefined as Selection,
+      getSnapshot,
+      selector,
+      isEqual: equalityFn,
+    }
+  } else {
+    instRef.current.getSnapshot = getSnapshot
+    instRef.current.selector = selector
+    instRef.current.isEqual = equalityFn
+  }
+
+  const getSelection = useCallback(() => {
+    const inst = instRef.current!
+    const nextSnapshot = inst.getSnapshot()
+    const nextSelection = inst.selector(nextSnapshot)
+
+    if (inst.hasValue && inst.isEqual(inst.value, nextSelection)) {
+      return inst.value
+    }
+
+    inst.hasValue = true
+    inst.value = nextSelection
+    return nextSelection
+  }, [])
+
+  const getServerSelection = useCallback(() => {
+    if (getServerSnapshot === null || getServerSnapshot === undefined) {
+      throw new Error('Missing getServerSnapshot')
+    }
+    const inst = instRef.current!
+    return inst.selector(getServerSnapshot())
+  }, [getServerSnapshot])
+
+  const maybeGetServerSelection =
+    getServerSnapshot === null || getServerSnapshot === undefined
+      ? undefined
+      : getServerSelection
+
+  return useSyncExternalStore(subscribe, getSelection, maybeGetServerSelection)
+}

@@ -73,7 +73,7 @@ function RootDocument({
   children: React.ReactNode
 }): React.JSX.Element {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
@@ -101,7 +101,7 @@ function RootDocument({
                         Welcome to RBI Inventory
                       </h1>
                       <SignInButton mode="modal">
-                        <button className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+                        <button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2">
                           Sign In
                         </button>
                       </SignInButton>
