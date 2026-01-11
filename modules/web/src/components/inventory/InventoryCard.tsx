@@ -84,15 +84,13 @@ export function InventoryCard({ inventory }: InventoryCardProps): React.JSX.Elem
     setDeleteOpen(false)
 
     let didUndo = false
-    const timeoutId = window.setTimeout(async () => {
+    const timeoutId = window.setTimeout(() => {
       if (didUndo) {
         return
       }
-      try {
-        await deleteMutation.mutateAsync({ id })
-      } catch {
+      deleteMutation.mutateAsync({ id }).catch(() => {
         restoreQueryData(queryClient, snapshot)
-      }
+      })
     }, 5000)
 
     toast(t('inventory.deleted') || 'Inventory deleted successfully', {

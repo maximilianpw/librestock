@@ -120,15 +120,13 @@ function InventoryRow({ inventory, showLocation = true }: InventoryRowProps): Re
     setDeleteOpen(false)
 
     let didUndo = false
-    const timeoutId = window.setTimeout(async () => {
+    const timeoutId = window.setTimeout(() => {
       if (didUndo) {
         return
       }
-      try {
-        await deleteMutation.mutateAsync({ id })
-      } catch {
+      deleteMutation.mutateAsync({ id }).catch(() => {
         restoreQueryData(queryClient, snapshot)
-      }
+      })
     }, 5000)
 
     toast(t('inventory.deleted') || 'Inventory deleted successfully', {

@@ -20,6 +20,7 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { AuthProvider } from '@/hooks/providers/AuthProvider'
 import { I18nProvider } from '@/hooks/providers/I18nProvider'
 import { ThemeProvider } from '@/hooks/providers/ThemeProvider'
+import { Theme } from '@/lib/enums/theme.enum'
 import type { RouterContext } from '@/lib/router/context'
 
 // eslint-disable-next-line import/order
@@ -90,7 +91,7 @@ function RootDocument({
               disableTransitionOnChange
               enableSystem
               attribute="class"
-              defaultTheme="system"
+              defaultTheme={Theme.SYSTEM}
             >
               <SignedIn>
                 <SidebarProvider>

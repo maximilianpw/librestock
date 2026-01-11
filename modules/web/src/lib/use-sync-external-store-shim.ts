@@ -1,6 +1,7 @@
 // React 19 has useSyncExternalStore built-in, so we re-export from React
 // This shim handles packages that still import from use-sync-external-store/shim
-import { useSyncExternalStore, useRef, useCallback } from 'react'
+/* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/prefer-nullish-coalescing, max-params */
+import { useSyncExternalStore, useRef, useCallback, useEffect } from 'react'
 
 export { useSyncExternalStore }
 
@@ -20,11 +21,11 @@ export function useSyncExternalStoreWithSelector<Snapshot, Selection>(
     isEqual: (a: Selection, b: Selection) => boolean
   } | null>(null)
 
-  const equalityFn = isEqual ?? Object.is
+  const equalityFn = isEqual || Object.is
   const serverSnapshotRef = useRef<Snapshot | null>(null)
   const serverSnapshotGetterRef = useRef<typeof getServerSnapshot>(getServerSnapshot)
 
-  // Initialize or update the ref
+  // Initialize the ref on first render
   if (instRef.current === null) {
     instRef.current = {
       hasValue: false,
@@ -33,15 +34,20 @@ export function useSyncExternalStoreWithSelector<Snapshot, Selection>(
       selector,
       isEqual: equalityFn,
     }
-  } else {
-    instRef.current.getSnapshot = getSnapshot
-    instRef.current.selector = selector
-    instRef.current.isEqual = equalityFn
   }
-  if (serverSnapshotGetterRef.current !== getServerSnapshot) {
-    serverSnapshotGetterRef.current = getServerSnapshot
-    serverSnapshotRef.current = null
-  }
+
+  // Update the ref values in an effect to avoid lint warnings about refs during render
+  useEffect(() => {
+    if (instRef.current) {
+      instRef.current.getSnapshot = getSnapshot
+      instRef.current.selector = selector
+      instRef.current.isEqual = equalityFn
+    }
+    if (serverSnapshotGetterRef.current !== getServerSnapshot) {
+      serverSnapshotGetterRef.current = getServerSnapshot
+      serverSnapshotRef.current = null
+    }
+  }, [getSnapshot, selector, equalityFn, getServerSnapshot])
 
   const getSelection = useCallback(() => {
     const inst = instRef.current!

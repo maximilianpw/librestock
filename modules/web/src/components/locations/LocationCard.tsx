@@ -92,16 +92,14 @@ export function LocationCard({ location, onClick }: LocationCardProps): React.JS
     setDeleteOpen(false)
 
     let didUndo = false
-    const timeoutId = window.setTimeout(async () => {
+    const timeoutId = window.setTimeout(() => {
       if (didUndo) {
         return
       }
-      try {
-        await deleteMutation.mutateAsync({ id: location.id })
-      } catch {
+      deleteMutation.mutateAsync({ id: location.id }).catch(() => {
         restoreQueryData(queryClient, snapshot)
         restoreQueryData(queryClient, allSnapshot)
-      }
+      })
     }, 5000)
 
     toast(t('locations.deleted') || 'Location deleted successfully', {

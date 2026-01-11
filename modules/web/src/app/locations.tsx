@@ -71,7 +71,7 @@ function LocationsPage(): React.JSX.Element {
   const page = search.page ?? 1
 
   const filterChips = React.useMemo(() => {
-    const chips: Array<{ key: string; label: string; onRemove: () => void }> = []
+    const chips: { key: string; label: string; onRemove: () => void }[] = []
     if (typeFilter !== 'ALL') {
       chips.push({
         key: 'type',

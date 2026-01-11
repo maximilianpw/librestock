@@ -42,7 +42,7 @@ export function getRouter(): AnyRouter {
       queryClient,
     } satisfies RouterContext,
     dehydrate: () => {
-      const queryClientState: Record<string, {}> = JSON.parse(
+      const queryClientState: Record<string, object> = JSON.parse(
         JSON.stringify(dehydrate(queryClient)),
       )
       return {

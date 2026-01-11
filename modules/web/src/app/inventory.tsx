@@ -93,17 +93,20 @@ function InventoryPage(): React.JSX.Element {
     { query: { enabled: !!selectedLocationId } },
   )
 
-  const handleSelect = (locationId: string | null, areaId: string | null): void => {
-    void navigate({
-      search: (prev: InventorySearch) => ({
-        ...prev,
-        location: locationId ?? undefined,
-        area: areaId ?? undefined,
-        page: 1,
-      }),
-      replace: true,
-    })
-  }
+  const handleSelect = React.useCallback(
+    (locationId: string | null, areaId: string | null): void => {
+      void navigate({
+        search: (prev: InventorySearch) => ({
+          ...prev,
+          location: locationId ?? undefined,
+          area: areaId ?? undefined,
+          page: 1,
+        }),
+        replace: true,
+      })
+    },
+    [navigate],
+  )
 
   const filters = React.useMemo(() => {
     const f: Partial<ListInventoryParams> = {}
@@ -150,7 +153,7 @@ function InventoryPage(): React.JSX.Element {
   }, [areas, selectedAreaId])
 
   const filterChips = React.useMemo(() => {
-    const chips: Array<{ key: string; label: string; onRemove: () => void }> = []
+    const chips: { key: string; label: string; onRemove: () => void }[] = []
     if (selectedAreaId && selectedAreaName) {
       chips.push({
         key: 'area',

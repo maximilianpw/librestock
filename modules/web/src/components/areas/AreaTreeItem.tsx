@@ -81,15 +81,13 @@ export function AreaTreeItem({
     setDeleteOpen(false)
 
     let didUndo = false
-    const timeoutId = window.setTimeout(async () => {
+    const timeoutId = window.setTimeout(() => {
       if (didUndo) {
         return
       }
-      try {
-        await deleteMutation.mutateAsync({ id: area.id })
-      } catch {
+      deleteMutation.mutateAsync({ id: area.id }).catch(() => {
         restoreQueryData(queryClient, snapshot)
-      }
+      })
     }, 5000)
 
     toast(t('areas.deleted') || 'Area deleted successfully', {

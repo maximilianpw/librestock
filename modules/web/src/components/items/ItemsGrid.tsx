@@ -29,7 +29,7 @@ export function ItemsGrid<T>({
           : 'flex flex-col gap-3',
       )}
     >
-      {items.map((item) => renderItem(item))}
+      {items.map(renderItem)}
     </div>
   )
 }

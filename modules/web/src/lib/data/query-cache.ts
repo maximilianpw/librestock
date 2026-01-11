@@ -1,8 +1,6 @@
 import type { QueryClient, QueryKey } from '@tanstack/react-query'
 
-import type { PaginationMetaDto } from '@/lib/data/generated'
-
-export type QuerySnapshot<T> = Array<[QueryKey, T | undefined]>
+export type QuerySnapshot<T> = [QueryKey, T | undefined][]
 
 export function snapshotQueryData<T>(
   queryClient: QueryClient,
@@ -20,10 +18,15 @@ export function restoreQueryData<T>(
   }
 }
 
-export function removeItemFromPaginated<T extends { id: string }>(
-  data: { data: T[]; meta?: PaginationMetaDto } | undefined,
-  id: string,
-): { data: T[]; meta?: PaginationMetaDto } | undefined {
+interface PaginatedData<T, M> {
+  data: T[]
+  meta: M
+}
+
+export function removeItemFromPaginated<
+  T extends { id: string },
+  M extends { total: number },
+>(data: PaginatedData<T, M> | undefined, id: string): PaginatedData<T, M> | undefined {
   if (!data) {
     return data
   }
@@ -34,12 +37,10 @@ export function removeItemFromPaginated<T extends { id: string }>(
   return {
     ...data,
     data: next,
-    meta: data.meta
-      ? {
-          ...data.meta,
-          total: Math.max(0, data.meta.total - 1),
-        }
-      : data.meta,
+    meta: {
+      ...data.meta,
+      total: Math.max(0, data.meta.total - 1),
+    },
   }
 }
 

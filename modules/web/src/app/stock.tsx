@@ -75,19 +75,19 @@ function ItemsPage(): React.JSX.Element {
     limit: STOCK_PAGE_SIZE,
     search: deferredSearchQuery.trim() ? deferredSearchQuery.trim() : undefined,
   })
-  const items = productsResponse?.data ?? []
   const meta = productsResponse?.meta
 
   const sortedItems = React.useMemo(() => {
+    const items = productsResponse?.data ?? []
     const sorted = [...items]
     if (sortBy === SortField.NAME) {
       sorted.sort((a, b) => a.name.localeCompare(b.name))
     }
     return sorted
-  }, [items, sortBy])
+  }, [productsResponse?.data, sortBy])
 
   const filterChips = React.useMemo(() => {
-    const chips: Array<{ key: string; label: string; onRemove: () => void }> = []
+    const chips: { key: string; label: string; onRemove: () => void }[] = []
     if (searchQuery) {
       chips.push({
         key: 'search',
