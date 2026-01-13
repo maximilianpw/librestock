@@ -17,6 +17,11 @@
     pkgs.docker-compose
     pkgs.typescript
     pkgs.nodePackages.prettier
+    pkgs.pkg-config
+    pkgs.gtk3
+    pkgs.webkitgtk_4_1
+    pkgs.librsvg
+    pkgs.libayatana-appindicator
   ];
 
   # https://devenv.sh/languages/
@@ -42,6 +47,11 @@
       enable = true;
       package = pkgs.pnpm_10;
     };
+  };
+
+  languages.rust = {
+    enable = true;
+    channel = "stable";
   };
 
   # https://devenv.sh/services/
@@ -85,6 +95,7 @@
     echo "  Node: $(node --version)"
     echo "  pnpm: $(pnpm --version)"
     echo "  Python: $(python --version)"
+    echo "  Rust: $(rustc --version)"
     echo ""
   '';
 }
