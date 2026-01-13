@@ -125,6 +125,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Tauri icons if missing
+        shell: bash
         run: |
           if [ ! -d "modules/remote-desktop/src-tauri/icons" ]; then
             echo "Icons not found, generating..."
