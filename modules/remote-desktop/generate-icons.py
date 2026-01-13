@@ -14,7 +14,7 @@ svg_content = """<?xml version="1.0" encoding="UTF-8"?>
   </defs>
   <rect width="1024" height="1024" rx="180" fill="url(#grad)"/>
   <text x="512" y="640" font-family="Arial, sans-serif" font-size="400" font-weight="bold"
-        text-anchor="middle" fill="white">RBI</text>
+        text-anchor="middle" fill="white">LS</text>
 </svg>
 """
 

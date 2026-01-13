@@ -1,4 +1,4 @@
-# Dockerfile for @rbi/web (TanStack Start)
+# Dockerfile for @librestock/web (TanStack Start)
 # Based on devenv configuration: Node.js 24, pnpm 10
 
 # Build stage
@@ -26,7 +26,7 @@ RUN pnpm install --frozen-lockfile
 COPY modules/web/ ./modules/web/
 
 # Build TanStack Start app
-RUN pnpm --filter @rbi/web build
+RUN pnpm --filter @librestock/web build
 
 # Production stage
 FROM node:24-alpine AS production

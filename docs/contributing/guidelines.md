@@ -8,8 +8,8 @@ This document outlines the guidelines for contributing to LibreStock Inventory.
 
 ```bash
 # Fork the repository on GitHub, then:
-git clone https://github.com/YOUR-USERNAME/rbi.git
-cd rbi
+git clone https://github.com/YOUR-USERNAME/librestock.git
+cd librestock
 ```
 
 ### 2. Create a Branch

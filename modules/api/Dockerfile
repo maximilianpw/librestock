@@ -1,4 +1,4 @@
-# Dockerfile for @rbi/api (NestJS)
+# Dockerfile for @librestock/api (NestJS)
 # Based on devenv configuration: Node.js 24, pnpm 10, PostgreSQL 16
 
 # Build stage
@@ -25,7 +25,7 @@ RUN pnpm install --frozen-lockfile
 COPY modules/api/ ./modules/api/
 
 # Build API
-RUN pnpm --filter @rbi/api build
+RUN pnpm --filter @librestock/api build
 
 # Production stage
 FROM node:24-alpine AS production

@@ -30,7 +30,7 @@ nix-env -iA devenv -f https://github.com/NixOS/nixpkgs/tarball/nixos-unstable
 
 ```bash
 git clone <repo-url>
-cd rbi
+cd librestock
 devenv up
 ```
 

@@ -10,7 +10,7 @@ Emplacement : `modules/api/.env`
 
 | Variable | Requis | Description | Exemple |
 |----------|--------|-------------|---------|
-| `DATABASE_URL` | Oui* | Chaîne de connexion PostgreSQL complète | `postgresql://user:pass@localhost:5432/rbi` |
+| `DATABASE_URL` | Oui* | Chaîne de connexion PostgreSQL complète | `postgresql://user:pass@localhost:5432/librestock` |
 | `PGHOST` | Oui* | Hôte PostgreSQL | `localhost` |
 | `PGPORT` | Oui* | Port PostgreSQL | `5432` |
 | `PGUSER` | Oui* | Utilisateur PostgreSQL | `postgres` |

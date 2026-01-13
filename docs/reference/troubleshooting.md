@@ -209,7 +209,7 @@ pnpm --filter @librestock/web lint:fix
 
 If you're still stuck:
 
-1. Check [existing issues](https://github.com/your-org/rbi/issues)
+1. Check [existing issues](https://github.com/your-org/librestock/issues)
 2. Search error messages online
 3. Open a new issue with:
     - Error message

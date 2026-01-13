@@ -8,8 +8,8 @@ Ce document décrit les directives pour contribuer à LibreStock Inventory.
 
 ```bash
 # Fork le repository sur GitHub, puis :
-git clone https://github.com/VOTRE-NOM/rbi.git
-cd rbi
+git clone https://github.com/VOTRE-NOM/librestock.git
+cd librestock
 ```
 
 ### 2. Créer une branche

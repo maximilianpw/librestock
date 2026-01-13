@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rbi-cache-v1'
+const CACHE_NAME = 'librestock-cache-v1'
 
 // Assets to cache on install
 const PRECACHE_ASSETS = ['/icons/icon-192x192.png', '/icons/icon-512x512.png']

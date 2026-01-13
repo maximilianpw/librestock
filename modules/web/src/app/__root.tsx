@@ -48,7 +48,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       },
       {
         name: 'apple-mobile-web-app-title',
-        content: 'RBI',
+        content: 'LibreStock',
       },
     ],
     links: [
@@ -104,7 +104,7 @@ function RootDocument({
                 <div className="flex min-h-screen items-center justify-center">
                   <div className="text-center">
                     <h1 className="mb-4 text-2xl font-semibold">
-                      Welcome to RBI Inventory
+                      Welcome to LibreStock Inventory
                     </h1>
                     <SignInButton mode="modal">
                       <button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2">

@@ -38,7 +38,7 @@ graph TB
 ## Monorepo Structure
 
 ```
-rbi/
+librestock/
 ├── modules/
 │   ├── api/                 # @librestock/api - NestJS backend
 │   └── web/                 # @librestock/web - TanStack Start frontend

@@ -43,14 +43,14 @@ jobs:
       - name: Package artifacts
         run: |
           mkdir -p dist
-          tar -czf dist/rbi-server-dist.tar.gz \
+          tar -czf dist/librestock-server-dist.tar.gz \
             modules/api/dist \
             modules/api/package.json \
             package.json \
             pnpm-workspace.yaml \
             pnpm-lock.yaml \
             packages/tsconfig
-          tar -czf dist/rbi-remote-web.tar.gz \
+          tar -czf dist/librestock-remote-web.tar.gz \
             modules/web/dist \
             modules/web/package.json \
             package.json \
@@ -164,7 +164,7 @@ jobs:
       - name: Upload desktop app
         uses: actions/upload-artifact@v4
         with:
-          name: rbi-remote-desktop-${{ matrix.asset_name }}
+          name: librestock-remote-desktop-${{ matrix.asset_name }}
           path: dist/*
 
   docker:
@@ -194,7 +194,7 @@ jobs:
         id: meta_server
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ steps.vars.outputs.owner }}/rbi-server
+          images: ghcr.io/${{ steps.vars.outputs.owner }}/librestock-server
           tags: |
             type=ref,event=tag
             type=raw,value=latest
@@ -213,7 +213,7 @@ jobs:
         id: meta_remote
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ steps.vars.outputs.owner }}/rbi-remote
+          images: ghcr.io/${{ steps.vars.outputs.owner }}/librestock-remote
           tags: |
             type=ref,event=tag
             type=raw,value=latest

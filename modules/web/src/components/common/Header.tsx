@@ -67,7 +67,7 @@ export default function AppSidebar(): React.JSX.Element {
       <SidebarHeader>
         <Link className="inline-flex items-center gap-2" to="/">
           <span className="text-base font-bold tracking-tight">
-            RBI Inventory
+            LibreStock Inventory
           </span>
         </Link>
       </SidebarHeader>

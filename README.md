@@ -1,10 +1,10 @@
-# Riviera Beauty Interiors - Yacht Provisioning Management System
+# LibreStock - Yacht Provisioning Management System
 
-This is an internal management system for **Riviera Beauty Interiors**, a specialized provisioning company serving the luxury yacht industry.
+This is an internal management system for **LibreStock**, a specialized provisioning company serving the luxury yacht industry.
 
 ## Business Context
 
-Riviera Beauty Interiors manages orders for yacht owners, handling everything from luxury linens and cosmetics to personalized amenities. The company acts as a single point of contact, consolidating orders from multiple suppliers into unified deliveries for yacht owners.
+LibreStock manages orders for yacht owners, handling everything from luxury linens and cosmetics to personalized amenities. The company acts as a single point of contact, consolidating orders from multiple suppliers into unified deliveries for yacht owners.
 
 ## Project Vision
 
@@ -203,5 +203,5 @@ This application is being developed as a Master's degree project, designed to mo
 
 ## License
 
-This application is proprietary to **Riviera Beauty Interiors**.  
+This application is proprietary to **LibreStock**.
 Unauthorized copying or distribution is prohibited.

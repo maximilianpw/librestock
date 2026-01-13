@@ -1,6 +1,6 @@
 import { INVALID_SAVED_URL_MESSAGE, normalizeUrl, readStoredUrl } from './url-utils.js';
 
-const STORAGE_KEY = 'rbi_server_url';
+const STORAGE_KEY = 'librestock_server_url';
 const form = document.querySelector('[data-connect-form]');
 const input = document.querySelector('#server-url');
 const error = document.querySelector('[data-error]');
