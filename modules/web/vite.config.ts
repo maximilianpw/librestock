@@ -5,8 +5,14 @@ import viteReact from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 
-const shimPath = path.resolve(__dirname, 'src/lib/use-sync-external-store-shim.ts')
-const withSelectorShimPath = path.resolve(__dirname, 'src/lib/use-sync-external-store-with-selector-shim.ts')
+const shimPath = path.resolve(
+  __dirname,
+  'src/lib/use-sync-external-store-shim.ts',
+)
+const withSelectorShimPath = path.resolve(
+  __dirname,
+  'src/lib/use-sync-external-store-with-selector-shim.ts',
+)
 
 export default defineConfig({
   server: {

@@ -1,6 +1,6 @@
 // React 19 has useSyncExternalStore built-in
 // This shim provides useSyncExternalStoreWithSelector for packages that need it
-import { useSyncExternalStore, useRef, useMemo } from 'react'
+import { useRef, useSyncExternalStore } from 'react'
 
 export { useSyncExternalStore }
 
