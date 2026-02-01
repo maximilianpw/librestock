@@ -1,12 +1,12 @@
 import type { ExecutionContext, Type } from '@nestjs/common';
 
-export type MockRequest = {
+export interface MockRequest {
   params: { id: string };
   body?: Record<string, unknown>;
   headers?: Record<string, string>;
   socket: { remoteAddress: string };
   session?: { user?: { id?: string } } | undefined;
-};
+}
 
 export const createExecutionContext = (
   request: MockRequest,

@@ -5,11 +5,11 @@ import { of, throwError } from 'rxjs';
 import { AuditLogService } from '../../routes/audit-logs/audit-log.service';
 import { AuditAction, AuditEntityType } from '../enums';
 import { type AuditMetadata } from '../decorators/auditable.decorator';
-import { AuditInterceptor } from './audit.interceptor';
 import {
   type MockRequest,
   createExecutionContext,
 } from '../../test-utils/execution-context';
+import { AuditInterceptor } from './audit.interceptor';
 
 describe('AuditInterceptor', () => {
   let interceptor: AuditInterceptor;

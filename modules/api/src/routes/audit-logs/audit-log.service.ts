@@ -113,7 +113,7 @@ export class AuditLogService {
   computeChanges<T extends Record<string, unknown>>(
     before: T | null,
     after: T | null,
-    fieldsToTrack?: Array<Extract<keyof T, string>>,
+    fieldsToTrack?: Extract<keyof T, string>[],
   ): AuditChanges | null {
     if (!before && !after) {
       return null;
@@ -131,7 +131,7 @@ export class AuditLogService {
     }
 
     const fields =
-      fieldsToTrack ?? (Object.keys(after) as Array<Extract<keyof T, string>>);
+      fieldsToTrack ?? (Object.keys(after) as Extract<keyof T, string>[]);
     const beforeChanges: Record<string, unknown> = {};
     const afterChanges: Record<string, unknown> = {};
     let hasChanges = false;
@@ -188,12 +188,7 @@ export class AuditLogService {
         if (!(key in right)) {
           return false;
         }
-        if (
-          !this.areValuesEqual(
-            (left as Record<string, unknown>)[key],
-            (right as Record<string, unknown>)[key],
-          )
-        ) {
+        if (!this.areValuesEqual(left[key], right[key])) {
           return false;
         }
       }
