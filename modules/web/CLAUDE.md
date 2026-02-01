@@ -5,7 +5,7 @@
 ## Tech Stack
 
 TanStack Start · TanStack Router · React 19 · TypeScript · Tailwind CSS 4 · Radix UI · TanStack
-Query + Form · Clerk Auth · i18next · Orval
+Query + Form · Better Auth · i18next · Orval
 
 ## Directory Structure
 
@@ -98,13 +98,14 @@ navigate({ to: '/locations' })
 Order matters in `__root.tsx`:
 
 ```
-ClerkProvider → AuthProvider → ReactQueryProvider → I18nProvider → ThemeProvider → SidebarProvider
+BrandingProvider → I18nProvider → ThemeProvider → SidebarProvider
 ```
 
-- **ClerkProvider**: Authentication (from `@clerk/tanstack-react-start`)
-- **AuthProvider**: Registers Clerk token getter with axios-client
-- **ReactQueryProvider**: Server state management
+- **BrandingProvider**: App branding/theming
 - **I18nProvider**: Translations
+- **ThemeProvider**: Light/dark mode
+
+Authentication is handled by Better Auth's `useSession()` hook from `@/lib/auth-client` - no provider needed.
 
 ## API Integration
 
@@ -152,7 +153,7 @@ await mutation.mutateAsync(formData)
 | Form state   | TanStack Form + Zod | `useForm({ validators: { onSubmit: schema } })` |
 | UI state     | useState            | `selectedCategoryId`, `expandedIds`             |
 | Global UI    | Context             | Sidebar state                                   |
-| Auth         | Clerk               | `useAuth()`, `<SignedIn>`                       |
+| Auth         | Better Auth         | `useAuthSession()`                             |
 
 ## Forms (TanStack Form + Zod)
 
@@ -260,9 +261,7 @@ const { page, filter } = Route.useSearch();
 ## Environment Variables
 
 ```bash
-VITE_API_BASE_URL=http://localhost:8080          # Required
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_...           # Required
-CLERK_SECRET_KEY=sk_test_...                     # Server-side
+VITE_API_BASE_URL=http://localhost:8080/api/v1   # Required
 ```
 
 ## Commands

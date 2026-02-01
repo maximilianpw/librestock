@@ -1,14 +1,26 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as yaml from 'js-yaml';
-import { AppModule } from 'src/app.module';
+import { config } from 'dotenv';
+
+// Load .env before NestFactory initializes modules
+config();
+
+// Fix Docker hostname for local execution
+if (process.env.DATABASE_URL?.includes('@postgres:')) {
+  process.env.DATABASE_URL = process.env.DATABASE_URL.replace('@postgres:', '@localhost:');
+}
 
 async function generateOpenApi() {
+  // Dynamic imports so env vars are loaded first
+  const { NestFactory } = await import('@nestjs/core');
+  const { ValidationPipe } = await import('@nestjs/common');
+  const { SwaggerModule, DocumentBuilder } = await import('@nestjs/swagger');
+  const yaml = await import('js-yaml');
+  const { AppModule } = await import('src/app.module');
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
+    bodyParser: false,
   });
 
   app.useGlobalPipes(
@@ -18,7 +30,7 @@ async function generateOpenApi() {
     }),
   );
 
-  const config = new DocumentBuilder()
+  const docConfig = new DocumentBuilder()
     .setTitle('LibreStock Inventory API')
     .setDescription('REST API for LibreStock Inventory Management System')
     .setVersion('1.0.0')
@@ -31,12 +43,12 @@ async function generateOpenApi() {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        description: 'Clerk JWT token',
+        description: 'Better Auth token',
       },
       'BearerAuth',
     )
     .addTag('Health', 'System health endpoints')
-    .addTag('Auth', 'Authentication endpoints (Clerk JWT)')
+    .addTag('Auth', 'Authentication endpoints (Better Auth)')
     .addTag('Users', 'User management endpoints')
     .addTag('Categories', 'Product category management')
     .addTag('Products', 'Product catalog management')
@@ -45,7 +57,7 @@ async function generateOpenApi() {
     .addTag('Inventory', 'Inventory management (stock levels by location/area)')
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, docConfig);
 
   // Write to root of project (two levels up from this file)
   const outputPath = path.resolve(

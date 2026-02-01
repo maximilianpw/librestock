@@ -25,7 +25,7 @@ This directory contains GitHub Actions workflows for the LibreStock Inventory mo
 - Changes to `packages/**`, `package.json`, `pnpm-lock.yaml` → Runs ALL jobs (affects both modules)
 
 **Environment Variables Required:**
-- `CLERK_SECRET_KEY_TEST` (optional, falls back to dummy key for CI)
+- `BETTER_AUTH_SECRET_TEST` (optional, falls back to dummy key for CI)
 
 ---
 
@@ -114,10 +114,10 @@ Results viewable in: **Security → Code scanning alerts**
 Configure these in repository settings (Settings → Secrets and variables → Actions):
 
 ### Optional Secrets
-- `CLERK_SECRET_KEY_TEST` - Clerk API key for testing (falls back to dummy if not set)
+- `BETTER_AUTH_SECRET_TEST` - Better Auth secret for testing (falls back to dummy if not set)
 
 ### For Production Deployment (if needed)
-- `CLERK_SECRET_KEY` - Production Clerk API key
+- `BETTER_AUTH_SECRET` - Production Better Auth secret (32+ characters)
 - `DATABASE_URL` - Production database connection string
 
 ---

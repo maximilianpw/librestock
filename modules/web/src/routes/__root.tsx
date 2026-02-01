@@ -1,29 +1,22 @@
 import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-} from '@clerk/tanstack-react-start'
-import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRouteWithContext,
   Link,
-  type ErrorComponentProps,
+  useRouterState,
 } from '@tanstack/react-router'
 import { Toaster } from 'sonner'
 
 import AppSidebar from '@/components/common/Header'
-import { ErrorState } from '@/components/common/ErrorState'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { AuthProvider } from '@/hooks/providers/AuthProvider'
 import {
   BrandingProvider,
   useBranding,
 } from '@/hooks/providers/BrandingProvider'
 import { I18nProvider } from '@/hooks/providers/I18nProvider'
 import { ThemeProvider } from '@/hooks/providers/ThemeProvider'
+import { useSession } from '@/lib/auth-client'
 import { Theme } from '@/lib/enums/theme.enum'
 import type { RouterContext } from '@/lib/router/context'
 
@@ -59,11 +52,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent(): React.JSX.Element {
   return (
-    <ClerkProvider>
-      <RootDocument>
-        <Outlet />
-      </RootDocument>
-    </ClerkProvider>
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
   )
 }
 
@@ -76,11 +67,11 @@ function DynamicHead(): React.JSX.Element {
       <meta content={branding.tagline} name="description" />
       <meta content={branding.app_name} name="apple-mobile-web-app-title" />
       <link
-        href={branding.favicon_url ?? '/icons/icon-192x192.png'}
+        href={(branding.favicon_url as unknown as string) ?? '/icons/icon-192x192.png'}
         rel="icon"
       />
       <link
-        href={branding.favicon_url ?? '/icons/apple-touch-icon.png'}
+        href={(branding.favicon_url as unknown as string) ?? '/icons/apple-touch-icon.png'}
         rel="apple-touch-icon"
       />
     </div>
@@ -96,13 +87,36 @@ function WelcomeScreen(): React.JSX.Element {
         <h1 className="mb-4 text-2xl font-semibold">
           Welcome to {branding.app_name}
         </h1>
-        <SignInButton mode="modal">
-          <button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2">
-            Sign In
-          </button>
-        </SignInButton>
+        <Link
+          className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex rounded-md px-4 py-2"
+          to="/login"
+        >
+          Sign In
+        </Link>
       </div>
     </div>
+  )
+}
+
+function AuthLoadingScreen(): React.JSX.Element {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-muted-foreground text-sm">Loading…</div>
+    </div>
+  )
+}
+
+function AuthenticatedLayout({
+  children,
+}: {
+  children: React.ReactNode
+}): React.JSX.Element {
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="flex flex-1 flex-col">{children}</main>
+      <Toaster />
+    </SidebarProvider>
   )
 }
 
@@ -111,36 +125,37 @@ function RootDocument({
 }: {
   children: React.ReactNode
 }): React.JSX.Element {
+  const { data: session, isPending: isLoading } = useSession()
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const isPublicRoute = pathname.startsWith('/login')
+
   return (
     <html suppressHydrationWarning lang="en">
       <head>
         <HeadContent />
       </head>
       <body suppressHydrationWarning className="antialiased">
-        <AuthProvider>
-          <BrandingProvider>
-            <DynamicHead />
-            <I18nProvider>
-              <ThemeProvider
-                disableTransitionOnChange
-                enableSystem
-                attribute="class"
-                defaultTheme={Theme.SYSTEM}
-              >
-                <SignedIn>
-                  <SidebarProvider>
-                    <AppSidebar />
-                    <main className="flex flex-1 flex-col">{children}</main>
-                    <Toaster />
-                  </SidebarProvider>
-                </SignedIn>
-                <SignedOut>
-                  <WelcomeScreen />
-                </SignedOut>
-              </ThemeProvider>
-            </I18nProvider>
-          </BrandingProvider>
-        </AuthProvider>
+        <BrandingProvider>
+          <DynamicHead />
+          <I18nProvider>
+            <ThemeProvider
+              disableTransitionOnChange
+              enableSystem
+              attribute="class"
+              defaultTheme={Theme.SYSTEM}
+            >
+              {isLoading ? (
+                <AuthLoadingScreen />
+              ) : session ? (
+                <AuthenticatedLayout>{children}</AuthenticatedLayout>
+              ) : isPublicRoute ? (
+                <>{children}</>
+              ) : (
+                <WelcomeScreen />
+              )}
+            </ThemeProvider>
+          </I18nProvider>
+        </BrandingProvider>
         <Scripts />
       </body>
     </html>

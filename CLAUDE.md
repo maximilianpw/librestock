@@ -4,9 +4,9 @@
 
 ## Tech Stack
 
-**Backend:** NestJS 11 · TypeORM · PostgreSQL 16 · Clerk Auth · OpenAPI/Swagger
+**Backend:** NestJS 11 · TypeORM · PostgreSQL 16 · Better Auth · OpenAPI/Swagger
 **Frontend:** TanStack Start · React 19 · TanStack Router · TanStack Query/Form · Tailwind · Radix UI · Orval
-**Tooling:** pnpm workspaces · devenv.sh · TypeScript
+**Tooling:** pnpm workspaces · Nix flakes · TypeScript
 
 ## Monorepo Structure
 
@@ -29,13 +29,13 @@ librestock/
 ┌─────────────────────────────────────────┐
 │           TanStack Start Frontend       │
 │  React Query ←── Orval (generated) ←────┼── openapi.yaml
-│  Clerk Auth                             │
+│  Better Auth                            │
 └─────────────────────────────────────────┘
                     ▼ HTTP/REST
 ┌─────────────────────────────────────────┐
 │            NestJS Backend               │
 │  Controller → Service → Repository      │
-│  ClerkAuthGuard · TypeORM · Swagger ────┼──► openapi.yaml
+│  BetterAuthGuard · TypeORM · Swagger ───┼──► openapi.yaml
 └─────────────────────────────────────────┘
                     ▼
 ┌─────────────────────────────────────────┐
@@ -102,18 +102,18 @@ Products are catalog items. Inventory tracks quantities at locations. Areas prov
 | Repository      | `api/src/routes/*/`             | Data access layer          |
 | Service         | `api/src/routes/*/`             | Business logic             |
 | BaseAuditEntity | `api/src/common/entities/`      | Soft delete + audit fields |
-| ClerkAuthGuard  | `api/src/common/guards/`        | JWT verification           |
+| BetterAuthGuard | `api/src/common/guards/`        | Session verification       |
 | HATEOAS         | `api/src/common/hateoas/`       | REST hypermedia links      |
 | Generated hooks | `web/src/lib/data/generated.ts` | Type-safe API calls        |
 
 ## Authentication Flow
 
 ```
-User → Clerk → JWT Token
-                  ↓
-Frontend: Authorization: Bearer {token}
-                  ↓
-Backend: ClerkAuthGuard → verify → req.auth.userId
+User → Better Auth → Session Cookie
+                         ↓
+Frontend: Cookie sent automatically
+                         ↓
+Backend: BetterAuthGuard → verify → session.user
 ```
 
 ## Adding a New Entity (Full Stack)
@@ -132,15 +132,16 @@ Backend: ClerkAuthGuard → verify → req.auth.userId
 
 ```bash
 DATABASE_URL=postgresql://...  # or PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE
-CLERK_SECRET_KEY=sk_test_...
+BETTER_AUTH_SECRET=your-32-char-secret
+BETTER_AUTH_URL=http://localhost:8080
+FRONTEND_URL=http://localhost:3000
 PORT=8080
 ```
 
 **Web (`modules/web/.env.local`):**
 
 ```bash
-VITE_API_BASE_URL=http://localhost:8080
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+VITE_API_BASE_URL=http://localhost:8080/api/v1
 ```
 
 ## Module Documentation

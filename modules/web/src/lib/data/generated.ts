@@ -1460,6 +1460,18 @@ export interface PoweredByDto {
   url: string
 }
 
+/**
+ * Logo URL
+ * @nullable
+ */
+export type BrandingResponseDtoLogoUrl = { [key: string]: unknown } | null
+
+/**
+ * Favicon URL
+ * @nullable
+ */
+export type BrandingResponseDtoFaviconUrl = { [key: string]: unknown } | null
+
 export interface BrandingResponseDto {
   /** Application name */
   app_name: string
@@ -1469,12 +1481,12 @@ export interface BrandingResponseDto {
    * Logo URL
    * @nullable
    */
-  logo_url: string | null
+  logo_url: BrandingResponseDtoLogoUrl
   /**
    * Favicon URL
    * @nullable
    */
-  favicon_url: string | null
+  favicon_url: BrandingResponseDtoFaviconUrl
   /** Primary brand color (hex) */
   primary_color: string
   /** Powered by attribution (always present) */
@@ -1482,6 +1494,18 @@ export interface BrandingResponseDto {
   /** Last update timestamp */
   updated_at: string
 }
+
+/**
+ * Logo URL (relative or absolute)
+ * @maxLength 500
+ */
+export type UpdateBrandingDtoLogoUrl = { [key: string]: unknown }
+
+/**
+ * Favicon URL (relative or absolute)
+ * @maxLength 500
+ */
+export type UpdateBrandingDtoFaviconUrl = { [key: string]: unknown }
 
 export interface UpdateBrandingDto {
   /**
@@ -1497,15 +1521,13 @@ export interface UpdateBrandingDto {
   /**
    * Logo URL (relative or absolute)
    * @maxLength 500
-   * @nullable
    */
-  logo_url?: string | null
+  logo_url?: UpdateBrandingDtoLogoUrl
   /**
    * Favicon URL (relative or absolute)
    * @maxLength 500
-   * @nullable
    */
-  favicon_url?: string | null
+  favicon_url?: UpdateBrandingDtoFaviconUrl
   /** Primary brand color (hex) */
   primary_color?: string
 }
@@ -2061,7 +2083,7 @@ type AwaitedInput<T> = PromiseLike<T> | T
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never
 
 /**
- * Comprehensive health check including database and Clerk configuration
+ * Comprehensive health check including database and Better Auth configuration
  * @summary Full health check
  */
 export const healthCheck = (signal?: AbortSignal) => {
@@ -2445,7 +2467,7 @@ export function useReadiness<
 }
 
 /**
- * Retrieves the current user profile from Clerk
+ * Retrieves the current user profile from Better Auth
  * @summary Get user profile
  */
 export const getProfile = (signal?: AbortSignal) => {
@@ -7709,7 +7731,7 @@ export function useGetUserAuditHistory<
 /**
  * @summary Get branding settings (public)
  */
-export const getBranding = (signal?: AbortSignal) => {
+export const brandingControllerGet = (signal?: AbortSignal) => {
   return getAxiosInstance<BrandingResponseDto>({
     url: `/branding`,
     method: 'GET',
@@ -7717,51 +7739,59 @@ export const getBranding = (signal?: AbortSignal) => {
   })
 }
 
-export const getGetBrandingQueryKey = () => {
+export const getBrandingControllerGetQueryKey = () => {
   return [`/branding`] as const
 }
 
-export const getGetBrandingQueryOptions = <
-  TData = Awaited<ReturnType<typeof getBranding>>,
+export const getBrandingControllerGetQueryOptions = <
+  TData = Awaited<ReturnType<typeof brandingControllerGet>>,
   TError = unknown,
 >(options?: {
   query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getBranding>>, TError, TData>
+    UseQueryOptions<
+      Awaited<ReturnType<typeof brandingControllerGet>>,
+      TError,
+      TData
+    >
   >
 }) => {
   const { query: queryOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getGetBrandingQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getBrandingControllerGetQueryKey()
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBranding>>> = ({
-    signal,
-  }) => getBranding(signal)
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof brandingControllerGet>>
+  > = ({ signal }) => brandingControllerGet(signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getBranding>>,
+    Awaited<ReturnType<typeof brandingControllerGet>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetBrandingQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getBranding>>
+export type BrandingControllerGetQueryResult = NonNullable<
+  Awaited<ReturnType<typeof brandingControllerGet>>
 >
-export type GetBrandingQueryError = unknown
+export type BrandingControllerGetQueryError = unknown
 
-export function useGetBranding<
-  TData = Awaited<ReturnType<typeof getBranding>>,
+export function useBrandingControllerGet<
+  TData = Awaited<ReturnType<typeof brandingControllerGet>>,
   TError = unknown,
 >(
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getBranding>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof brandingControllerGet>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBranding>>,
+          Awaited<ReturnType<typeof brandingControllerGet>>,
           TError,
-          Awaited<ReturnType<typeof getBranding>>
+          Awaited<ReturnType<typeof brandingControllerGet>>
         >,
         'initialData'
       >
@@ -7770,19 +7800,23 @@ export function useGetBranding<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetBranding<
-  TData = Awaited<ReturnType<typeof getBranding>>,
+export function useBrandingControllerGet<
+  TData = Awaited<ReturnType<typeof brandingControllerGet>>,
   TError = unknown,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getBranding>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof brandingControllerGet>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBranding>>,
+          Awaited<ReturnType<typeof brandingControllerGet>>,
           TError,
-          Awaited<ReturnType<typeof getBranding>>
+          Awaited<ReturnType<typeof brandingControllerGet>>
         >,
         'initialData'
       >
@@ -7791,13 +7825,17 @@ export function useGetBranding<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetBranding<
-  TData = Awaited<ReturnType<typeof getBranding>>,
+export function useBrandingControllerGet<
+  TData = Awaited<ReturnType<typeof brandingControllerGet>>,
   TError = unknown,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getBranding>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof brandingControllerGet>>,
+        TError,
+        TData
+      >
     >
   },
   queryClient?: QueryClient,
@@ -7808,20 +7846,24 @@ export function useGetBranding<
  * @summary Get branding settings (public)
  */
 
-export function useGetBranding<
-  TData = Awaited<ReturnType<typeof getBranding>>,
+export function useBrandingControllerGet<
+  TData = Awaited<ReturnType<typeof brandingControllerGet>>,
   TError = unknown,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getBranding>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof brandingControllerGet>>,
+        TError,
+        TData
+      >
     >
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getGetBrandingQueryOptions(options)
+  const queryOptions = getBrandingControllerGetQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -7836,7 +7878,9 @@ export function useGetBranding<
 /**
  * @summary Update branding settings
  */
-export const updateBranding = (updateBrandingDto: UpdateBrandingDto) => {
+export const brandingControllerUpdate = (
+  updateBrandingDto: UpdateBrandingDto,
+) => {
   return getAxiosInstance<BrandingResponseDto>({
     url: `/branding`,
     method: 'PUT',
@@ -7845,23 +7889,23 @@ export const updateBranding = (updateBrandingDto: UpdateBrandingDto) => {
   })
 }
 
-export const getUpdateBrandingMutationOptions = <
-  TError = ErrorResponseDto,
+export const getBrandingControllerUpdateMutationOptions = <
+  TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateBranding>>,
+    Awaited<ReturnType<typeof brandingControllerUpdate>>,
     TError,
     { data: UpdateBrandingDto },
     TContext
   >
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof updateBranding>>,
+  Awaited<ReturnType<typeof brandingControllerUpdate>>,
   TError,
   { data: UpdateBrandingDto },
   TContext
 > => {
-  const mutationKey = ['updateBranding']
+  const mutationKey = ['brandingControllerUpdate']
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -7871,33 +7915,33 @@ export const getUpdateBrandingMutationOptions = <
     : { mutation: { mutationKey } }
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateBranding>>,
+    Awaited<ReturnType<typeof brandingControllerUpdate>>,
     { data: UpdateBrandingDto }
   > = (props) => {
     const { data } = props ?? {}
 
-    return updateBranding(data)
+    return brandingControllerUpdate(data)
   }
 
   return { mutationFn, ...mutationOptions }
 }
 
-export type UpdateBrandingMutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateBranding>>
+export type BrandingControllerUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof brandingControllerUpdate>>
 >
-export type UpdateBrandingMutationBody = UpdateBrandingDto
-export type UpdateBrandingMutationError = ErrorResponseDto
+export type BrandingControllerUpdateMutationBody = UpdateBrandingDto
+export type BrandingControllerUpdateMutationError = unknown
 
 /**
  * @summary Update branding settings
  */
-export const useUpdateBranding = <
-  TError = ErrorResponseDto,
+export const useBrandingControllerUpdate = <
+  TError = unknown,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateBranding>>,
+      Awaited<ReturnType<typeof brandingControllerUpdate>>,
       TError,
       { data: UpdateBrandingDto },
       TContext
@@ -7905,12 +7949,12 @@ export const useUpdateBranding = <
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof updateBranding>>,
+  Awaited<ReturnType<typeof brandingControllerUpdate>>,
   TError,
   { data: UpdateBrandingDto },
   TContext
 > => {
-  const mutationOptions = getUpdateBrandingMutationOptions(options)
+  const mutationOptions = getBrandingControllerUpdateMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }

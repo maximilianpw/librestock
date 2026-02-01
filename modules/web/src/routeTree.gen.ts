@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StockRouteImport } from './routes/stock'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as AuditLogsRouteImport } from './routes/audit-logs'
@@ -31,6 +32,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocationsRoute = LocationsRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/audit-logs': typeof AuditLogsRoute
   '/inventory': typeof InventoryRoute
   '/locations': typeof LocationsRouteWithChildren
+  '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
   '/stock': typeof StockRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/audit-logs': typeof AuditLogsRoute
   '/inventory': typeof InventoryRoute
   '/locations': typeof LocationsRouteWithChildren
+  '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
   '/stock': typeof StockRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/audit-logs': typeof AuditLogsRoute
   '/inventory': typeof InventoryRoute
   '/locations': typeof LocationsRouteWithChildren
+  '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
   '/stock': typeof StockRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/inventory'
     | '/locations'
+    | '/login'
     | '/products'
     | '/settings'
     | '/stock'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/inventory'
     | '/locations'
+    | '/login'
     | '/products'
     | '/settings'
     | '/stock'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/inventory'
     | '/locations'
+    | '/login'
     | '/products'
     | '/settings'
     | '/stock'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   AuditLogsRoute: typeof AuditLogsRoute
   InventoryRoute: typeof InventoryRoute
   LocationsRoute: typeof LocationsRouteWithChildren
+  LoginRoute: typeof LoginRoute
   ProductsRoute: typeof ProductsRoute
   SettingsRoute: typeof SettingsRoute
   StockRoute: typeof StockRoute
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/products'
       preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/locations': {
@@ -211,6 +231,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuditLogsRoute: AuditLogsRoute,
   InventoryRoute: InventoryRoute,
   LocationsRoute: LocationsRouteWithChildren,
+  LoginRoute: LoginRoute,
   ProductsRoute: ProductsRoute,
   SettingsRoute: SettingsRoute,
   StockRoute: StockRoute,

@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react'
-import { useGetBranding, type BrandingResponseDto } from '@/lib/data/generated'
+import { useBrandingControllerGet, type BrandingResponseDto } from '@/lib/data/generated'
 
 const DEFAULT_BRANDING: BrandingResponseDto = {
   app_name: 'LibreStock',
@@ -29,7 +29,7 @@ export function BrandingProvider({
 }: {
   children: React.ReactNode
 }): React.JSX.Element {
-  const { data, isLoading } = useGetBranding({
+  const { data, isLoading } = useBrandingControllerGet({
     query: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       gcTime: 1000 * 60 * 30, // 30 minutes

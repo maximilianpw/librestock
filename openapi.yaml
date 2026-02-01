@@ -2,7 +2,9 @@ openapi: 3.0.0
 paths:
   /health-check:
     get:
-      description: Comprehensive health check including database and Clerk configuration
+      description: >-
+        Comprehensive health check including database and Better Auth
+        configuration
       operationId: healthCheck
       parameters: []
       responses:
@@ -343,7 +345,7 @@ paths:
         - Health
   /auth/auth/profile:
     get:
-      description: Retrieves the current user profile from Clerk
+      description: Retrieves the current user profile from Better Auth
       operationId: getProfile
       parameters: []
       responses:
@@ -2250,7 +2252,7 @@ paths:
         - Audit Logs
   /branding:
     get:
-      operationId: getBranding
+      operationId: BrandingController_get
       parameters: []
       responses:
         '200':
@@ -2263,7 +2265,7 @@ paths:
       tags:
         - Branding
     put:
-      operationId: updateBranding
+      operationId: BrandingController_update
       parameters: []
       requestBody:
         required: true
@@ -2278,12 +2280,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BrandingResponseDto'
-        '401':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseDto'
       security:
         - bearer: []
       summary: Update branding settings
@@ -2304,7 +2300,7 @@ tags:
   - name: Health
     description: System health endpoints
   - name: Auth
-    description: Authentication endpoints (Clerk JWT)
+    description: Authentication endpoints (Better Auth)
   - name: Users
     description: User management endpoints
   - name: Categories
@@ -2328,7 +2324,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
       type: http
-      description: Clerk JWT token
+      description: Better Auth token
   schemas:
     ProfileResponseDto:
       type: object
@@ -3663,11 +3659,11 @@ components:
           type: string
           description: Application tagline
         logo_url:
-          type: string
+          type: object
           description: Logo URL
           nullable: true
         favicon_url:
-          type: string
+          type: object
           description: Favicon URL
           nullable: true
         primary_color:
@@ -3675,7 +3671,8 @@ components:
           description: Primary brand color (hex)
         powered_by:
           description: Powered by attribution (always present)
-          $ref: '#/components/schemas/PoweredByDto'
+          allOf:
+            - $ref: '#/components/schemas/PoweredByDto'
         updated_at:
           format: date-time
           type: string
@@ -3700,15 +3697,13 @@ components:
           description: Application tagline
           maxLength: 255
         logo_url:
-          type: string
+          type: object
           description: Logo URL (relative or absolute)
           maxLength: 500
-          nullable: true
         favicon_url:
-          type: string
+          type: object
           description: Favicon URL (relative or absolute)
           maxLength: 500
-          nullable: true
         primary_color:
           type: string
           description: Primary brand color (hex)
