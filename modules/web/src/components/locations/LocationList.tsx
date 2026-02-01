@@ -8,9 +8,9 @@ import { ErrorState } from '@/components/common/ErrorState'
 import { PaginationControls } from '@/components/common/PaginationControls'
 import {
   useListLocations,
-  type ListLocationsParams,
+  type LocationQueryDto,
   type LocationResponseDto,
-} from '@/lib/data/generated'
+} from '@/lib/data/locations'
 
 interface LocationListProps {
   typeFilter?: string | null
@@ -35,7 +35,7 @@ export function LocationList({
   const navigate = useNavigate()
   const deferredSearchQuery = React.useDeferredValue(searchQuery ?? '')
   const queryParams = React.useMemo(() => {
-    const params: ListLocationsParams = {
+    const params: LocationQueryDto = {
       page,
       limit,
     }
@@ -44,7 +44,7 @@ export function LocationList({
       params.search = query
     }
     if (typeFilter) {
-      params.type = typeFilter as ListLocationsParams['type']
+      params.type = typeFilter as LocationQueryDto['type']
     }
     return params
   }, [deferredSearchQuery, limit, page, typeFilter])

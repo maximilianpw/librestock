@@ -8,7 +8,7 @@ import {
   useCreateInventoryItem,
   useUpdateInventoryItem,
   getListInventoryQueryKey,
-} from '@/lib/data/generated'
+} from '@/lib/data/inventory'
 
 const formSchema = z.object({
   product_id: z.string().uuid('Please select a product'),

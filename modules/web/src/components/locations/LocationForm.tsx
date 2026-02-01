@@ -19,7 +19,7 @@ import {
 } from '../ui/select'
 import { FormErrorBanner } from '@/components/common/FormErrorBanner'
 import { BooleanSelect } from '@/components/common/BooleanSelect'
-import type { LocationResponseDto } from '@/lib/data/generated'
+import type { LocationResponseDto } from '@/lib/data/locations'
 import { LocationType } from '@/lib/enums/location-type.enum'
 import { useLocationForm } from '@/hooks/forms/use-location-form'
 

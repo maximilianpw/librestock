@@ -9,21 +9,16 @@ import {
   Max,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { LocationType } from '../../../common/enums/location-type.enum';
+import {
+  LocationType,
+  LocationSortField,
+  SortOrder,
+  type LocationQueryDto as LocationQueryDtoShape,
+} from '@librestock/types';
 
-export enum LocationSortField {
-  NAME = 'name',
-  TYPE = 'type',
-  CREATED_AT = 'created_at',
-  UPDATED_AT = 'updated_at',
-}
+export { LocationSortField, SortOrder };
 
-export enum SortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
-
-export class LocationQueryDto {
+export class LocationQueryDto implements LocationQueryDtoShape {
   @ApiProperty({
     description: 'Page number (1-based)',
     minimum: 1,

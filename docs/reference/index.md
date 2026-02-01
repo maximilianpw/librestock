@@ -12,17 +12,17 @@ Technical reference documentation for LibreStock Inventory.
 
 ### API Documentation
 
-The API is documented via OpenAPI/Swagger:
+The API is documented via Swagger UI:
 
 - **Local:** http://localhost:8080/api/docs
-- **Spec file:** `openapi.yaml` in repository root
+- **OpenAPI JSON:** http://localhost:8080/api/docs-json
 
-### Generated Types
+### Shared Types
 
-Frontend TypeScript types are generated from the OpenAPI spec:
+Shared DTO interfaces/enums live in `packages/types`:
 
 ```bash
-pnpm --filter @librestock/web api:gen
+pnpm --filter @librestock/types build
 ```
 
-Generated files are in `modules/web/src/lib/data/generated.ts`.
+Types are authored in `packages/types/src/`.

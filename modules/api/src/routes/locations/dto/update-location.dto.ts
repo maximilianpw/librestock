@@ -7,9 +7,10 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { LocationType } from '../../../common/enums/location-type.enum';
+import type { UpdateLocationDto as UpdateLocationDtoShape } from '@librestock/types';
+import { LocationType } from '@librestock/types';
 
-export class UpdateLocationDto {
+export class UpdateLocationDto implements UpdateLocationDtoShape {
   @ApiProperty({
     description: 'Location name',
     type: String,

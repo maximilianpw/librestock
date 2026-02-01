@@ -111,9 +111,9 @@ kill -9 <PID>
    ```
 3. Verify Clerk dashboard configuration
 
-### OpenAPI generation fails
+### Shared types build fails
 
-**Symptom:** `openapi:generate` command fails
+**Symptom:** `@librestock/types` build fails
 
 **Solutions:**
 
@@ -131,14 +131,13 @@ kill -9 <PID>
 
 ### API client type errors
 
-**Symptom:** TypeScript errors in generated code
+**Symptom:** TypeScript errors in handwritten hooks or shared types
 
 **Solutions:**
 
-1. Regenerate after API changes:
+1. Rebuild shared types after API changes:
    ```bash
-   pnpm --filter @librestock/api openapi:generate
-   pnpm --filter @librestock/web api:gen
+   pnpm --filter @librestock/types build
    ```
 
 ### Hydration errors

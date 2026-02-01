@@ -6,7 +6,7 @@ import { ImagePlaceholder } from '@/components/items/ImagePlaceholder'
 import { DisplayType } from '@/lib/enums/display-type.enum'
 import { IconSize } from '@/lib/enums/icon-size.enum'
 
-import type { ProductResponseDto } from '@/lib/data/generated'
+import type { ProductResponseDto } from '@/lib/data/products'
 
 export function ItemCard({
   item,
@@ -16,9 +16,8 @@ export function ItemCard({
   displayType: DisplayType
 }): React.JSX.Element {
   const { t } = useTranslation()
-  const price = Number(item.standard_price ?? 0)
-  // Type assertion: description is actually string | null at runtime despite incorrect generated types
-  const description = (item.description as unknown as string | null) ?? null
+  const { description, name, sku, standard_price: standardPrice } = item
+  const price = Number(standardPrice ?? 0)
 
   if (displayType === DisplayType.LIST) {
     return (
@@ -27,9 +26,9 @@ export function ItemCard({
           <ImagePlaceholder icon={Package} iconSize={IconSize.SM} />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="text-foreground truncate font-medium">{item.name}</h3>
+          <h3 className="text-foreground truncate font-medium">{name}</h3>
           <div className="text-muted-foreground mt-1 flex items-center gap-4 text-sm">
-            <span>SKU: {item.sku}</span>
+            <span>SKU: {sku}</span>
             <span>
               {t('items.price')}: ${price.toLocaleString()}
             </span>
@@ -50,10 +49,8 @@ export function ItemCard({
         <ImagePlaceholder icon={Package} iconSize={IconSize.LG} />
       </div>
       <CardContent className="pt-4">
-        <h3 className="text-foreground mb-1 truncate font-medium">
-          {item.name}
-        </h3>
-        <p className="text-muted-foreground mb-2 text-xs">{item.sku}</p>
+        <h3 className="text-foreground mb-1 truncate font-medium">{name}</h3>
+        <p className="text-muted-foreground mb-2 text-xs">{sku}</p>
         <div className="text-muted-foreground space-y-1 text-sm">
           <p className="text-foreground font-medium">
             ${price.toLocaleString()}

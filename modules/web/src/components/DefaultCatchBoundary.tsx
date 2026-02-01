@@ -7,7 +7,9 @@ import {
 } from '@tanstack/react-router'
 import type { ErrorComponentProps } from '@tanstack/react-router'
 
-export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
+export function DefaultCatchBoundary({
+  error,
+}: ErrorComponentProps): React.JSX.Element {
   const router = useRouter()
   const isRoot = useMatch({
     strict: false,
@@ -23,7 +25,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         <button
           className={`rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700`}
           onClick={() => {
-            router.invalidate()
+            void router.invalidate()
           }}
         >
           Try Again

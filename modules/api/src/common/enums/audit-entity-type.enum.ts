@@ -1,11 +1,1 @@
-export enum AuditEntityType {
-  PRODUCT = 'PRODUCT',
-  CATEGORY = 'CATEGORY',
-  SUPPLIER = 'SUPPLIER',
-  ORDER = 'ORDER',
-  ORDER_ITEM = 'ORDER_ITEM',
-  INVENTORY = 'INVENTORY',
-  LOCATION = 'LOCATION',
-  STOCK_MOVEMENT = 'STOCK_MOVEMENT',
-  PHOTO = 'PHOTO',
-}
+export { AuditEntityType } from '@librestock/types';

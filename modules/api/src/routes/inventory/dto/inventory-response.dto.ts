@@ -1,7 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type {
+  AreaSummaryDto as AreaSummaryDtoShape,
+  InventoryResponseDto as InventoryResponseDtoShape,
+  LocationSummaryDto as LocationSummaryDtoShape,
+  ProductSummaryDto as ProductSummaryDtoShape,
+} from '@librestock/types';
 import { BaseResponseDto } from '../../../common/dto/base-response.dto';
 
-export class ProductSummaryDto {
+export class ProductSummaryDto implements ProductSummaryDtoShape {
   @ApiProperty({ description: 'Product ID', format: 'uuid' })
   id: string;
 
@@ -15,7 +21,7 @@ export class ProductSummaryDto {
   unit: string | null;
 }
 
-export class LocationSummaryDto {
+export class LocationSummaryDto implements LocationSummaryDtoShape {
   @ApiProperty({ description: 'Location ID', format: 'uuid' })
   id: string;
 
@@ -26,7 +32,7 @@ export class LocationSummaryDto {
   type: string;
 }
 
-export class AreaSummaryDto {
+export class AreaSummaryDto implements AreaSummaryDtoShape {
   @ApiProperty({ description: 'Area ID', format: 'uuid' })
   id: string;
 
@@ -37,7 +43,10 @@ export class AreaSummaryDto {
   code: string;
 }
 
-export class InventoryResponseDto extends BaseResponseDto {
+export class InventoryResponseDto
+  extends BaseResponseDto
+  implements InventoryResponseDtoShape
+{
   @ApiProperty({
     description: 'Unique identifier',
     format: 'uuid',

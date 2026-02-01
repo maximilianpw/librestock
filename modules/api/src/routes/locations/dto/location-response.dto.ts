@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  type LocationResponseDto as LocationResponseDtoShape,
+  LocationType,
+} from '@librestock/types';
 import { BaseResponseDto } from '../../../common/dto/base-response.dto';
-import { LocationType } from '../../../common/enums/location-type.enum';
 
-export class LocationResponseDto extends BaseResponseDto {
+export class LocationResponseDto
+  extends BaseResponseDto
+  implements LocationResponseDtoShape
+{
   @ApiProperty({
     description: 'Unique identifier',
     format: 'uuid',

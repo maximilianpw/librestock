@@ -24,14 +24,13 @@ import {
   getListLocationsQueryKey,
   getListAllLocationsQueryKey,
   type PaginatedLocationsResponseDto,
-} from '@/lib/data/generated'
+} from '@/lib/data/locations'
 import {
   removeItemFromArray,
   removeItemFromPaginated,
   restoreQueryData,
   snapshotQueryData,
 } from '@/lib/data/query-cache'
-import { type LocationType } from '@/lib/enums/location-type.enum'
 import {
   LOCATION_TYPE_ICONS,
   LOCATION_TYPE_COLORS,
@@ -48,8 +47,8 @@ export function LocationCard({ location, onClick }: LocationCardProps): React.JS
   const [editOpen, setEditOpen] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
 
-  const Icon = LOCATION_TYPE_ICONS[location.type as LocationType]
-  const typeColor = LOCATION_TYPE_COLORS[location.type as LocationType]
+  const Icon = LOCATION_TYPE_ICONS[location.type]
+  const typeColor = LOCATION_TYPE_COLORS[location.type]
 
   const deleteMutation = useDeleteLocation({
     mutation: {

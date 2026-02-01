@@ -9,8 +9,8 @@ import {
   useUpdateLocation,
   getListLocationsQueryKey,
   getListAllLocationsQueryKey,
-  type CreateLocationDtoType,
-} from '@/lib/data/generated'
+  LocationType,
+} from '@/lib/data/locations'
 
 const formSchema = z.object({
   name: z
@@ -85,7 +85,7 @@ export function useLocationForm({ location, onSuccess }: UseLocationFormOptions 
   return useForm({
     defaultValues: {
       name: location?.name ?? '',
-      type: (location?.type ?? 'WAREHOUSE') as keyof typeof CreateLocationDtoType,
+      type: location?.type ?? LocationType.WAREHOUSE,
       address: location?.address ?? '',
       contact_person: location?.contact_person ?? '',
       phone: location?.phone ?? '',

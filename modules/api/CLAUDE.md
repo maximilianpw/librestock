@@ -183,7 +183,7 @@ The transaction interceptor automatically wraps decorated methods in TypeORM tra
 6. **Controller** in `routes/<feature>/<feature>.controller.ts`
 7. **Module** in `routes/<feature>/<feature>.module.ts`
 8. **Register** in `app.module.ts` (imports) and `app.routes.ts`
-9. **Regenerate OpenAPI**: `npm run openapi:generate`
+9. **Update shared DTOs/enums** in `packages/types/src/<feature>/`
 
 ## Adding an Endpoint
 
@@ -194,7 +194,7 @@ The transaction interceptor automatically wraps decorated methods in TypeORM tra
    - `@ApiOperation()`, `@ApiResponse()` for Swagger
 3. Add service method with business logic
 4. Add repository method if new query needed
-5. Regenerate OpenAPI `npm run openapi:generate`
+5. Update shared DTOs/enums in `packages/types` if response/request shapes change
 
 ## API Routes
 
@@ -284,7 +284,7 @@ NODE_ENV=development               # development | production
 npm run start:dev       # Dev with hot reload
 npm run build           # Compile
 npm run start:prod      # Production
-npm run openapi:generate # Generate openapi.yaml
+pnpm --filter @librestock/types build # Build shared types
 ```
 
 ## Response Formats

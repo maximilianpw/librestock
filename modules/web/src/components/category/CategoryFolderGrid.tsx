@@ -1,7 +1,7 @@
 'use client'
 
 import { Folder } from 'lucide-react'
-import type { CategoryWithChildrenResponseDto } from '@/lib/data/generated'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/categories'
 
 interface CategoryFolderGridProps {
   categories: CategoryWithChildrenResponseDto[]

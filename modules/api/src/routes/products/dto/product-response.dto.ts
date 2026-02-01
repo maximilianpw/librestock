@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type {
+  CategorySummaryDto as CategorySummaryDtoShape,
+  SupplierSummaryDto as SupplierSummaryDtoShape,
+  ProductLinksDto as ProductLinksDtoShape,
+  ProductResponseDto as ProductResponseDtoShape,
+} from '@librestock/types';
 import { HateoasLink } from '../../../common/hateoas/hateoas-link.dto';
 import { BaseAuditResponseDto } from '../../../common/dto/base-response.dto';
 
-export class CategorySummaryDto {
+export class CategorySummaryDto implements CategorySummaryDtoShape {
   @ApiProperty({
     description: 'Category ID',
     format: 'uuid',
@@ -24,7 +30,7 @@ export class CategorySummaryDto {
   parent_id: string | null;
 }
 
-export class SupplierSummaryDto {
+export class SupplierSummaryDto implements SupplierSummaryDtoShape {
   @ApiProperty({
     description: 'Supplier ID',
     format: 'uuid',
@@ -39,7 +45,7 @@ export class SupplierSummaryDto {
   name: string;
 }
 
-export class ProductLinksDto {
+export class ProductLinksDto implements ProductLinksDtoShape {
   @ApiProperty({ description: 'Link to this product', type: HateoasLink })
   self: HateoasLink;
 
@@ -62,7 +68,10 @@ export class ProductLinksDto {
   category: HateoasLink;
 }
 
-export class ProductResponseDto extends BaseAuditResponseDto {
+export class ProductResponseDto
+  extends BaseAuditResponseDto
+  implements ProductResponseDtoShape
+{
   @ApiProperty({
     description: 'Unique identifier',
     format: 'uuid',

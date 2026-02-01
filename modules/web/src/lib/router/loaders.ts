@@ -2,11 +2,13 @@ import type { QueryClient } from '@tanstack/react-query'
 import {
   getListLocationsQueryOptions,
   getListAllLocationsQueryOptions,
-  getAreasControllerFindAllQueryOptions,
+  type LocationQueryDto,
+} from '@/lib/data/locations'
+import { getAreasControllerFindAllQueryOptions } from '@/lib/data/areas'
+import {
   getListInventoryQueryOptions,
-  type ListLocationsParams,
-  type ListInventoryParams,
-} from '@/lib/data/generated'
+  type InventoryQueryDto,
+} from '@/lib/data/inventory'
 
 /**
  * Loader helper for locations page
@@ -16,12 +18,12 @@ export async function prefetchLocationsData(
   queryClient: QueryClient,
   search: {
     q?: string
-    type?: ListLocationsParams['type']
+    type?: LocationQueryDto['type']
     page?: number
   },
   pageSize: number,
 ): Promise<void> {
-  const params: ListLocationsParams = {
+  const params: LocationQueryDto = {
     page: search.page ?? 1,
     limit: pageSize,
   }
@@ -66,7 +68,7 @@ export async function prefetchInventoryData(
   }
 
   // Build inventory query params
-  const params: ListInventoryParams = {
+  const params: InventoryQueryDto = {
     page: search.page ?? 1,
     limit: pageSize,
   }

@@ -35,14 +35,13 @@ import {
   getGetLocationQueryOptions,
   type PaginatedLocationsResponseDto,
   type LocationResponseDto,
-} from '@/lib/data/generated'
+} from '@/lib/data/locations'
 import {
   removeItemFromArray,
   removeItemFromPaginated,
   restoreQueryData,
   snapshotQueryData,
 } from '@/lib/data/query-cache'
-import { type LocationType } from '@/lib/enums/location-type.enum'
 import {
   LOCATION_TYPE_ICONS,
   LOCATION_TYPE_COLORS,
@@ -140,8 +139,8 @@ function LocationHeader({
   onDelete,
 }: LocationHeaderProps): React.JSX.Element {
   const { t } = useTranslation()
-  const Icon = LOCATION_TYPE_ICONS[location.type as LocationType]
-  const typeColor = LOCATION_TYPE_COLORS[location.type as LocationType]
+  const Icon = LOCATION_TYPE_ICONS[location.type]
+  const typeColor = LOCATION_TYPE_COLORS[location.type]
 
   return (
     <div className="border-b px-6 py-4">

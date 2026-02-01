@@ -42,9 +42,9 @@ export class AuthController {
     description: 'Internal server error',
     type: ErrorResponseDto,
   })
-  async getProfile(
+  getProfile(
     @Session() session: UserSession,
-  ): Promise<ProfileResponseDto> {
+  ): ProfileResponseDto {
     return session.user;
   }
 

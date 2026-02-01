@@ -7,7 +7,7 @@ import { CreateArea } from './CreateArea'
 import { Spinner } from '@/components/ui/spinner'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
-import { useAreasControllerFindAll } from '@/lib/data/generated'
+import { useAreasControllerFindAll } from '@/lib/data/areas'
 
 interface AreaTreeProps {
   locationId: string

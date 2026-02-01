@@ -10,21 +10,15 @@ import {
   Max,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
+import {
+  InventorySortField,
+  SortOrder,
+  type InventoryQueryDto as InventoryQueryDtoShape,
+} from '@librestock/types';
 
-export enum InventorySortField {
-  QUANTITY = 'quantity',
-  CREATED_AT = 'created_at',
-  UPDATED_AT = 'updated_at',
-  EXPIRY_DATE = 'expiry_date',
-  RECEIVED_DATE = 'received_date',
-}
+export { InventorySortField, SortOrder };
 
-export enum SortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
-
-export class InventoryQueryDto {
+export class InventoryQueryDto implements InventoryQueryDtoShape {
   @ApiProperty({
     description: 'Page number (1-based)',
     minimum: 1,

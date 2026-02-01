@@ -256,6 +256,14 @@ export default tseslint.config(
     },
   },
 
+  // API client helpers: allow direct promise returns in async wrappers
+  {
+    files: ['src/lib/data/**/*.ts'],
+    rules: {
+      '@typescript-eslint/return-await': 'off',
+    },
+  },
+
   // Web-specific ignores
   {
     ignores: [

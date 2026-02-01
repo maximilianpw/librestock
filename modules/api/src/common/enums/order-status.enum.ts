@@ -1,11 +1,1 @@
-export enum OrderStatus {
-  DRAFT = 'DRAFT',
-  CONFIRMED = 'CONFIRMED',
-  SOURCING = 'SOURCING',
-  PICKING = 'PICKING',
-  PACKED = 'PACKED',
-  SHIPPED = 'SHIPPED',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-  ON_HOLD = 'ON_HOLD',
-}
+export { OrderStatus } from '@librestock/types';

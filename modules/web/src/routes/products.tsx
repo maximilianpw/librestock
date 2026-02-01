@@ -8,7 +8,7 @@ import {
   useListCategories,
   type CategoryWithChildrenResponseDto,
   getListCategoriesQueryOptions,
-} from '@/lib/data/generated'
+} from '@/lib/data/categories'
 
 export const Route = createFileRoute('/products')({
   loader: async ({ context: { queryClient } }) => {

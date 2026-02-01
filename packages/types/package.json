@@ -1,0 +1,61 @@
+{
+  "name": "@librestock/types",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared TypeScript interfaces and enums for LibreStock",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    },
+    "./areas": {
+      "types": "./dist/areas/index.d.ts",
+      "require": "./dist/areas/index.js"
+    },
+    "./audit-logs": {
+      "types": "./dist/audit-logs/index.d.ts",
+      "require": "./dist/audit-logs/index.js"
+    },
+    "./auth": {
+      "types": "./dist/auth/index.d.ts",
+      "require": "./dist/auth/index.js"
+    },
+    "./branding": {
+      "types": "./dist/branding/index.d.ts",
+      "require": "./dist/branding/index.js"
+    },
+    "./categories": {
+      "types": "./dist/categories/index.d.ts",
+      "require": "./dist/categories/index.js"
+    },
+    "./common": {
+      "types": "./dist/common/index.d.ts",
+      "require": "./dist/common/index.js"
+    },
+    "./inventory": {
+      "types": "./dist/inventory/index.d.ts",
+      "require": "./dist/inventory/index.js"
+    },
+    "./locations": {
+      "types": "./dist/locations/index.d.ts",
+      "require": "./dist/locations/index.js"
+    },
+    "./products": {
+      "types": "./dist/products/index.d.ts",
+      "require": "./dist/products/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "barrels": "node ./scripts/generate-barrels.mjs",
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "pnpm build",
+    "postinstall": "pnpm build"
+  },
+  "main": "./dist/index.js"
+}

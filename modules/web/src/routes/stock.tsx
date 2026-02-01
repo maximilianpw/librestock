@@ -20,7 +20,7 @@ import {
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
 import { PaginationControls } from '@/components/common/PaginationControls'
-import { useListProducts } from '@/lib/data/generated'
+import { useListProducts } from '@/lib/data/products'
 import { DisplayType } from '@/lib/enums/display-type.enum'
 import { SortField } from '@/lib/enums/sort-field.enum'
 import {

@@ -46,7 +46,7 @@ import { CreateProductDto } from './dto';
 
 ```typescript
 // Utiliser les imports de type inline
-import { type ProductResponseDto } from '@/lib/data/generated';
+import { type ProductResponseDto } from '@/lib/data/products';
 ```
 
 **Variables inutilisées** :

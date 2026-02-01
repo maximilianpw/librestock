@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type { HateoasLink as HateoasLinkShape } from '@librestock/types';
 
-export class HateoasLink {
+export class HateoasLink implements HateoasLinkShape {
   @ApiProperty({ description: 'The URL of the linked resource' })
   href: string;
 

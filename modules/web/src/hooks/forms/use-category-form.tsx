@@ -7,7 +7,7 @@ import {
   type CategoryWithChildrenResponseDto,
   useCreateCategory,
   getListCategoriesQueryKey,
-} from '@/lib/data/generated'
+} from '@/lib/data/categories'
 
 const formSchema = z.object({
   name: z

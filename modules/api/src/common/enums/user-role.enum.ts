@@ -1,6 +1,1 @@
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  WAREHOUSE_MANAGER = 'WAREHOUSE_MANAGER',
-  PICKER = 'PICKER',
-  SALES = 'SALES',
-}
+export { UserRole } from '@librestock/types';

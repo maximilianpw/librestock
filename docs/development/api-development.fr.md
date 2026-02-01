@@ -164,10 +164,10 @@ export class ProductsController {
 }
 ```
 
-### 6. Génération OpenAPI
+### 6. Mise à jour des types partagés
 
 ```bash
-pnpm --filter @librestock/api openapi:generate
+pnpm --filter @librestock/types build
 ```
 
 ## Authentification

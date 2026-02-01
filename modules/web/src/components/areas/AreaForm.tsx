@@ -22,7 +22,7 @@ import { BooleanSelect } from '@/components/common/BooleanSelect'
 import {
   type AreaResponseDto,
   useAreasControllerFindAll,
-} from '@/lib/data/generated'
+} from '@/lib/data/areas'
 import { useAreaForm } from '@/hooks/forms/use-area-form'
 
 // Get all descendant IDs of an area (for filtering out invalid parent options)

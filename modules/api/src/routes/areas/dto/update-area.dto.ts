@@ -6,8 +6,9 @@ import {
   IsBoolean,
   MaxLength,
 } from 'class-validator';
+import type { UpdateAreaDto as UpdateAreaDtoShape } from '@librestock/types';
 
-export class UpdateAreaDto {
+export class UpdateAreaDto implements UpdateAreaDtoShape {
   @ApiProperty({
     description: 'Parent area ID (for nested areas)',
     format: 'uuid',

@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type {
+  PaginatedAuditLogsResponseDto as PaginatedAuditLogsResponseDtoShape,
+  PaginationMeta as PaginationMetaShape,
+} from '@librestock/types';
 import { AuditLogResponseDto } from './audit-log-response.dto';
 
-export class PaginationMetaDto {
+export class PaginationMetaDto implements PaginationMetaShape {
   @ApiProperty({ description: 'Current page number' })
   page: number;
 
@@ -21,7 +25,9 @@ export class PaginationMetaDto {
   has_previous: boolean;
 }
 
-export class PaginatedAuditLogsResponseDto {
+export class PaginatedAuditLogsResponseDto
+  implements PaginatedAuditLogsResponseDtoShape
+{
   @ApiProperty({
     description: 'Array of audit log entries',
     type: [AuditLogResponseDto],

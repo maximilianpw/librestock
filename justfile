@@ -40,10 +40,6 @@ test-all:
   just modules/web/test
   cd modules/api && pnpm test
 
-# API client generation from OpenAPI spec
-api-gen:
-  cd modules/web && pnpm api:gen
-
 # Database migrations (Go API)
 migrate-up:
   just modules/api/migrate-up

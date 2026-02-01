@@ -21,7 +21,7 @@ import {
   type InventoryResponseDto,
   useAdjustInventoryQuantity,
   getListInventoryQueryKey,
-} from '@/lib/data/generated'
+} from '@/lib/data/inventory'
 
 interface AdjustQuantityProps {
   inventory: InventoryResponseDto

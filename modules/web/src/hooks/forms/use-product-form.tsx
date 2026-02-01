@@ -5,11 +5,11 @@ import { toast } from 'sonner'
 import z from 'zod'
 import { isValidCategoryId } from '@/lib/utils'
 import {
-  type CategoryWithChildrenResponseDto,
   getGetProductsByCategoryQueryKey,
   getListProductsQueryKey,
   useCreateProduct,
-} from '@/lib/data/generated'
+} from '@/lib/data/products'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/categories'
 
 const formSchema = z.object({
   sku: z

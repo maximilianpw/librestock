@@ -9,8 +9,9 @@ import {
   Min,
   MaxLength,
 } from 'class-validator';
+import type { UpdateInventoryDto as UpdateInventoryDtoShape } from '@librestock/types';
 
-export class UpdateInventoryDto {
+export class UpdateInventoryDto implements UpdateInventoryDtoShape {
   @ApiProperty({
     description: 'Location ID',
     format: 'uuid',

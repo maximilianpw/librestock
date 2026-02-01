@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type { AreaResponseDto as AreaResponseDtoShape } from '@librestock/types';
 import { BaseResponseDto } from '../../../common/dto/base-response.dto';
 
-export class AreaResponseDto extends BaseResponseDto {
+export class AreaResponseDto
+  extends BaseResponseDto
+  implements AreaResponseDtoShape
+{
   @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
   id: string;
 

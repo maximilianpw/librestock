@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react'
-import { useBrandingControllerGet, type BrandingResponseDto } from '@/lib/data/generated'
+import { useBrandingControllerGet, type BrandingResponseDto } from '@/lib/data/branding'
 
 const DEFAULT_BRANDING: BrandingResponseDto = {
   app_name: 'LibreStock',

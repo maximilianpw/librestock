@@ -9,13 +9,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  useListAllLocations,
-  useAreasControllerFindAll,
-  type LocationResponseDto,
-  type AreaResponseDto,
-} from '@/lib/data/generated'
-import { type LocationType } from '@/lib/enums/location-type.enum'
+import { useListAllLocations, type LocationResponseDto } from '@/lib/data/locations'
+import { useAreasControllerFindAll, type AreaResponseDto } from '@/lib/data/areas'
 import { LOCATION_TYPE_ICONS } from '@/lib/location-type.utils'
 
 const SELECTED_ITEM_STYLES = 'bg-accent text-accent-foreground'
@@ -127,7 +122,7 @@ function LocationItem({
   onToggle,
   onSelectArea,
 }: LocationItemProps): React.JSX.Element {
-  const Icon = LOCATION_TYPE_ICONS[location.type as LocationType]
+  const Icon = LOCATION_TYPE_ICONS[location.type]
   const [expandedAreaIds, setExpandedAreaIds] = React.useState<Set<string>>(
     new Set()
   )

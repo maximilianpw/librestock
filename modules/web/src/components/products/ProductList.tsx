@@ -1,12 +1,15 @@
 'use client'
 import { useTranslation } from 'react-i18next'
-import { Spinner } from '../ui/spinner'
+import { isAxiosError } from 'axios'
+import type { ErrorResponseDto } from '@librestock/types'
+
 import { CategoryFolderGrid } from '../category/CategoryFolderGrid'
+import { Spinner } from '../ui/spinner'
 import {
   useListProducts,
   useGetProductsByCategory,
-  type CategoryWithChildrenResponseDto,
-} from '@/lib/data/generated'
+} from '@/lib/data/products'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/categories'
 
 interface ProductListProps {
   categoryId?: string | null
@@ -44,6 +47,16 @@ export function ProductList({
       : isLoadingAll
   const error =
     categoryId !== null && categoryId !== undefined ? errorCategory : errorAll
+  const errorMessage = (() => {
+    if (isAxiosError(error)) {
+      const data = error.response?.data as ErrorResponseDto | undefined
+      return data?.error ?? error.message
+    }
+    if (error instanceof Error) {
+      return error.message
+    }
+    return undefined
+  })()
 
   if (isLoading === true) {
     return (
@@ -56,7 +69,8 @@ export function ProductList({
   if (error) {
     return (
       <p className="text-destructive">
-        {t('products.errorLoading')} {error.error}
+        {t('products.errorLoading')}
+        {!!errorMessage && ` ${errorMessage}`}
       </p>
     )
   }

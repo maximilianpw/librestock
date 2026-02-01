@@ -14,7 +14,7 @@ Runs on every pull request and push to main:
 - Type check
 - Run tests
 - Build all packages
-- Validate OpenAPI spec
+- Build shared types
 
 ### Documentation Deployment
 
