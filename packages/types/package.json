@@ -7,43 +7,63 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./areas": {
       "types": "./dist/areas/index.d.ts",
-      "require": "./dist/areas/index.js"
+      "import": "./dist/areas/index.js",
+      "require": "./dist/areas/index.js",
+      "default": "./dist/areas/index.js"
     },
     "./audit-logs": {
       "types": "./dist/audit-logs/index.d.ts",
-      "require": "./dist/audit-logs/index.js"
+      "import": "./dist/audit-logs/index.js",
+      "require": "./dist/audit-logs/index.js",
+      "default": "./dist/audit-logs/index.js"
     },
     "./auth": {
       "types": "./dist/auth/index.d.ts",
-      "require": "./dist/auth/index.js"
+      "import": "./dist/auth/index.js",
+      "require": "./dist/auth/index.js",
+      "default": "./dist/auth/index.js"
     },
     "./branding": {
       "types": "./dist/branding/index.d.ts",
-      "require": "./dist/branding/index.js"
+      "import": "./dist/branding/index.js",
+      "require": "./dist/branding/index.js",
+      "default": "./dist/branding/index.js"
     },
     "./categories": {
       "types": "./dist/categories/index.d.ts",
-      "require": "./dist/categories/index.js"
+      "import": "./dist/categories/index.js",
+      "require": "./dist/categories/index.js",
+      "default": "./dist/categories/index.js"
     },
     "./common": {
       "types": "./dist/common/index.d.ts",
-      "require": "./dist/common/index.js"
+      "import": "./dist/common/index.js",
+      "require": "./dist/common/index.js",
+      "default": "./dist/common/index.js"
     },
     "./inventory": {
       "types": "./dist/inventory/index.d.ts",
-      "require": "./dist/inventory/index.js"
+      "import": "./dist/inventory/index.js",
+      "require": "./dist/inventory/index.js",
+      "default": "./dist/inventory/index.js"
     },
     "./locations": {
       "types": "./dist/locations/index.d.ts",
-      "require": "./dist/locations/index.js"
+      "import": "./dist/locations/index.js",
+      "require": "./dist/locations/index.js",
+      "default": "./dist/locations/index.js"
     },
     "./products": {
       "types": "./dist/products/index.d.ts",
-      "require": "./dist/products/index.js"
+      "import": "./dist/products/index.js",
+      "require": "./dist/products/index.js",
+      "default": "./dist/products/index.js"
     }
   },
   "types": "./dist/index.d.ts",
@@ -57,5 +77,6 @@
     "prepare": "pnpm build",
     "postinstall": "pnpm build"
   },
-  "main": "./dist/index.js"
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
 }
