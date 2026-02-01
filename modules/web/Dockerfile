@@ -1,61 +1,43 @@
 # Dockerfile for @librestock/web (TanStack Start)
-# Based on devenv configuration: Node.js 24, pnpm 10
+# Based on: https://github.com/olegkorol/docker-tanstack-start
 
-# Build stage
-FROM node:24-alpine AS builder
-
-# Install pnpm
+# Base stage with pnpm
+FROM node:24-alpine AS base
 RUN corepack enable && corepack prepare pnpm@10 --activate
-
 WORKDIR /app
 
-# Copy workspace configuration files
+# Development stage - for local dev with HMR
+FROM base AS development
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-
-# Copy shared packages
 COPY packages/tsconfig/ ./packages/tsconfig/
 COPY packages/eslint-config/ ./packages/eslint-config/
-
-# Copy Web module
 COPY modules/web/package.json ./modules/web/
-
-# Install dependencies
 RUN pnpm install --frozen-lockfile
-
-# Copy source code
 COPY modules/web/ ./modules/web/
+WORKDIR /app/modules/web
+EXPOSE 3000
+CMD ["pnpm", "dev", "--host", "0.0.0.0"]
 
-# Build TanStack Start app
+# Build stage
+FROM base AS builder
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/tsconfig/ ./packages/tsconfig/
+COPY packages/eslint-config/ ./packages/eslint-config/
+COPY modules/web/package.json ./modules/web/
+RUN pnpm install --frozen-lockfile
+COPY modules/web/ ./modules/web/
 RUN pnpm --filter @librestock/web build
 
 # Production stage
 FROM node:24-alpine AS production
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@10 --activate
-
+ENV NODE_ENV=production
 WORKDIR /app
 
-# Copy workspace configuration
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 tanstack
 
-# Copy package.json files for workspace resolution
-COPY packages/tsconfig/ ./packages/tsconfig/
-COPY modules/web/package.json ./modules/web/
+COPY --from=builder --chown=tanstack:nodejs /app/modules/web/.output ./.output
 
-# Install production dependencies only
-RUN pnpm install --frozen-lockfile --prod
-
-# Copy built artifacts from builder
-COPY --from=builder /app/modules/web/dist ./modules/web/dist
-COPY --from=builder /app/modules/web/public ./modules/web/public
-
-# Set environment variables
-ENV NODE_ENV=production
-
-# Expose web port
+USER tanstack
 EXPOSE 3000
-
-WORKDIR /app/modules/web
-
-CMD ["pnpm", "start"]
+CMD ["node", ".output/server/index.mjs"]
