@@ -44,7 +44,10 @@ import { auth } from './auth';
         limit: 100, // 100 requests per minute (global default)
       },
     ]),
-    BetterAuthModule.forRoot({ auth }),
+    BetterAuthModule.forRoot({
+      auth,
+      disableGlobalAuthGuard: false,
+    }),
     HealthModule,
     AuthRoutesModule,
     CategoriesModule,
