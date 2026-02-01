@@ -1,48 +1,59 @@
-# See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
+# Git
+.git
+.gitignore
 
-# Ignore git directory.
-/.git/
-/.gitignore
+# Environment files
+.env*
+!.env.example
 
-# Ignore bundler config.
-/.bundle
+# Development tools
+.devenv
+.devcontainer
+.direnv
+.postgres
+.claude
+devenv.nix
+devenv.yaml
+devenv.lock
+flake.nix
+flake.lock
 
-# Ignore all environment files (except templates).
-/.env*
-!/.env*.erb
+# IDE
+.idea
+.vscode
 
-# Ignore all default key files.
-/config/master.key
-/config/credentials/*.key
+# Dependencies (will be installed in container)
+node_modules
+**/node_modules
 
-# Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+# Build outputs
+**/dist
+**/.output
+**/coverage
 
-# Ignore pidfiles, but keep the directory.
-/tmp/pids/*
-!/tmp/pids/.keep
+# Logs
+*.log
+**/logs
 
-# Ignore storage (uploaded files in development and any SQLite databases).
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/.keep
+# Documentation
+docs
+site
+*.md
+!README.md
 
-# Ignore assets.
-/node_modules/
-/app/assets/builds/*
-!/app/assets/builds/.keep
-/public/assets
+# CI/CD
+.github
 
-# Ignore CI service files.
-/.github
+# Docker files (prevent recursive copy)
+docker-compose*.yml
+**/Dockerfile
 
-# Ignore development files
-/.devcontainer
+# Test files
+**/*.spec.ts
+**/*.test.ts
+**/test
+**/tests
 
-# Ignore Docker-related files
-/.dockerignore
-/Dockerfile*
+# Misc
+.DS_Store
+*.local

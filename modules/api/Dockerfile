@@ -1,60 +1,41 @@
 # Dockerfile for @librestock/api (NestJS)
-# Based on devenv configuration: Node.js 24, pnpm 10, PostgreSQL 16
+# Based on: https://www.tomray.dev/nestjs-docker-production
 
-# Build stage
-FROM node:24-alpine AS builder
-
-# Install pnpm
+# Base stage with pnpm
+FROM node:24-alpine AS base
 RUN corepack enable && corepack prepare pnpm@10 --activate
-
 WORKDIR /app
 
-# Copy workspace configuration files
+# Development stage - for local dev with hot reload
+FROM base AS development
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-
-# Copy shared packages
 COPY packages/tsconfig/ ./packages/tsconfig/
-
-# Copy API module
 COPY modules/api/package.json ./modules/api/
-
-# Install dependencies
 RUN pnpm install --frozen-lockfile
-
-# Copy source code
 COPY modules/api/ ./modules/api/
+WORKDIR /app/modules/api
+CMD ["pnpm", "start:dev"]
 
-# Build API
+# Build stage
+FROM base AS builder
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/tsconfig/ ./packages/tsconfig/
+COPY modules/api/package.json ./modules/api/
+RUN pnpm install --frozen-lockfile
+COPY modules/api/ ./modules/api/
 RUN pnpm --filter @librestock/api build
 
 # Production stage
-FROM node:24-alpine AS production
+FROM base AS production
+ENV NODE_ENV=production
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@10 --activate
-
-WORKDIR /app
-
-# Copy workspace configuration
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-
-# Copy package.json files for workspace resolution
 COPY packages/tsconfig/ ./packages/tsconfig/
 COPY modules/api/package.json ./modules/api/
-
-# Install production dependencies only
 RUN pnpm install --frozen-lockfile --prod
 
-# Copy built artifacts
 COPY --from=builder /app/modules/api/dist ./modules/api/dist
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV NEST_PORT=3001
-
-# Expose API port
-EXPOSE 3001
-
+EXPOSE 8080
 WORKDIR /app/modules/api
-
 CMD ["node", "dist/main"]

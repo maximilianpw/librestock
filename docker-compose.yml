@@ -1,0 +1,72 @@
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    ports:
+      - "9999:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: librestock_inventory
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: modules/api/Dockerfile
+      target: development
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./modules/api/.env
+    environment:
+      NODE_ENV: development
+      PORT: 8080
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: librestock_inventory
+    volumes:
+      - ./modules/api/src:/app/modules/api/src
+      - ./modules/api/tsconfig.json:/app/modules/api/tsconfig.json:ro
+      - ./modules/api/nest-cli.json:/app/modules/api/nest-cli.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: modules/web/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./modules/web/.env
+    environment:
+      NODE_ENV: development
+      VITE_API_BASE_URL: http://localhost:8080/api/v1
+    volumes:
+      - ./modules/web/src:/app/modules/web/src
+      - ./modules/web/public:/app/modules/web/public:ro
+      - ./modules/web/vite.config.ts:/app/modules/web/vite.config.ts:ro
+      - ./modules/web/tsconfig.json:/app/modules/web/tsconfig.json:ro
+      - ./modules/web/app.config.ts:/app/modules/web/app.config.ts:ro
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
