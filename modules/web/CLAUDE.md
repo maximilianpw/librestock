@@ -98,12 +98,14 @@ navigate({ to: '/locations' })
 Order matters in `__root.tsx`:
 
 ```
-AuthProvider → ReactQueryProvider → I18nProvider → ThemeProvider → SidebarProvider
+BrandingProvider → I18nProvider → ThemeProvider → SidebarProvider
 ```
 
-- **AuthProvider**: Better Auth session loader + axios token getter
-- **ReactQueryProvider**: Server state management
+- **BrandingProvider**: App branding/theming
 - **I18nProvider**: Translations
+- **ThemeProvider**: Light/dark mode
+
+Authentication is handled by Better Auth's `useSession()` hook from `@/lib/auth-client` - no provider needed.
 
 ## API Integration
 
@@ -259,9 +261,7 @@ const { page, filter } = Route.useSearch();
 ## Environment Variables
 
 ```bash
-VITE_API_BASE_URL=http://localhost:8080          # Required
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_...           # Required
-CLERK_SECRET_KEY=sk_test_...                     # Server-side
+VITE_API_BASE_URL=http://localhost:8080/api/v1   # Required
 ```
 
 ## Commands

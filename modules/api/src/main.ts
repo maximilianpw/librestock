@@ -25,11 +25,12 @@ async function bootstrap() {
   const corsOrigin = configService.get<string>('CORS_ORIGIN');
   app.enableCors({
     origin: corsOrigin ?? false,
+    credentials: true,
   });
 
   // Set global prefix for all routes
   app.setGlobalPrefix('api/v1', {
-    exclude: ['health-check'], // Exclude health check from prefix
+    exclude: ['health-check', 'api/auth/(.*)'], // Exclude health check and auth from prefix
   });
 
   app.useGlobalPipes(

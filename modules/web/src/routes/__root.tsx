@@ -4,18 +4,19 @@ import {
   Scripts,
   createRootRouteWithContext,
   Link,
+  useRouterState,
 } from '@tanstack/react-router'
 import { Toaster } from 'sonner'
 
 import AppSidebar from '@/components/common/Header'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { AuthProvider, useAuthSession } from '@/hooks/providers/AuthProvider'
 import {
   BrandingProvider,
   useBranding,
 } from '@/hooks/providers/BrandingProvider'
 import { I18nProvider } from '@/hooks/providers/I18nProvider'
 import { ThemeProvider } from '@/hooks/providers/ThemeProvider'
+import { useSession } from '@/lib/auth-client'
 import { Theme } from '@/lib/enums/theme.enum'
 import type { RouterContext } from '@/lib/router/context'
 
@@ -51,11 +52,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent(): React.JSX.Element {
   return (
-    <AuthProvider>
-      <RootDocument>
-        <Outlet />
-      </RootDocument>
-    </AuthProvider>
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
   )
 }
 
@@ -126,7 +125,9 @@ function RootDocument({
 }: {
   children: React.ReactNode
 }): React.JSX.Element {
-  const { session, isLoading } = useAuthSession()
+  const { data: session, isPending: isLoading } = useSession()
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const isPublicRoute = pathname.startsWith('/login')
 
   return (
     <html suppressHydrationWarning lang="en">
@@ -147,6 +148,8 @@ function RootDocument({
                 <AuthLoadingScreen />
               ) : session ? (
                 <AuthenticatedLayout>{children}</AuthenticatedLayout>
+              ) : isPublicRoute ? (
+                <>{children}</>
               ) : (
                 <WelcomeScreen />
               )}

@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { useAuthSession } from '@/hooks/providers/AuthProvider'
+import { useSession } from '@/lib/auth-client'
 import { useBranding } from '@/hooks/providers/BrandingProvider'
 
 function useRoutes(): {
@@ -61,7 +61,7 @@ function useRoutes(): {
 export default function AppSidebar(): React.JSX.Element {
   const { t } = useTranslation()
   const { branding } = useBranding()
-  const { session } = useAuthSession()
+  const { data: session } = useSession()
   const routes = useRoutes()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname

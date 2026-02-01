@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { auth } from '@/lib/auth'
-import { useAuthSession } from '@/hooks/providers/AuthProvider'
+import { signIn } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/login')({
   component: LoginRoute,
@@ -9,7 +8,6 @@ export const Route = createFileRoute('/login')({
 
 function LoginRoute(): React.JSX.Element {
   const navigate = useNavigate()
-  const { refreshSession } = useAuthSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -20,15 +18,9 @@ function LoginRoute(): React.JSX.Element {
     setIsSubmitting(true)
     setError(null)
     try {
-      await auth.api.signInEmail({
-        body: {
-          email,
-          password,
-        },
-      })
-      await refreshSession()
+      await signIn.email({ email, password })
       await navigate({ to: '/' })
-    } catch (err) {
+    } catch {
       setError('Unable to sign in. Check your credentials and try again.')
     } finally {
       setIsSubmitting(false)

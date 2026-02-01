@@ -59,7 +59,9 @@ jobs:
         run: pnpm --filter @librestock/api openapi:generate
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/librestock_inventory_test
-          CLERK_SECRET_KEY: sk_test_dummy_key_for_openapi_generation
+          BETTER_AUTH_SECRET: dummy-secret-at-least-32-chars-long
+          BETTER_AUTH_URL: http://localhost:8080
+          FRONTEND_URL: http://localhost:3000
 
       - name: Regenerate frontend API client
         run: pnpm --filter @librestock/web api:gen

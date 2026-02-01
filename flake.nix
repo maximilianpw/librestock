@@ -65,11 +65,6 @@
             # Formatting
             nixfmt-rfc-style
           ];
-
-          shellHook = ''
-            export PGDATABASE="librestock_inventory"
-            export DATABASE_URL="postgresql://$USER@127.0.0.1:5432/librestock_inventory?sslmode=disable"
-          '';
         };
       }
     );
