@@ -15,10 +15,10 @@ export class BrandingResponseDto {
   @ApiProperty({ description: 'Application tagline' })
   tagline: string;
 
-  @ApiProperty({ description: 'Logo URL', nullable: true })
+  @ApiProperty({ description: 'Logo URL', type: 'string', nullable: true })
   logo_url: string | null;
 
-  @ApiProperty({ description: 'Favicon URL', nullable: true })
+  @ApiProperty({ description: 'Favicon URL', type: 'string', nullable: true })
   favicon_url: string | null;
 
   @ApiProperty({ description: 'Primary brand color (hex)' })

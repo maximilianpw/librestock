@@ -67,11 +67,11 @@ function DynamicHead(): React.JSX.Element {
       <meta content={branding.tagline} name="description" />
       <meta content={branding.app_name} name="apple-mobile-web-app-title" />
       <link
-        href={branding.favicon_url ?? '/icons/icon-192x192.png'}
+        href={(branding.favicon_url as unknown as string) ?? '/icons/icon-192x192.png'}
         rel="icon"
       />
       <link
-        href={branding.favicon_url ?? '/icons/apple-touch-icon.png'}
+        href={(branding.favicon_url as unknown as string) ?? '/icons/apple-touch-icon.png'}
         rel="apple-touch-icon"
       />
     </div>

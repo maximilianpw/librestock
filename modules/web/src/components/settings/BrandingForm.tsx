@@ -24,9 +24,9 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
-  useGetBranding,
-  useUpdateBranding,
-  getGetBrandingQueryKey,
+  useBrandingControllerGet,
+  useBrandingControllerUpdate,
+  getBrandingControllerGetQueryKey,
 } from '@/lib/data/generated'
 
 const brandingSchema = z.object({
@@ -42,15 +42,15 @@ const brandingSchema = z.object({
 export function BrandingForm(): React.JSX.Element {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const { data: branding, isLoading } = useGetBranding()
-  const updateMutation = useUpdateBranding()
+  const { data: branding, isLoading } = useBrandingControllerGet()
+  const updateMutation = useBrandingControllerUpdate()
 
   const form = useForm({
     defaultValues: {
       app_name: branding?.app_name ?? 'LibreStock',
       tagline: branding?.tagline ?? '',
-      logo_url: branding?.logo_url ?? '',
-      favicon_url: branding?.favicon_url ?? '',
+      logo_url: String(branding?.logo_url ?? ''),
+      favicon_url: String(branding?.favicon_url ?? ''),
       primary_color: branding?.primary_color ?? '#3b82f6',
     },
     validators: {
@@ -64,17 +64,18 @@ export function BrandingForm(): React.JSX.Element {
     },
     onSubmit: async ({ value }) => {
       try {
+        // TODO: Remove cast once openapi.yaml is regenerated with proper nullable string types
         await updateMutation.mutateAsync({
           data: {
             app_name: value.app_name,
             tagline: value.tagline || undefined,
-            logo_url: value.logo_url || null,
-            favicon_url: value.favicon_url || null,
+            logo_url: value.logo_url || undefined,
+            favicon_url: value.favicon_url || undefined,
             primary_color: value.primary_color || undefined,
-          },
+          } as Parameters<typeof updateMutation.mutateAsync>[0]['data'],
         })
         await queryClient.invalidateQueries({
-          queryKey: getGetBrandingQueryKey(),
+          queryKey: getBrandingControllerGetQueryKey(),
         })
         toast.success(t('settings.brandingSaved') || 'Branding settings saved')
       } catch {
@@ -89,14 +90,14 @@ export function BrandingForm(): React.JSX.Element {
     if (branding) {
       form.setFieldValue('app_name', branding.app_name)
       form.setFieldValue('tagline', branding.tagline)
-      form.setFieldValue('logo_url', branding.logo_url ?? '')
-      form.setFieldValue('favicon_url', branding.favicon_url ?? '')
+      form.setFieldValue('logo_url', String(branding.logo_url ?? ''))
+      form.setFieldValue('favicon_url', String(branding.favicon_url ?? ''))
       form.setFieldValue('primary_color', branding.primary_color)
     }
   }, [branding, form])
 
   if (isLoading) {
-    return <div className="animate-pulse h-64 bg-muted rounded-lg" />
+    return <div className="bg-muted h-64 animate-pulse rounded-lg" />
   }
 
   return (

@@ -14,13 +14,13 @@ export class UpdateBrandingDto {
   @MaxLength(255)
   tagline?: string;
 
-  @ApiPropertyOptional({ description: 'Logo URL (relative or absolute)', maxLength: 500 })
+  @ApiPropertyOptional({ description: 'Logo URL (relative or absolute)', maxLength: 500, type: 'string', nullable: true })
   @IsOptional()
   @IsString()
   @MaxLength(500)
   logo_url?: string | null;
 
-  @ApiPropertyOptional({ description: 'Favicon URL (relative or absolute)', maxLength: 500 })
+  @ApiPropertyOptional({ description: 'Favicon URL (relative or absolute)', maxLength: 500, type: 'string', nullable: true })
   @IsOptional()
   @IsString()
   @MaxLength(500)
