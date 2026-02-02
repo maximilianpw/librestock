@@ -1,1 +1,1 @@
-export * from './order-status.enum.js'
+export * from './order-status.enum.ts'

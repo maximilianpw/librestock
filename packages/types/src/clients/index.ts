@@ -1,1 +1,1 @@
-export * from './client-status.enum.js'
+export * from './client-status.enum.ts'

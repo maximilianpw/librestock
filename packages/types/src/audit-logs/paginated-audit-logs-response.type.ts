@@ -1,5 +1,5 @@
-import type { PaginationMeta } from '../common/pagination-meta.type.js'
-import type { AuditLogResponseDto } from './audit-log-response.type.js'
+import type { PaginationMeta } from '../common/pagination-meta.type.ts'
+import type { AuditLogResponseDto } from './audit-log-response.type.ts'
 
 export interface PaginatedAuditLogsResponseDto {
   data: AuditLogResponseDto[]

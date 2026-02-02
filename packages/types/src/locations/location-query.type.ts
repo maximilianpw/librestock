@@ -1,6 +1,6 @@
-import type { SortOrder } from '../common/sort-order.enum.js'
-import type { LocationSortField } from './location-sort-field.enum.js'
-import type { LocationType } from './location-type.enum.js'
+import type { SortOrder } from '../common/sort-order.enum.ts'
+import type { LocationSortField } from './location-sort-field.enum.ts'
+import type { LocationType } from './location-type.enum.ts'
 
 export interface LocationQueryDto {
   page?: number

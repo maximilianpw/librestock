@@ -1,3 +1,3 @@
-export * from './profile-response.type.js'
-export * from './session-claims-response.type.js'
-export * from './user-role.enum.js'
+export * from './profile-response.type.ts'
+export * from './session-claims-response.type.ts'
+export * from './user-role.enum.ts'

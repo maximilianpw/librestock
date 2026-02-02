@@ -1,4 +1,4 @@
-import type { CreateProductDto } from './create-product.type.js'
+import type { CreateProductDto } from './create-product.type.ts'
 
 export interface BulkCreateProductsDto {
   products: CreateProductDto[]

@@ -1,7 +1,7 @@
-import type { BaseResponseDto } from '../common/base-response.type.js'
-import type { AreaSummaryDto } from './area-summary.type.js'
-import type { LocationSummaryDto } from './location-summary.type.js'
-import type { ProductSummaryDto } from './product-summary.type.js'
+import type { BaseResponseDto } from '../common/base-response.type.ts'
+import type { AreaSummaryDto } from './area-summary.type.ts'
+import type { LocationSummaryDto } from './location-summary.type.ts'
+import type { ProductSummaryDto } from './product-summary.type.ts'
 
 export interface InventoryResponseDto extends BaseResponseDto {
   id: string

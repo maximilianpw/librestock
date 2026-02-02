@@ -1,7 +1,7 @@
-import type { BaseAuditResponseDto } from '../common/base-response.type.js'
-import type { CategorySummaryDto } from './category-summary.type.js'
-import type { ProductLinksDto } from './product-links.type.js'
-import type { SupplierSummaryDto } from './supplier-summary.type.js'
+import type { BaseAuditResponseDto } from '../common/base-response.type.ts'
+import type { CategorySummaryDto } from './category-summary.type.ts'
+import type { ProductLinksDto } from './product-links.type.ts'
+import type { SupplierSummaryDto } from './supplier-summary.type.ts'
 
 export interface ProductResponseDto extends BaseAuditResponseDto {
   id: string

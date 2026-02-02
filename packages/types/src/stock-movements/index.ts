@@ -1,1 +1,1 @@
-export * from './stock-movement-reason.enum.js'
+export * from './stock-movement-reason.enum.ts'

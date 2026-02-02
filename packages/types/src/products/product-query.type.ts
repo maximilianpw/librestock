@@ -1,5 +1,5 @@
-import type { SortOrder } from '../common/sort-order.enum.js'
-import type { ProductSortField } from './product-sort-field.enum.js'
+import type { SortOrder } from '../common/sort-order.enum.ts'
+import type { ProductSortField } from './product-sort-field.enum.ts'
 
 export interface ProductQueryDto {
   page?: number
