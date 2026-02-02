@@ -1,6 +1,6 @@
-import type { AuditAction } from './audit-action.enum'
-import type { AuditChanges } from './audit-changes.type'
-import type { AuditEntityType } from './audit-entity-type.enum'
+import type { AuditAction } from './audit-action.enum.js'
+import type { AuditChanges } from './audit-changes.type.js'
+import type { AuditEntityType } from './audit-entity-type.enum.js'
 
 export interface AuditLogResponseDto {
   id: string

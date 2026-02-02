@@ -1,5 +1,5 @@
-import type { PaginationMeta } from '../common/pagination-meta.type'
-import type { LocationResponseDto } from './location-response.type'
+import type { PaginationMeta } from '../common/pagination-meta.type.js'
+import type { LocationResponseDto } from './location-response.type.js'
 
 export interface PaginatedLocationsResponseDto {
   data: LocationResponseDto[]

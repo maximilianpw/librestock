@@ -12,7 +12,11 @@ import {
 
 export const Route = createFileRoute('/products')({
   loader: async ({ context: { queryClient } }) => {
-    await queryClient.ensureQueryData(getListCategoriesQueryOptions())
+    try {
+      await queryClient.ensureQueryData(getListCategoriesQueryOptions())
+    } catch {
+      // Allow client-side to retry if SSR prefetch fails
+    }
   },
   component: ProductPage,
 })

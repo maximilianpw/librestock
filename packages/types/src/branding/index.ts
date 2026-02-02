@@ -1,3 +1,3 @@
-export * from './branding-response.type'
-export * from './powered-by.type'
-export * from './update-branding.type'
+export * from './branding-response.type.js'
+export * from './powered-by.type.js'
+export * from './update-branding.type.js'

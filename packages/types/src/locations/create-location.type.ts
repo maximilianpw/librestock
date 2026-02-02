@@ -1,4 +1,4 @@
-import type { LocationType } from './location-type.enum'
+import type { LocationType } from './location-type.enum.js'
 
 export interface CreateLocationDto {
   name: string

@@ -1,5 +1,5 @@
-import type { BaseResponseDto } from '../common/base-response.type'
-import type { LocationType } from './location-type.enum'
+import type { BaseResponseDto } from '../common/base-response.type.js'
+import type { LocationType } from './location-type.enum.js'
 
 export interface LocationResponseDto extends BaseResponseDto {
   id: string

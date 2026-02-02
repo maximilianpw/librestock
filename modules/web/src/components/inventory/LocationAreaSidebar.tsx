@@ -50,16 +50,25 @@ function AreaItem({
 
   return (
     <div>
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
         className={cn(
-          'flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent',
+          'flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent cursor-pointer',
           isSelected && SELECTED_ITEM_STYLES
         )}
         onClick={() => onSelect(area.id)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onSelect(area.id)
+          }
+        }}
       >
         {hasChildren ? (
           <button
+            type="button"
             className="p-0.5 hover:bg-accent-foreground/10 rounded"
             onClick={(e) => {
               e.stopPropagation()
@@ -82,7 +91,7 @@ function AreaItem({
           <Folder className="size-4 text-muted-foreground" />
         )}
         <span className="truncate">{area.name}</span>
-      </button>
+      </div>
       {hasChildren && isExpanded && (
         <div>
           {children.map((child) => (
@@ -149,14 +158,23 @@ function LocationItem({
 
   return (
     <div>
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         className={cn(
-          'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent',
+          'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent cursor-pointer',
           isSelected && !selectedAreaId && SELECTED_ITEM_STYLES
         )}
         onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onSelect()
+          }
+        }}
       >
         <button
+          type="button"
           className="p-0.5 hover:bg-accent-foreground/10 rounded"
           onClick={(e) => {
             e.stopPropagation()
@@ -172,7 +190,7 @@ function LocationItem({
         </button>
         <Icon className="size-4 text-muted-foreground" />
         <span className="truncate">{location.name}</span>
-      </button>
+      </div>
       {isExpanded && (
         <div className="ml-2">
           {!areas && (

@@ -49,7 +49,11 @@ import {
 
 export const Route = createFileRoute('/locations/$id')({
   loader: async ({ context: { queryClient }, params }) => {
-    await queryClient.ensureQueryData(getGetLocationQueryOptions(params.id))
+    try {
+      await queryClient.ensureQueryData(getGetLocationQueryOptions(params.id))
+    } catch {
+      // Allow client-side to retry if SSR prefetch fails
+    }
   },
   component: LocationDetailPage,
 })

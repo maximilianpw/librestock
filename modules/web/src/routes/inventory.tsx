@@ -35,7 +35,11 @@ export const Route = createFileRoute('/inventory')({
   validateSearch: (search) => inventorySearchSchema.parse(search),
   loader: async ({ context: { queryClient }, location }) => {
     const search = inventorySearchSchema.parse(location.search)
-    await prefetchInventoryData(queryClient, search, INVENTORY_PAGE_SIZE)
+    try {
+      await prefetchInventoryData(queryClient, search, INVENTORY_PAGE_SIZE)
+    } catch {
+      // Allow client-side to retry if SSR prefetch fails
+    }
   },
   component: InventoryPage,
 })
