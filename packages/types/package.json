@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "description": "Shared TypeScript interfaces and enums for LibreStock",
-  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
