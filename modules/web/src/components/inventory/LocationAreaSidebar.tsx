@@ -52,8 +52,8 @@ function AreaItem({
     <div>
       <div
         role="button"
-        tabIndex={0}
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
+        tabIndex={0}
         className={cn(
           'flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent cursor-pointer',
           isSelected && SELECTED_ITEM_STYLES
@@ -68,8 +68,8 @@ function AreaItem({
       >
         {hasChildren ? (
           <button
-            type="button"
             className="p-0.5 hover:bg-accent-foreground/10 rounded"
+            type="button"
             onClick={(e) => {
               e.stopPropagation()
               onToggle(area.id)
@@ -174,8 +174,8 @@ function LocationItem({
         }}
       >
         <button
-          type="button"
           className="p-0.5 hover:bg-accent-foreground/10 rounded"
+          type="button"
           onClick={(e) => {
             e.stopPropagation()
             onToggle()

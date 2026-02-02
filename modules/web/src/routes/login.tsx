@@ -42,9 +42,9 @@ function LoginRoute(): React.JSX.Element {
         <label className="block space-y-1 text-sm">
           <span>Email</span>
           <input
-            className="w-full rounded-md border px-3 py-2"
-            autoComplete="email"
             required
+            autoComplete="email"
+            className="w-full rounded-md border px-3 py-2"
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
@@ -53,9 +53,9 @@ function LoginRoute(): React.JSX.Element {
         <label className="block space-y-1 text-sm">
           <span>Password</span>
           <input
-            className="w-full rounded-md border px-3 py-2"
-            autoComplete="current-password"
             required
+            autoComplete="current-password"
+            className="w-full rounded-md border px-3 py-2"
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
