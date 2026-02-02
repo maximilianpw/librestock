@@ -1,4 +1,4 @@
-import type { PoweredByDto } from './powered-by.type.ts'
+import type { PoweredByDto } from './powered-by.type'
 
 export interface BrandingResponseDto {
   app_name: string

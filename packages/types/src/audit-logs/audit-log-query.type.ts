@@ -1,5 +1,5 @@
-import type { AuditAction } from './audit-action.enum.ts'
-import type { AuditEntityType } from './audit-entity-type.enum.ts'
+import type { AuditAction } from './audit-action.enum'
+import type { AuditEntityType } from './audit-entity-type.enum'
 
 export interface AuditLogQueryDto {
   page?: number

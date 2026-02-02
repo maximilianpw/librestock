@@ -1,6 +1,6 @@
-import type { AuditAction } from './audit-action.enum.ts'
-import type { AuditChanges } from './audit-changes.type.ts'
-import type { AuditEntityType } from './audit-entity-type.enum.ts'
+import type { AuditAction } from './audit-action.enum'
+import type { AuditChanges } from './audit-changes.type'
+import type { AuditEntityType } from './audit-entity-type.enum'
 
 export interface AuditLogResponseDto {
   id: string

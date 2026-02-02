@@ -1,5 +1,5 @@
-import type { PaginationMeta } from '../common/pagination-meta.type.ts'
-import type { ProductResponseDto } from './product-response.type.ts'
+import type { PaginationMeta } from '../common/pagination-meta.type'
+import type { ProductResponseDto } from './product-response.type'
 
 export interface PaginatedProductsResponseDto {
   data: ProductResponseDto[]

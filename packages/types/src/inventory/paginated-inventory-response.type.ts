@@ -1,5 +1,5 @@
-import type { PaginationMeta } from '../common/pagination-meta.type.ts'
-import type { InventoryResponseDto } from './inventory-response.type.ts'
+import type { PaginationMeta } from '../common/pagination-meta.type'
+import type { InventoryResponseDto } from './inventory-response.type'
 
 export interface PaginatedInventoryResponseDto {
   data: InventoryResponseDto[]

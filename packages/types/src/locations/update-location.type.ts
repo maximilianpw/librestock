@@ -1,4 +1,4 @@
-import type { LocationType } from './location-type.enum.ts'
+import type { LocationType } from './location-type.enum'
 
 export interface UpdateLocationDto {
   name?: string
