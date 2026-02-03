@@ -290,6 +290,8 @@ export default tseslint.config(
       '*.min.js',
       '*.min.css',
       'public/**/*.js',
+      'e2e/**',
+      'playwright.config.ts',
     ],
   },
 )

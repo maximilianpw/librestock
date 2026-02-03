@@ -75,7 +75,7 @@
   "sideEffects": false,
   "scripts": {
     "barrels": "node ./scripts/generate-barrels.mjs",
-    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json",
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
     "prepare": "pnpm build",
     "postinstall": "pnpm build"
   }

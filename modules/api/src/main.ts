@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { auth } from './auth';
 import { Client } from './clients/entities/client.entity';
 import { HateoasInterceptor } from './common/hateoas';
 import { AuditLog } from './routes/audit-logs/entities/audit-log.entity';
@@ -78,6 +79,12 @@ async function bootstrap() {
     ],
   });
   SwaggerModule.setup('api/docs', app, document);
+
+  // Run Better Auth migrations in non-production (mirrors TypeORM synchronize behavior)
+  if (process.env.NODE_ENV !== 'production') {
+    const ctx = await auth.$context;
+    await ctx.runMigrations();
+  }
 
   await app.listen(process.env.PORT ?? 8080);
 }

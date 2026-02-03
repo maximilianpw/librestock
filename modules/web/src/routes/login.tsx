@@ -18,7 +18,11 @@ function LoginRoute(): React.JSX.Element {
     setIsSubmitting(true)
     setError(null)
     try {
-      await signIn.email({ email, password })
+      const { error: signInError } = await signIn.email({ email, password })
+      if (signInError) {
+        setError('Unable to sign in. Check your credentials and try again.')
+        return
+      }
       await navigate({ to: '/' })
     } catch {
       setError('Unable to sign in. Check your credentials and try again.')
@@ -61,7 +65,7 @@ function LoginRoute(): React.JSX.Element {
             onChange={(event) => setPassword(event.target.value)}
           />
         </label>
-        {error ? <div className="text-sm text-red-600">{error}</div> : null}
+        {error ? <div className="text-sm text-red-600" role="alert">{error}</div> : null}
         <button
           className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md px-3 py-2 disabled:opacity-60"
           disabled={isSubmitting}
