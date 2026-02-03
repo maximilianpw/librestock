@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test'
 import { TEST_USER } from '../global-setup'
 
+const NAVIGATION_TIMEOUT = 15000
+
 test.describe('Authentication', () => {
   test('login form renders', async ({ page }) => {
     await page.goto('/login')
@@ -20,7 +22,7 @@ test.describe('Authentication', () => {
 
     await expect(
       page.locator('[data-sidebar="menu-button"]', { hasText: /dashboard/i }),
-    ).toBeVisible({ timeout: 15000 })
+    ).toBeVisible({ timeout: NAVIGATION_TIMEOUT })
     await expect(page).toHaveURL('/')
   })
 
@@ -31,7 +33,7 @@ test.describe('Authentication', () => {
     await page.locator('input[type="password"]').fill('WrongPassword123!')
     await page.locator('button[type="submit"]').click()
 
-    await expect(page.locator('.text-red-600')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[role="alert"]')).toBeVisible({ timeout: NAVIGATION_TIMEOUT })
     await expect(page).toHaveURL('/login')
   })
 
@@ -39,8 +41,8 @@ test.describe('Authentication', () => {
     await page.goto('/')
 
     await expect(
-      page.locator('text=Welcome to LibreStock'),
-    ).toBeVisible({ timeout: 15000 })
+      page.getByTestId('welcome-heading'),
+    ).toBeVisible({ timeout: NAVIGATION_TIMEOUT })
     await expect(page.locator('a', { hasText: /sign in/i })).toBeVisible()
   })
 
@@ -53,14 +55,14 @@ test.describe('Authentication', () => {
 
     await expect(
       page.locator('[data-sidebar="menu-button"]', { hasText: /dashboard/i }),
-    ).toBeVisible({ timeout: 15000 })
+    ).toBeVisible({ timeout: NAVIGATION_TIMEOUT })
 
     // Clear cookies to simulate logout
     await page.context().clearCookies()
     await page.reload()
 
     await expect(
-      page.locator('text=Welcome to LibreStock'),
-    ).toBeVisible({ timeout: 15000 })
+      page.getByTestId('welcome-heading'),
+    ).toBeVisible({ timeout: NAVIGATION_TIMEOUT })
   })
 })

@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+const NAVIGATION_TIMEOUT = 15000
+
 const sidebarLinks = [
   { name: 'Dashboard', url: '/' },
   { name: 'Stock', url: '/stock' },
@@ -17,7 +19,7 @@ test.describe('Sidebar Navigation', () => {
     for (const link of sidebarLinks) {
       await expect(
         page.locator('[data-sidebar="menu-button"]', { hasText: new RegExp(link.name, 'i') }),
-      ).toBeVisible({ timeout: 15000 })
+      ).toBeVisible({ timeout: NAVIGATION_TIMEOUT })
     }
   })
 
@@ -39,7 +41,7 @@ test.describe('Sidebar Navigation', () => {
     const productsLink = page.locator('[data-sidebar="menu-button"]', {
       hasText: /products/i,
     })
-    await expect(productsLink).toHaveAttribute('data-active', 'true', { timeout: 15000 })
+    await expect(productsLink).toHaveAttribute('data-active', 'true', { timeout: NAVIGATION_TIMEOUT })
 
     const dashboardLink = page.locator('[data-sidebar="menu-button"]', {
       hasText: /dashboard/i,

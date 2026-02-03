@@ -320,7 +320,7 @@ jobs:
         run: pnpm --filter @librestock/api build
 
       - name: Start API server
-        run: pnpm --filter @librestock/api start &
+        run: pnpm --filter @librestock/api start > /tmp/api-server.log 2>&1 &
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/librestock_inventory_e2e
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET_TEST || 'test-secret-at-least-32-chars-long' }}
@@ -330,17 +330,17 @@ jobs:
           NODE_ENV: test
 
       - name: Start Web dev server
-        run: pnpm --filter @librestock/web dev &
+        run: pnpm --filter @librestock/web dev > /tmp/web-server.log 2>&1 &
         env:
           VITE_API_BASE_URL: http://localhost:8080/api/v1
 
       - name: Wait for servers
         run: |
           echo "Waiting for API server..."
-          timeout 60 bash -c 'until curl -sf http://localhost:8080/api/docs > /dev/null 2>&1; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sf http://localhost:8080/api/docs > /dev/null 2>&1; do sleep 2; done' || { echo "API server failed to start:"; cat /tmp/api-server.log; exit 1; }
           echo "API server is ready"
           echo "Waiting for Web server..."
-          timeout 60 bash -c 'until curl -sf http://localhost:3000 > /dev/null 2>&1; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sf http://localhost:3000 > /dev/null 2>&1; do sleep 2; done' || { echo "Web server failed to start:"; cat /tmp/web-server.log; exit 1; }
           echo "Web server is ready"
 
       - name: Run Playwright tests

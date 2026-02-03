@@ -84,7 +84,7 @@ function WelcomeScreen(): React.JSX.Element {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <h1 className="mb-4 text-2xl font-semibold">
+        <h1 className="mb-4 text-2xl font-semibold" data-testid="welcome-heading">
           Welcome to {branding.app_name}
         </h1>
         <Link
