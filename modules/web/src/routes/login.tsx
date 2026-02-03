@@ -18,7 +18,11 @@ function LoginRoute(): React.JSX.Element {
     setIsSubmitting(true)
     setError(null)
     try {
-      await signIn.email({ email, password })
+      const { error: signInError } = await signIn.email({ email, password })
+      if (signInError) {
+        setError('Unable to sign in. Check your credentials and try again.')
+        return
+      }
       await navigate({ to: '/' })
     } catch {
       setError('Unable to sign in. Check your credentials and try again.')
