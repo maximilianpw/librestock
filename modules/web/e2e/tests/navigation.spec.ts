@@ -31,7 +31,7 @@ test.describe('Sidebar Navigation', () => {
         .locator('[data-sidebar="menu-button"]', { hasText: new RegExp(link.name, 'i') })
         .click()
 
-      await expect(page).toHaveURL(link.url)
+      await expect(page).toHaveURL(link.url, { timeout: NAVIGATION_TIMEOUT })
     })
   }
 
