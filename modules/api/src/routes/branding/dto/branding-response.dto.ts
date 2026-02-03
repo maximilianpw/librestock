@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type {
+  BrandingResponseDto as BrandingResponseDtoShape,
+  PoweredByDto as PoweredByDtoShape,
+} from '@librestock/types';
 
-class PoweredByDto {
+class PoweredByDto implements PoweredByDtoShape {
   @ApiProperty({ description: 'Product name', example: 'LibreStock' })
   name: string;
 
@@ -8,7 +12,7 @@ class PoweredByDto {
   url: string;
 }
 
-export class BrandingResponseDto {
+export class BrandingResponseDto implements BrandingResponseDtoShape {
   @ApiProperty({ description: 'Application name' })
   app_name: string;
 

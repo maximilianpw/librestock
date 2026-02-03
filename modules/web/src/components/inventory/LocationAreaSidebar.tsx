@@ -9,13 +9,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  useListAllLocations,
-  useAreasControllerFindAll,
-  type LocationResponseDto,
-  type AreaResponseDto,
-} from '@/lib/data/generated'
-import { type LocationType } from '@/lib/enums/location-type.enum'
+import { useListAllLocations, type LocationResponseDto } from '@/lib/data/locations'
+import { useAreasControllerFindAll, type AreaResponseDto } from '@/lib/data/areas'
 import { LOCATION_TYPE_ICONS } from '@/lib/location-type.utils'
 
 const SELECTED_ITEM_STYLES = 'bg-accent text-accent-foreground'
@@ -55,17 +50,26 @@ function AreaItem({
 
   return (
     <div>
-      <button
+      <div
+        role="button"
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
+        tabIndex={0}
         className={cn(
-          'flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent',
+          'flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent cursor-pointer',
           isSelected && SELECTED_ITEM_STYLES
         )}
         onClick={() => onSelect(area.id)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onSelect(area.id)
+          }
+        }}
       >
         {hasChildren ? (
           <button
             className="p-0.5 hover:bg-accent-foreground/10 rounded"
+            type="button"
             onClick={(e) => {
               e.stopPropagation()
               onToggle(area.id)
@@ -87,7 +91,7 @@ function AreaItem({
           <Folder className="size-4 text-muted-foreground" />
         )}
         <span className="truncate">{area.name}</span>
-      </button>
+      </div>
       {hasChildren && isExpanded && (
         <div>
           {children.map((child) => (
@@ -127,7 +131,7 @@ function LocationItem({
   onToggle,
   onSelectArea,
 }: LocationItemProps): React.JSX.Element {
-  const Icon = LOCATION_TYPE_ICONS[location.type as LocationType]
+  const Icon = LOCATION_TYPE_ICONS[location.type]
   const [expandedAreaIds, setExpandedAreaIds] = React.useState<Set<string>>(
     new Set()
   )
@@ -154,15 +158,24 @@ function LocationItem({
 
   return (
     <div>
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         className={cn(
-          'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent',
+          'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent cursor-pointer',
           isSelected && !selectedAreaId && SELECTED_ITEM_STYLES
         )}
         onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onSelect()
+          }
+        }}
       >
         <button
           className="p-0.5 hover:bg-accent-foreground/10 rounded"
+          type="button"
           onClick={(e) => {
             e.stopPropagation()
             onToggle()
@@ -177,7 +190,7 @@ function LocationItem({
         </button>
         <Icon className="size-4 text-muted-foreground" />
         <span className="truncate">{location.name}</span>
-      </button>
+      </div>
       {isExpanded && (
         <div className="ml-2">
           {!areas && (

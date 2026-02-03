@@ -23,6 +23,7 @@ logfile
 node_modules/
 .DS_Store
 dist/
+*.tsbuildinfo
 
 # MkDocs generated site
 site/

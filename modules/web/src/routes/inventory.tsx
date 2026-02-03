@@ -10,11 +10,9 @@ import { CreateInventory } from '@/components/inventory/CreateInventory'
 import { LocationAreaSidebar } from '@/components/inventory/LocationAreaSidebar'
 import { InventoryTable } from '@/components/inventory/InventoryTable'
 import { SearchBar } from '@/components/items/SearchBar'
-import {
-  useAreasControllerFindAll,
-  useListAllLocations,
-  type ListInventoryParams,
-} from '@/lib/data/generated'
+import { useListAllLocations } from '@/lib/data/locations'
+import { useAreasControllerFindAll } from '@/lib/data/areas'
+import type { InventoryQueryDto } from '@/lib/data/inventory'
 import {
   parseBooleanParam,
   parseNumberParam,
@@ -37,7 +35,11 @@ export const Route = createFileRoute('/inventory')({
   validateSearch: (search) => inventorySearchSchema.parse(search),
   loader: async ({ context: { queryClient }, location }) => {
     const search = inventorySearchSchema.parse(location.search)
-    await prefetchInventoryData(queryClient, search, INVENTORY_PAGE_SIZE)
+    try {
+      await prefetchInventoryData(queryClient, search, INVENTORY_PAGE_SIZE)
+    } catch {
+      // Allow client-side to retry if SSR prefetch fails
+    }
   },
   component: InventoryPage,
 })
@@ -78,7 +80,7 @@ function InventoryPage(): React.JSX.Element {
   )
 
   const filters = React.useMemo(() => {
-    const f: Partial<ListInventoryParams> = {}
+    const f: Partial<InventoryQueryDto> = {}
     if (selectedAreaId) {
       f.area_id = selectedAreaId
     } else if (selectedLocationId) {

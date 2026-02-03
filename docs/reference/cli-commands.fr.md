@@ -87,11 +87,11 @@ pnpm --filter @librestock/api lint
 pnpm --filter @librestock/api lint --fix
 ```
 
-### OpenAPI
+### Types partagés
 
 ```bash
-# Générer la spec OpenAPI
-pnpm --filter @librestock/api openapi:generate
+# Build des types partagés
+pnpm --filter @librestock/types build
 ```
 
 ## Commandes du module Web
@@ -121,12 +121,6 @@ pnpm --filter @librestock/web lint
 pnpm --filter @librestock/web lint:fix
 ```
 
-### Client API
-
-```bash
-# Générer le client API depuis la spec OpenAPI
-pnpm --filter @librestock/web api:gen
-```
 
 ## Commandes Devenv
 
@@ -166,6 +160,6 @@ pnpm install && pnpm build
 # Vérification pré-commit
 pnpm lint && pnpm test && pnpm build
 
-# Régénérer les types API après des changements backend
-pnpm --filter @librestock/api openapi:generate && pnpm --filter @librestock/web api:gen
+# Mettre à jour les types partagés après des changements backend
+pnpm --filter @librestock/types build
 ```

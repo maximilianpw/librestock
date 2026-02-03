@@ -27,7 +27,7 @@ import {
   useBrandingControllerGet,
   useBrandingControllerUpdate,
   getBrandingControllerGetQueryKey,
-} from '@/lib/data/generated'
+} from '@/lib/data/branding'
 
 const brandingSchema = z.object({
   app_name: z.string().min(1, 'App name is required').max(100),
@@ -64,7 +64,6 @@ export function BrandingForm(): React.JSX.Element {
     },
     onSubmit: async ({ value }) => {
       try {
-        // TODO: Remove cast once openapi.yaml is regenerated with proper nullable string types
         await updateMutation.mutateAsync({
           data: {
             app_name: value.app_name,

@@ -199,10 +199,10 @@ export class ProductsModule {}
 export class AppModule {}
 ```
 
-### 8. Generate OpenAPI
+### 8. Update Shared Types
 
 ```bash
-pnpm --filter @librestock/api openapi:generate
+pnpm --filter @librestock/types build
 ```
 
 ## Authentication

@@ -72,13 +72,12 @@ Set the connection string:
 DATABASE_URL=postgresql://username:password@localhost:5432/librestock_inventory
 ```
 
-## OpenAPI Configuration
+## API Documentation
 
-The API generates OpenAPI documentation automatically:
+Swagger UI is available at:
 
-1. Generate the spec: `pnpm --filter @librestock/api openapi:generate`
-2. View at: http://localhost:8080/api/docs
-3. Generate frontend hooks: `pnpm --filter @librestock/web api:gen`
+- http://localhost:8080/api/docs
+- OpenAPI JSON: http://localhost:8080/api/docs-json
 
 ## Next Steps
 

@@ -80,7 +80,7 @@ The inventory management system will provide:
 - **TanStack Query/Form** for data fetching and form handling
 - **Tailwind CSS** with **Radix UI** for styling
 - **Better Auth** for authentication
-- **Orval** for generating typed API hooks from OpenAPI spec
+- **@librestock/types** shared types with handwritten API hooks
 
 ### Backend
 
@@ -88,7 +88,7 @@ The inventory management system will provide:
 - **TypeORM** for database ORM
 - **PostgreSQL 16** for data persistence
 - **Better Auth** for authentication
-- **OpenAPI/Swagger** for API documentation
+- **Swagger UI** for API documentation
 
 ### Tooling
 
@@ -122,7 +122,7 @@ pnpm --filter @librestock/web dev          # Web on :3000
 ### API Documentation
 
 - Swagger UI: http://localhost:8080/api/docs
-- OpenAPI spec: `openapi.yaml` (repo root)
+- OpenAPI JSON: http://localhost:8080/api/docs-json
 
 ---
 

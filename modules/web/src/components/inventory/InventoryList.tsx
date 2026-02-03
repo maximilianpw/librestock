@@ -5,10 +5,10 @@ import { InventoryCard } from './InventoryCard'
 import { Spinner } from '@/components/ui/spinner'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
-import { useListInventory, type ListInventoryParams } from '@/lib/data/generated'
+import { useListInventory, type InventoryQueryDto } from '@/lib/data/inventory'
 
 interface InventoryListProps {
-  filters?: Partial<ListInventoryParams>
+  filters?: Partial<InventoryQueryDto>
 }
 
 export function InventoryList({ filters }: InventoryListProps): React.JSX.Element {

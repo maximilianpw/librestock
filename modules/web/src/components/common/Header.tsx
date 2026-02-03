@@ -74,7 +74,7 @@ export default function AppSidebar(): React.JSX.Element {
             <img
               alt={branding.app_name}
               className="h-6 w-auto"
-              src={branding.logo_url as unknown as string}
+              src={branding.logo_url}
             />
           ) : null}
           <span className="text-base font-bold tracking-tight">

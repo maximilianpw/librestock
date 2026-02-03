@@ -10,7 +10,7 @@ import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { CategoryPathSelector } from './CategoryPathSelector'
 import { FormErrorBanner } from '@/components/common/FormErrorBanner'
-import type { CategoryWithChildrenResponseDto } from '@/lib/data/generated'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/categories'
 import { useCategoryForm } from '@/hooks/forms/use-category-form'
 
 interface CategoryFormProps {

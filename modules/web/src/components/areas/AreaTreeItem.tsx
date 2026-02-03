@@ -23,7 +23,7 @@ import {
   type AreaResponseDto,
   useAreasControllerDelete,
   getAreasControllerFindAllQueryKey,
-} from '@/lib/data/generated'
+} from '@/lib/data/areas'
 import {
   removeItemFromArray,
   restoreQueryData,

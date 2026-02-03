@@ -15,9 +15,9 @@
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",
     "bootstrap": "pnpm install",
-    "api:gen": "pnpm --filter @librestock/web api:gen",
     "docs:dev": "mkdocs serve",
-    "docs:build": "mkdocs build --strict"
+    "docs:build": "mkdocs build --strict",
+    "postinstall": "pnpm --filter @librestock/types build"
   },
   "devDependencies": {
     "@types/node": "^20.19.27",

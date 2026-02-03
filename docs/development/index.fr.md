@@ -29,11 +29,10 @@ LibreStock Inventory est un monorepo pnpm contenant :
 
 2. **Effectuer les modifications** dans la base de code
 
-3. **Régénérer le client API** (si l'API a changé)
+3. **Mettre à jour les types partagés** (si les DTO ont changé)
 
     ```bash
-    pnpm --filter @librestock/api openapi:generate
-    pnpm --filter @librestock/web api:gen
+    pnpm --filter @librestock/types build
     ```
 
 4. **Exécuter les tests et le lint**

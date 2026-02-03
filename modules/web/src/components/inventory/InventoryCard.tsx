@@ -24,7 +24,7 @@ import {
   useDeleteInventoryItem,
   getListInventoryQueryKey,
   type PaginatedInventoryResponseDto,
-} from '@/lib/data/generated'
+} from '@/lib/data/inventory'
 import {
   removeItemFromPaginated,
   restoreQueryData,

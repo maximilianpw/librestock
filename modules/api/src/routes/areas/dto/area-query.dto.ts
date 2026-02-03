@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsUUID, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
+import type { AreaQueryDto as AreaQueryDtoShape } from '@librestock/types';
 
-export class AreaQueryDto {
+export class AreaQueryDto implements AreaQueryDtoShape {
   @ApiProperty({
     description: 'Filter by location ID',
     format: 'uuid',

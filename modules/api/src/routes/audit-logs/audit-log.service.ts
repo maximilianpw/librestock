@@ -113,21 +113,25 @@ export class AuditLogService {
   computeChanges<T extends Record<string, unknown>>(
     before: T | null,
     after: T | null,
-    fieldsToTrack?: (keyof T)[],
+    fieldsToTrack?: Extract<keyof T, string>[],
   ): AuditChanges | null {
     if (!before && !after) {
       return null;
     }
 
     if (!before) {
-      return { after: after as Record<string, unknown> };
+      if (after === null) {
+        return null;
+      }
+      return { after };
     }
 
     if (!after) {
-      return { before: before as Record<string, unknown> };
+      return { before };
     }
 
-    const fields = fieldsToTrack ?? (Object.keys(after) as (keyof T)[]);
+    const fields =
+      fieldsToTrack ?? (Object.keys(after) as Extract<keyof T, string>[]);
     const beforeChanges: Record<string, unknown> = {};
     const afterChanges: Record<string, unknown> = {};
     let hasChanges = false;
@@ -136,9 +140,9 @@ export class AuditLogService {
       const beforeValue = before[field];
       const afterValue = after[field];
 
-      if (JSON.stringify(beforeValue) !== JSON.stringify(afterValue)) {
-        beforeChanges[field as string] = beforeValue;
-        afterChanges[field as string] = afterValue;
+      if (!this.areValuesEqual(beforeValue, afterValue)) {
+        beforeChanges[field] = beforeValue;
+        afterChanges[field] = afterValue;
         hasChanges = true;
       }
     }
@@ -151,5 +155,53 @@ export class AuditLogService {
       before: beforeChanges,
       after: afterChanges,
     };
+  }
+
+  private areValuesEqual(left: unknown, right: unknown): boolean {
+    if (left === right) {
+      return true;
+    }
+
+    if (left instanceof Date && right instanceof Date) {
+      return left.getTime() === right.getTime();
+    }
+
+    if (Array.isArray(left) && Array.isArray(right)) {
+      if (left.length !== right.length) {
+        return false;
+      }
+      for (let i = 0; i < left.length; i += 1) {
+        if (!this.areValuesEqual(left[i], right[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    if (this.isPlainObject(left) && this.isPlainObject(right)) {
+      const leftKeys = Object.keys(left);
+      const rightKeys = Object.keys(right);
+      if (leftKeys.length !== rightKeys.length) {
+        return false;
+      }
+      for (const key of leftKeys) {
+        if (!(key in right)) {
+          return false;
+        }
+        if (!this.areValuesEqual(left[key], right[key])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  private isPlainObject(value: unknown): value is Record<string, unknown> {
+    if (value === null || typeof value !== 'object') {
+      return false;
+    }
+    return Object.getPrototypeOf(value) === Object.prototype;
   }
 }

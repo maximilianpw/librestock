@@ -69,7 +69,7 @@ pnpm --filter @librestock/api start:dev      # Development server
 pnpm --filter @librestock/api build          # Build
 pnpm --filter @librestock/api test           # Run tests
 pnpm --filter @librestock/api test:e2e       # E2E tests
-pnpm --filter @librestock/api openapi:generate  # Generate OpenAPI spec
+pnpm --filter @librestock/types build        # Build shared types
 ```
 
 ### Web Module
@@ -77,7 +77,6 @@ pnpm --filter @librestock/api openapi:generate  # Generate OpenAPI spec
 ```bash
 pnpm --filter @librestock/web dev           # Development server
 pnpm --filter @librestock/web build         # Production build
-pnpm --filter @librestock/web api:gen       # Generate API client
 pnpm --filter @librestock/web lint          # Lint
 ```
 

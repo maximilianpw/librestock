@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type {
+  PaginatedInventoryResponseDto as PaginatedInventoryResponseDtoShape,
+  PaginationMeta as PaginationMetaShape,
+} from '@librestock/types';
 import { InventoryResponseDto } from './inventory-response.dto';
 
-export class PaginationMeta {
+export class PaginationMeta implements PaginationMetaShape {
   @ApiProperty({ description: 'Current page number' })
   page: number;
 
@@ -21,7 +25,9 @@ export class PaginationMeta {
   has_previous: boolean;
 }
 
-export class PaginatedInventoryResponseDto {
+export class PaginatedInventoryResponseDto
+  implements PaginatedInventoryResponseDtoShape
+{
   @ApiProperty({
     description: 'List of inventory items',
     type: [InventoryResponseDto],

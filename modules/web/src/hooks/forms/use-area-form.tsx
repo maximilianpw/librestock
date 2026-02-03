@@ -8,7 +8,7 @@ import {
   useAreasControllerCreate,
   useAreasControllerUpdate,
   getAreasControllerFindAllQueryKey,
-} from '@/lib/data/generated'
+} from '@/lib/data/areas'
 
 const formSchema = z.object({
   name: z

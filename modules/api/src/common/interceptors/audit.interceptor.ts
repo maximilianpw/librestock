@@ -123,34 +123,68 @@ export class AuditInterceptor implements NestInterceptor {
     request: AuthRequest,
     response: unknown,
   ): string | string[] | null {
-    // Try to get from route params (e.g., :id)
+    const fromParams = this.getEntityIdFromParams(metadata, request);
+    if (fromParams) {
+      return fromParams;
+    }
+
+    const fromBody = this.getEntityIdFromBody(metadata, request);
+    if (fromBody) {
+      return fromBody;
+    }
+
+    const fromResponse = this.getEntityIdFromResponse(metadata, response);
+    if (fromResponse) {
+      return fromResponse;
+    }
+
+    const fromDefaults = this.getEntityIdFromDefaults(request, response);
+    if (fromDefaults) {
+      return fromDefaults;
+    }
+
+    const fromBulk = this.getBulkEntityIds(response);
+    if (fromBulk) {
+      return fromBulk;
+    }
+
+    return null;
+  }
+
+  private getEntityIdFromParams(
+    metadata: AuditMetadata,
+    request: AuthRequest,
+  ): string | null {
     if (metadata.entityIdParam && request.params[metadata.entityIdParam]) {
       return request.params[metadata.entityIdParam];
     }
+    return null;
+  }
 
-    // Try to get from request body
+  private getEntityIdFromBody(
+    metadata: AuditMetadata,
+    request: AuthRequest,
+  ): string | string[] | null {
     if (metadata.entityIdFromBody && request.body) {
-      const bodyValue = this.getNestedValue(
-        request.body,
-        metadata.entityIdFromBody,
-      );
-      if (bodyValue) {
-        return bodyValue;
-      }
+      return this.getNestedValue(request.body, metadata.entityIdFromBody);
     }
+    return null;
+  }
 
-    // Try to get from response
+  private getEntityIdFromResponse(
+    metadata: AuditMetadata,
+    response: unknown,
+  ): string | string[] | null {
     if (metadata.entityIdFromResponse && response) {
-      const responseValue = this.getNestedValue(
-        response,
-        metadata.entityIdFromResponse,
-      );
-      if (responseValue) {
-        return responseValue;
-      }
+      return this.getNestedValue(response, metadata.entityIdFromResponse);
     }
+    return null;
+  }
 
-    // Default: try common patterns
+  private getEntityIdFromDefaults(
+    request: AuthRequest,
+    response: unknown,
+  ): string | null {
     if (request.params.id) {
       return request.params.id;
     }
@@ -159,7 +193,10 @@ export class AuditInterceptor implements NestInterceptor {
       return (response as { id: string }).id;
     }
 
-    // Handle bulk operations - check for succeeded array in response
+    return null;
+  }
+
+  private getBulkEntityIds(response: unknown): string[] | null {
     if (
       response &&
       typeof response === 'object' &&

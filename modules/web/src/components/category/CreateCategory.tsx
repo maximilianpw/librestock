@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { CategoryForm } from './CategoryForm'
 import { Button } from '@/components/ui/button'
-import type { CategoryWithChildrenResponseDto } from '@/lib/data/generated'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/categories'
 import { FormDialog } from '@/components/common/FormDialog'
 
 interface CreateCategoryProps {

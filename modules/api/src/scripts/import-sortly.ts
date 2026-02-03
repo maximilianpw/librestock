@@ -65,7 +65,8 @@ async function createDataSource(): Promise<DataSource> {
     dataSourceConfig.port = Number.parseInt(process.env.PGPORT ?? '5432');
     dataSourceConfig.username = process.env.PGUSER;
     dataSourceConfig.password = process.env.PGPASSWORD;
-    dataSourceConfig.database = process.env.PGDATABASE ?? 'librestock_inventory';
+    dataSourceConfig.database =
+      process.env.PGDATABASE ?? 'librestock_inventory';
   }
 
   const dataSource = new DataSource(dataSourceConfig);
@@ -125,7 +126,7 @@ function mapTransactionTypeToReason(
     Delete: StockMovementReason.WASTE,
   };
 
-  return typeMap[transactionType] || StockMovementReason.COUNT_CORRECTION;
+  return typeMap[transactionType] ?? StockMovementReason.COUNT_CORRECTION;
 }
 
 async function getOrCreateCategory(

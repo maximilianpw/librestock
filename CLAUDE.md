@@ -4,8 +4,8 @@
 
 ## Tech Stack
 
-**Backend:** NestJS 11 · TypeORM · PostgreSQL 16 · Better Auth · OpenAPI/Swagger
-**Frontend:** TanStack Start · React 19 · TanStack Router · TanStack Query/Form · Tailwind · Radix UI · Orval
+**Backend:** NestJS 11 · TypeORM · PostgreSQL 16 · Better Auth · Swagger UI
+**Frontend:** TanStack Start · React 19 · TanStack Router · TanStack Query/Form · Tailwind · Radix UI · @librestock/types
 **Tooling:** pnpm workspaces · Nix flakes · TypeScript
 
 ## Monorepo Structure
@@ -18,7 +18,7 @@ librestock/
 ├── packages/
 │   ├── tsconfig/            # Shared TS configs
 │   └── eslint-config/       # Shared ESLint config
-├── openapi.yaml             # Generated API spec (source of truth for frontend)
+│   └── types/               # Shared DTO interfaces/enums
 ├── pnpm-workspace.yaml
 └── devenv.nix               # Nix dev environment
 ```
@@ -28,14 +28,15 @@ librestock/
 ```
 ┌─────────────────────────────────────────┐
 │           TanStack Start Frontend       │
-│  React Query ←── Orval (generated) ←────┼── openapi.yaml
+│  React Query + handwritten clients       │
+│  Shared DTOs from @librestock/types      │
 │  Better Auth                            │
 └─────────────────────────────────────────┘
                     ▼ HTTP/REST
 ┌─────────────────────────────────────────┐
 │            NestJS Backend               │
 │  Controller → Service → Repository      │
-│  BetterAuthGuard · TypeORM · Swagger ───┼──► openapi.yaml
+│  BetterAuthGuard · TypeORM · Swagger UI │
 └─────────────────────────────────────────┘
                     ▼
 ┌─────────────────────────────────────────┐
@@ -43,17 +44,14 @@ librestock/
 └─────────────────────────────────────────┘
 ```
 
-## OpenAPI-First Workflow
+## Shared-Types Workflow
 
 ```bash
-# 1. Backend generates spec from decorators
-pnpm --filter @librestock/api openapi:generate   # → openapi.yaml
-
-# 2. Frontend generates typed hooks from spec
-pnpm --filter @librestock/web api:gen            # → src/lib/data/generated.ts
+# 1. Define shared types/enums
+pnpm --filter @librestock/types build
 ```
 
-**Always regenerate both after API changes.** The `openapi.yaml` at repo root is the contract between frontend and backend.
+**Keep DTO interfaces/enums in `packages/types` aligned with backend DTOs and frontend usage.**
 
 ## Development
 
@@ -104,7 +102,7 @@ Products are catalog items. Inventory tracks quantities at locations. Areas prov
 | BaseAuditEntity | `api/src/common/entities/`      | Soft delete + audit fields |
 | BetterAuthGuard | `api/src/common/guards/`        | Session verification       |
 | HATEOAS         | `api/src/common/hateoas/`       | REST hypermedia links      |
-| Generated hooks | `web/src/lib/data/generated.ts` | Type-safe API calls        |
+| Shared DTOs     | `packages/types/src/`           | Backend/Frontend contracts |
 
 ## Authentication Flow
 
@@ -122,9 +120,9 @@ Backend: BetterAuthGuard → verify → session.user
 2. **Backend DTOs** in `api/src/routes/<feature>/dto/`
 3. **Backend repository/service/controller/module**
 4. **Register module** in `api/src/app.module.ts` and `app.routes.ts`
-5. **Generate OpenAPI:** `pnpm --filter @librestock/api openapi:generate`
-6. **Generate frontend client:** `pnpm --filter @librestock/web api:gen`
-7. **Frontend components** using generated hooks
+5. **Define shared DTOs/enums** in `packages/types/src/<feature>/`
+6. **Implement DTOs** in backend to match shared interfaces
+7. **Frontend components** using handwritten hooks in `web/src/lib/data/<feature>.ts`
 
 ## Environment Variables
 

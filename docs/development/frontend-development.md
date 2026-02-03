@@ -10,7 +10,7 @@ This guide covers TanStack Start development patterns for the LibreStock Invento
 - TanStack Form (form management)
 - Tailwind CSS 4
 - Radix UI / shadcn components
-- Clerk Authentication
+- Better Auth
 - i18next (translations)
 
 ## Project Structure
@@ -30,7 +30,7 @@ modules/web/src/
 ├── lib/
 │   ├── data/
 │   │   ├── axios-client.ts  # API client
-│   │   └── generated.ts     # Orval-generated hooks
+│   │   └── products.ts      # Handwritten hooks by feature
 │   └── utils.ts             # Utilities
 ├── locales/                 # i18n (en, de, fr)
 ├── router.tsx               # Router setup
@@ -39,25 +39,15 @@ modules/web/src/
 
 ## API Integration
 
-### Generated Client
+### Handwritten Client + Shared Types
 
-Regenerate after API changes:
-
-```bash
-pnpm --filter @librestock/web api:gen
-```
-
-This generates:
-
-- Interfaces: `ProductResponseDto`, `CreateProductDto`
-- Query hooks: `useListProducts`, `useListCategories`
-- Mutation hooks: `useCreateProduct`, `useUpdateProduct`
-- Query keys: `getListProductsQueryKey()`
+API hooks live in `src/lib/data/*.ts` and use DTO interfaces/enums from
+`@librestock/types`.
 
 ### Using Queries
 
 ```typescript
-import { useListProducts } from '@/lib/data/generated';
+import { useListProducts } from '@/lib/data/products';
 
 function ProductList() {
   const { data, isLoading, error } = useListProducts({
@@ -83,7 +73,7 @@ function ProductList() {
 ### Using Mutations
 
 ```typescript
-import { useCreateProduct, getListProductsQueryKey } from '@/lib/data/generated';
+import { useCreateProduct, getListProductsQueryKey } from '@/lib/data/products';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -189,7 +179,7 @@ APIs at module scope; use `useEffect` or guard with
 ```typescript
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { type ProductResponseDto } from '@/lib/data/generated';
+import { type ProductResponseDto } from '@/lib/data/products';
 
 interface ProductCardProps {
   product: ProductResponseDto;

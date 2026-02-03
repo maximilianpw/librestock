@@ -34,7 +34,11 @@ export const Route = createFileRoute('/locations')({
   validateSearch: (search) => locationsSearchSchema.parse(search),
   loader: async ({ context: { queryClient }, location }) => {
     const search = locationsSearchSchema.parse(location.search)
-    await prefetchLocationsData(queryClient, search, LOCATIONS_PAGE_SIZE)
+    try {
+      await prefetchLocationsData(queryClient, search, LOCATIONS_PAGE_SIZE)
+    } catch {
+      // Allow client-side to retry if SSR prefetch fails
+    }
   },
   component: LocationsPage,
 })

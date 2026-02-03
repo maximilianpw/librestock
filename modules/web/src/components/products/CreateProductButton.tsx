@@ -5,7 +5,7 @@ import { ProductForm } from './ProductForm'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { FormDialog } from '@/components/common/FormDialog'
-import { useListCategories } from '@/lib/data/generated'
+import { useListCategories } from '@/lib/data/categories'
 
 interface CreateProductButtonProps {
   defaultCategoryId?: string | null

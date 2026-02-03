@@ -5,7 +5,7 @@ REST API for LibreStock Inventory Management System built with NestJS.
 ## Features
 
 - 🔐 **Better Auth Authentication** - JWT/session auth with global guard
-- 📝 **OpenAPI/Swagger** - Auto-generated API documentation
+- 📝 **Swagger UI** - API documentation
 - ✅ **Validation** - Request validation with class-validator
 - 🏷️ **TypeScript** - Full type safety
 - 📊 **Logging** - Structured logging with request IDs
@@ -283,7 +283,7 @@ This implementation is ported from the Go/Gin API and includes:
 - ✅ Better Auth integration (equivalent to Go middleware)
 - ✅ Request ID middleware
 - ✅ Structured logging with request IDs
-- ✅ All API endpoints from OpenAPI spec
+- ✅ All API endpoints from the Go implementation
 - ✅ Input validation
 - ✅ Error handling
 

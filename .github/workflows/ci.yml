@@ -67,6 +67,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build types package
+        run: pnpm --filter @librestock/types build
+
       - name: Lint API
         if: needs.changes.outputs.api == 'true' || needs.changes.outputs.shared == 'true'
         run: pnpm --filter @librestock/api lint
@@ -98,6 +101,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build types package
+        run: pnpm --filter @librestock/types build
+
       - name: Type check API
         run: cd modules/api && pnpm exec tsc --noEmit
 
@@ -123,6 +129,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build types package
+        run: pnpm --filter @librestock/types build
 
       - name: Type check Web
         run: cd modules/web && pnpm type-check
@@ -165,6 +174,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build types package
+        run: pnpm --filter @librestock/types build
+
       - name: Run API tests
         run: pnpm --filter @librestock/api test
         env:
@@ -200,6 +212,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build types package
+        run: pnpm --filter @librestock/types build
 
       - name: Build API
         run: pnpm --filter @librestock/api build
@@ -237,6 +252,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build types package
+        run: pnpm --filter @librestock/types build
 
       - name: Build Web
         run: pnpm --filter @librestock/web build

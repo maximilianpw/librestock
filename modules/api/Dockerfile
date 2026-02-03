@@ -10,6 +10,10 @@ WORKDIR /app
 FROM base AS development
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/tsconfig/ ./packages/tsconfig/
+COPY packages/types/package.json ./packages/types/
+COPY packages/types/tsconfig.build.json ./packages/types/
+COPY packages/types/scripts/ ./packages/types/scripts/
+COPY packages/types/src/ ./packages/types/src/
 COPY modules/api/package.json ./modules/api/
 RUN pnpm install --frozen-lockfile
 COPY modules/api/ ./modules/api/
@@ -20,6 +24,10 @@ CMD ["pnpm", "start:dev"]
 FROM base AS builder
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/tsconfig/ ./packages/tsconfig/
+COPY packages/types/package.json ./packages/types/
+COPY packages/types/tsconfig.build.json ./packages/types/
+COPY packages/types/scripts/ ./packages/types/scripts/
+COPY packages/types/src/ ./packages/types/src/
 COPY modules/api/package.json ./modules/api/
 RUN pnpm install --frozen-lockfile
 COPY modules/api/ ./modules/api/
@@ -31,8 +39,10 @@ ENV NODE_ENV=production
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/tsconfig/ ./packages/tsconfig/
+COPY packages/types/package.json ./packages/types/
+COPY packages/types/dist/ ./packages/types/dist/
 COPY modules/api/package.json ./modules/api/
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY --from=builder /app/modules/api/dist ./modules/api/dist
 

@@ -9,9 +9,13 @@ import {
   Max,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { AuditAction, AuditEntityType } from 'src/common/enums';
+import {
+  AuditAction,
+  AuditEntityType,
+  type AuditLogQueryDto as AuditLogQueryDtoShape,
+} from '@librestock/types';
 
-export class AuditLogQueryDto {
+export class AuditLogQueryDto implements AuditLogQueryDtoShape {
   @ApiProperty({
     description: 'Page number (1-based)',
     minimum: 1,

@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AuditAction, AuditEntityType } from 'src/common/enums';
-import { AuditChanges } from '../entities/audit-log.entity';
+import {
+  AuditAction,
+  AuditEntityType,
+  type AuditChanges,
+  type AuditLogResponseDto as AuditLogResponseDtoShape,
+} from '@librestock/types';
 
-export class AuditLogResponseDto {
+export class AuditLogResponseDto implements AuditLogResponseDtoShape {
   @ApiProperty({
     description: 'Unique identifier',
     format: 'uuid',

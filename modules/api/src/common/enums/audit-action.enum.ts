@@ -1,9 +1,1 @@
-export enum AuditAction {
-  CREATE = 'CREATE',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  RESTORE = 'RESTORE',
-  ADJUST_QUANTITY = 'ADJUST_QUANTITY',
-  ADD_PHOTO = 'ADD_PHOTO',
-  STATUS_CHANGE = 'STATUS_CHANGE',
-}
+export { AuditAction } from '@librestock/types';

@@ -1,0 +1,82 @@
+{
+  "name": "@librestock/types",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Shared TypeScript interfaces and enums for LibreStock",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./areas": {
+      "types": "./dist/esm/areas/index.d.ts",
+      "import": "./dist/esm/areas/index.js",
+      "require": "./dist/cjs/areas/index.js",
+      "default": "./dist/esm/areas/index.js"
+    },
+    "./audit-logs": {
+      "types": "./dist/esm/audit-logs/index.d.ts",
+      "import": "./dist/esm/audit-logs/index.js",
+      "require": "./dist/cjs/audit-logs/index.js",
+      "default": "./dist/esm/audit-logs/index.js"
+    },
+    "./auth": {
+      "types": "./dist/esm/auth/index.d.ts",
+      "import": "./dist/esm/auth/index.js",
+      "require": "./dist/cjs/auth/index.js",
+      "default": "./dist/esm/auth/index.js"
+    },
+    "./branding": {
+      "types": "./dist/esm/branding/index.d.ts",
+      "import": "./dist/esm/branding/index.js",
+      "require": "./dist/cjs/branding/index.js",
+      "default": "./dist/esm/branding/index.js"
+    },
+    "./categories": {
+      "types": "./dist/esm/categories/index.d.ts",
+      "import": "./dist/esm/categories/index.js",
+      "require": "./dist/cjs/categories/index.js",
+      "default": "./dist/esm/categories/index.js"
+    },
+    "./common": {
+      "types": "./dist/esm/common/index.d.ts",
+      "import": "./dist/esm/common/index.js",
+      "require": "./dist/cjs/common/index.js",
+      "default": "./dist/esm/common/index.js"
+    },
+    "./inventory": {
+      "types": "./dist/esm/inventory/index.d.ts",
+      "import": "./dist/esm/inventory/index.js",
+      "require": "./dist/cjs/inventory/index.js",
+      "default": "./dist/esm/inventory/index.js"
+    },
+    "./locations": {
+      "types": "./dist/esm/locations/index.d.ts",
+      "import": "./dist/esm/locations/index.js",
+      "require": "./dist/cjs/locations/index.js",
+      "default": "./dist/esm/locations/index.js"
+    },
+    "./products": {
+      "types": "./dist/esm/products/index.d.ts",
+      "import": "./dist/esm/products/index.js",
+      "require": "./dist/cjs/products/index.js",
+      "default": "./dist/esm/products/index.js"
+    }
+  },
+  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "barrels": "node ./scripts/generate-barrels.mjs",
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json",
+    "prepare": "pnpm build",
+    "postinstall": "pnpm build"
+  }
+}

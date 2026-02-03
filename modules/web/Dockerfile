@@ -11,6 +11,10 @@ FROM base AS development
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/tsconfig/ ./packages/tsconfig/
 COPY packages/eslint-config/ ./packages/eslint-config/
+COPY packages/types/package.json ./packages/types/
+COPY packages/types/tsconfig.build.json ./packages/types/
+COPY packages/types/scripts/ ./packages/types/scripts/
+COPY packages/types/src/ ./packages/types/src/
 COPY modules/web/package.json ./modules/web/
 RUN pnpm install --frozen-lockfile
 COPY modules/web/ ./modules/web/
@@ -23,6 +27,10 @@ FROM base AS builder
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/tsconfig/ ./packages/tsconfig/
 COPY packages/eslint-config/ ./packages/eslint-config/
+COPY packages/types/package.json ./packages/types/
+COPY packages/types/tsconfig.build.json ./packages/types/
+COPY packages/types/scripts/ ./packages/types/scripts/
+COPY packages/types/src/ ./packages/types/src/
 COPY modules/web/package.json ./modules/web/
 RUN pnpm install --frozen-lockfile
 COPY modules/web/ ./modules/web/

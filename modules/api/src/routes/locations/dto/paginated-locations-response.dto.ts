@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type {
+  PaginatedLocationsResponseDto as PaginatedLocationsResponseDtoShape,
+  PaginationMeta as PaginationMetaShape,
+} from '@librestock/types';
 import { LocationResponseDto } from './location-response.dto';
 
-export class PaginationMeta {
+export class PaginationMeta implements PaginationMetaShape {
   @ApiProperty({ description: 'Current page number' })
   page: number;
 
@@ -21,7 +25,9 @@ export class PaginationMeta {
   has_previous: boolean;
 }
 
-export class PaginatedLocationsResponseDto {
+export class PaginatedLocationsResponseDto
+  implements PaginatedLocationsResponseDtoShape
+{
   @ApiProperty({
     description: 'List of locations',
     type: [LocationResponseDto],

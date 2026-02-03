@@ -16,6 +16,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
+import type { UpdateProductDto as UpdateProductDtoShape } from '@librestock/types';
 import { Product } from '../entities/product.entity';
 
 @ValidatorConstraint({ name: 'updatePriceGreaterThanCost', async: false })
@@ -40,7 +41,9 @@ export class UpdatePriceGreaterThanCostConstraint
   }
 }
 
-export class UpdateProductDto implements Partial<Product> {
+export class UpdateProductDto
+  implements Partial<Product>, UpdateProductDtoShape
+{
   @ApiProperty({
     description: 'Product SKU',
     minLength: 1,

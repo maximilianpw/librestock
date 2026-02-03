@@ -35,8 +35,10 @@ function getExpirySnapshot(): number {
   return currentTimeSnapshot
 }
 
+// Server snapshot must return a stable value - use 0 as a sentinel
+// The actual time will be computed client-side after hydration
 function getExpiryServerSnapshot(): number {
-  return Date.now()
+  return 0
 }
 
 function parseExpiryDate(expiryDate: unknown): Date | null {

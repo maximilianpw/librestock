@@ -53,7 +53,7 @@ export class AreasController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async create(@Body() dto: CreateAreaDto): Promise<AreaResponseDto> {
     const area = await this.areasService.create(dto);
-    return area as unknown as AreaResponseDto;
+    return area;
   }
 
   @Get()
@@ -68,7 +68,7 @@ export class AreasController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll(@Query() query: AreaQueryDto): Promise<AreaResponseDto[]> {
     const areas = await this.areasService.findAll(query);
-    return areas as unknown as AreaResponseDto[];
+    return areas;
   }
 
   @Get(':id')
@@ -91,7 +91,7 @@ export class AreasController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<AreaResponseDto> {
     const area = await this.areasService.findById(id);
-    return area as unknown as AreaResponseDto;
+    return area;
   }
 
   @Get(':id/children')
@@ -114,7 +114,7 @@ export class AreasController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<AreaResponseDto> {
     const area = await this.areasService.findByIdWithChildren(id);
-    return area as unknown as AreaResponseDto;
+    return area;
   }
 
   @Put(':id')
@@ -143,7 +143,7 @@ export class AreasController {
     @Body() dto: UpdateAreaDto,
   ): Promise<AreaResponseDto> {
     const area = await this.areasService.update(id, dto);
-    return area as unknown as AreaResponseDto;
+    return area;
   }
 
   @Delete(':id')

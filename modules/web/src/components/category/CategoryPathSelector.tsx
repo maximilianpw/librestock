@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { CategorySelector } from './CategorySelector'
-import type { CategoryWithChildrenResponseDto } from '@/lib/data/generated'
+import type { CategoryWithChildrenResponseDto } from '@/lib/data/categories'
 
 interface CategoryPathSelectorProps {
   categories: CategoryWithChildrenResponseDto[]

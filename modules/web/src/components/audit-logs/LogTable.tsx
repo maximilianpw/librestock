@@ -1,5 +1,5 @@
 'use client'
-import { useListAuditLogs } from '@/lib/data/generated'
+import { useListAuditLogs } from '@/lib/data/audit-logs'
 
 export function LogTable(): React.JSX.Element {
   const { data, isError } = useListAuditLogs()

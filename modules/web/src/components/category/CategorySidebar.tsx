@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { NestedCategory } from './NestedCategory'
 import { CreateCategory } from './CreateCategory'
 import { Spinner } from '@/components/ui/spinner'
-import { useListCategories } from '@/lib/data/generated'
+import { useListCategories } from '@/lib/data/categories'
 
 interface CategorySidebarProps {
   selectedCategoryId: string | null

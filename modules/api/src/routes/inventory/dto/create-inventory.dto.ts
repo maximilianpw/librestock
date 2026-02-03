@@ -9,8 +9,9 @@ import {
   Min,
   MaxLength,
 } from 'class-validator';
+import type { CreateInventoryDto as CreateInventoryDtoShape } from '@librestock/types';
 
-export class CreateInventoryDto {
+export class CreateInventoryDto implements CreateInventoryDtoShape {
   @ApiProperty({
     description: 'Product ID',
     format: 'uuid',

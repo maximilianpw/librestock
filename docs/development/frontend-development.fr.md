@@ -10,7 +10,7 @@ Ce guide couvre les patterns de développement TanStack Start pour le frontend L
 - TanStack Form (gestion des formulaires)
 - Tailwind CSS 4
 - Radix UI / composants shadcn
-- Authentification Clerk
+- Better Auth
 - i18next (traductions)
 
 ## Structure du projet
@@ -30,7 +30,7 @@ modules/web/src/
 ├── lib/
 │   ├── data/
 │   │   ├── axios-client.ts  # Client API
-│   │   └── generated.ts     # Hooks générés par Orval
+│   │   └── products.ts      # Hooks écrits à la main par feature
 │   └── utils.ts             # Utilitaires
 ├── locales/                 # i18n (en, de, fr)
 ├── router.tsx               # Configuration du router
@@ -39,25 +39,15 @@ modules/web/src/
 
 ## Intégration API
 
-### Client généré
+### Client écrit à la main + Types partagés
 
-Régénérer après les changements d'API :
-
-```bash
-pnpm --filter @librestock/web api:gen
-```
-
-Cela génère :
-
-- Interfaces : `ProductResponseDto`, `CreateProductDto`
-- Hooks de requête : `useListProducts`, `useListCategories`
-- Hooks de mutation : `useCreateProduct`, `useUpdateProduct`
-- Clés de requête : `getListProductsQueryKey()`
+Les hooks API sont dans `src/lib/data/*.ts` et utilisent les interfaces/enums
+de `@librestock/types`.
 
 ### Utilisation des requêtes
 
 ```typescript
-import { useListProducts } from '@/lib/data/generated';
+import { useListProducts } from '@/lib/data/products';
 
 function ProductList() {
   const { data, isLoading, error } = useListProducts({
@@ -83,7 +73,7 @@ function ProductList() {
 ### Utilisation des mutations
 
 ```typescript
-import { useCreateProduct, getListProductsQueryKey } from '@/lib/data/generated';
+import { useCreateProduct, getListProductsQueryKey } from '@/lib/data/products';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

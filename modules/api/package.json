@@ -6,7 +6,7 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
-    "build": "nest build",
+    "build": "pnpm --filter @librestock/types build && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -18,9 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "openapi:generate": "ts-node -r tsconfig-paths/register src/scripts/generate-openapi.ts",
     "import:sortly": "ts-node -r tsconfig-paths/register src/scripts/import-sortly.ts",
-    "seed": "ts-node -r tsconfig-paths/register src/scripts/seed-database.ts"
+    "seed": "ts-node -r tsconfig-paths/register src/scripts/seed-database.ts",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.10",
@@ -41,7 +41,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "typeorm": "^0.3.28",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "@librestock/types": "workspace:*"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",

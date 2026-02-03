@@ -14,7 +14,7 @@ S'exécute à chaque pull request et push sur main :
 - Vérification des types
 - Exécution des tests
 - Build de tous les packages
-- Validation de la spec OpenAPI
+- Build des types partagés
 
 ### Déploiement de la documentation
 

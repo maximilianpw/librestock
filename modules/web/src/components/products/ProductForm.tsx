@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/input-group'
 import { Input } from '@/components/ui/input'
 import { ImagePlaceholder } from '@/components/items/ImagePlaceholder'
-import { type CategoryWithChildrenResponseDto } from '@/lib/data/generated'
+import { type CategoryWithChildrenResponseDto } from '@/lib/data/categories'
 import { useProductForm } from '@/hooks/forms/use-product-form'
 
 interface ProductFormProps {

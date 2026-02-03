@@ -5,9 +5,9 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import type { UserSession } from '@thallesp/nestjs-better-auth';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { UserRole } from '../enums';
-import type { UserSession } from '@thallesp/nestjs-better-auth';
 import { getUserSession } from '../auth/session';
 
 type RoleClaim = string | string[] | undefined;

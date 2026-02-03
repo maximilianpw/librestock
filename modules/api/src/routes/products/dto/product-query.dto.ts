@@ -10,23 +10,15 @@ import {
   Max,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
+import {
+  ProductSortField,
+  SortOrder,
+  type ProductQueryDto as ProductQueryDtoShape,
+} from '@librestock/types';
 
-export enum ProductSortField {
-  NAME = 'name',
-  SKU = 'sku',
-  CREATED_AT = 'created_at',
-  UPDATED_AT = 'updated_at',
-  STANDARD_PRICE = 'standard_price',
-  STANDARD_COST = 'standard_cost',
-  REORDER_POINT = 'reorder_point',
-}
+export { ProductSortField, SortOrder };
 
-export enum SortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
-
-export class ProductQueryDto {
+export class ProductQueryDto implements ProductQueryDtoShape {
   @ApiProperty({
     description: 'Page number (1-based)',
     minimum: 1,

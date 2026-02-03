@@ -1,5 +1,5 @@
 import { Folder, ChevronRight, ChevronDown, Plus } from 'lucide-react'
-import type { CategoryResponseDto } from '@/lib/data/generated'
+import type { CategoryResponseDto } from '@/lib/data/categories'
 import { Button } from '@/components/ui/button'
 
 interface CategoryCardProps {

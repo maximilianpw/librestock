@@ -28,10 +28,10 @@ import {
   useListInventory,
   useDeleteInventoryItem,
   getListInventoryQueryKey,
-  type PaginatedInventoryResponseDto,
-  type ListInventoryParams,
+  type InventoryQueryDto,
   type InventoryResponseDto,
-} from '@/lib/data/generated'
+  type PaginatedInventoryResponseDto,
+} from '@/lib/data/inventory'
 import {
   removeItemFromPaginated,
   restoreQueryData,
@@ -41,7 +41,7 @@ import { useExpiryDateStatus } from '@/hooks/useExpiryDateStatus'
 import { useLowStockStatus } from '@/hooks/useLowStockStatus'
 
 interface InventoryTableProps {
-  filters?: Partial<ListInventoryParams>
+  filters?: Partial<InventoryQueryDto>
   page: number
   limit: number
   hasActiveFilters: boolean

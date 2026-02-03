@@ -9,9 +9,16 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import type {
+  BulkCreateProductsDto as BulkCreateProductsDtoShape,
+  BulkUpdateStatusDto as BulkUpdateStatusDtoShape,
+  BulkDeleteDto as BulkDeleteDtoShape,
+  BulkRestoreDto as BulkRestoreDtoShape,
+  BulkOperationResultDto as BulkOperationResultDtoShape,
+} from '@librestock/types';
 import { CreateProductDto } from './create-product.dto';
 
-export class BulkCreateProductsDto {
+export class BulkCreateProductsDto implements BulkCreateProductsDtoShape {
   @ApiProperty({
     description: 'Array of products to create',
     type: [CreateProductDto],
@@ -26,7 +33,7 @@ export class BulkCreateProductsDto {
   products: CreateProductDto[];
 }
 
-export class BulkUpdateStatusDto {
+export class BulkUpdateStatusDto implements BulkUpdateStatusDtoShape {
   @ApiProperty({
     description: 'Array of product IDs to update',
     type: [String],
@@ -47,7 +54,7 @@ export class BulkUpdateStatusDto {
   is_active: boolean;
 }
 
-export class BulkDeleteDto {
+export class BulkDeleteDto implements BulkDeleteDtoShape {
   @ApiProperty({
     description: 'Array of product IDs to delete',
     type: [String],
@@ -71,7 +78,7 @@ export class BulkDeleteDto {
   permanent?: boolean = false;
 }
 
-export class BulkRestoreDto {
+export class BulkRestoreDto implements BulkRestoreDtoShape {
   @ApiProperty({
     description: 'Array of product IDs to restore',
     type: [String],
@@ -86,7 +93,7 @@ export class BulkRestoreDto {
   ids: string[];
 }
 
-export class BulkOperationResultDto {
+export class BulkOperationResultDto implements BulkOperationResultDtoShape {
   @ApiProperty({ description: 'Number of successfully processed items' })
   success_count: number;
 

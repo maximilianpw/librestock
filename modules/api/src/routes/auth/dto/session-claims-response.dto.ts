@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type { SessionClaimsResponseDto as SessionClaimsResponseDtoShape } from '@librestock/types';
 
-export class SessionClaimsResponseDto {
+export class SessionClaimsResponseDto implements SessionClaimsResponseDtoShape {
   @ApiProperty()
   user_id: string;
 

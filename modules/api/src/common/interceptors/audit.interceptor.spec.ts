@@ -1,10 +1,14 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type ExecutionContext, type CallHandler } from '@nestjs/common';
+import { type CallHandler } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { of, throwError } from 'rxjs';
 import { AuditLogService } from '../../routes/audit-logs/audit-log.service';
 import { AuditAction, AuditEntityType } from '../enums';
 import { type AuditMetadata } from '../decorators/auditable.decorator';
+import {
+  type MockRequest,
+  createExecutionContext,
+} from '../../test-utils/execution-context';
 import { AuditInterceptor } from './audit.interceptor';
 
 describe('AuditInterceptor', () => {
@@ -12,7 +16,7 @@ describe('AuditInterceptor', () => {
   let reflector: jest.Mocked<Reflector>;
   let auditLogService: jest.Mocked<AuditLogService>;
 
-  const mockRequest = {
+  const mockRequest: MockRequest = {
     params: { id: 'entity-123' },
     body: { name: 'Test' },
     headers: {
@@ -20,16 +24,10 @@ describe('AuditInterceptor', () => {
       'user-agent': 'Mozilla/5.0',
     },
     socket: { remoteAddress: '127.0.0.1' },
-    auth: { userId: 'user_123' },
+    session: { user: { id: 'user_123' } },
   };
 
-  const mockExecutionContext = {
-    switchToHttp: jest.fn().mockReturnValue({
-      getRequest: jest.fn().mockReturnValue(mockRequest),
-    }),
-    getHandler: jest.fn(),
-    getClass: jest.fn(),
-  } as unknown as ExecutionContext;
+  const mockExecutionContext = createExecutionContext(mockRequest);
 
   const mockCallHandler: CallHandler = {
     handle: jest.fn().mockReturnValue(of({ id: 'response-id', name: 'Test' })),
@@ -131,12 +129,7 @@ describe('AuditInterceptor', () => {
         ...mockRequest,
         body: { productId: 'body-id' },
       };
-      const customContext = {
-        ...mockExecutionContext,
-        switchToHttp: jest.fn().mockReturnValue({
-          getRequest: jest.fn().mockReturnValue(customRequest),
-        }),
-      } as unknown as ExecutionContext;
+      const customContext = createExecutionContext(customRequest);
 
       const metadata: AuditMetadata = {
         action: AuditAction.UPDATE,
@@ -246,12 +239,7 @@ describe('AuditInterceptor', () => {
           'x-forwarded-for': '10.0.0.1, 192.168.1.1, 172.16.0.1',
         },
       };
-      const multiIpContext = {
-        ...mockExecutionContext,
-        switchToHttp: jest.fn().mockReturnValue({
-          getRequest: jest.fn().mockReturnValue(multiIpRequest),
-        }),
-      } as unknown as ExecutionContext;
+      const multiIpContext = createExecutionContext(multiIpRequest);
 
       const metadata: AuditMetadata = {
         action: AuditAction.UPDATE,
@@ -281,12 +269,7 @@ describe('AuditInterceptor', () => {
         ...mockRequest,
         headers: { 'user-agent': 'Mozilla/5.0' },
       };
-      const noForwardedContext = {
-        ...mockExecutionContext,
-        switchToHttp: jest.fn().mockReturnValue({
-          getRequest: jest.fn().mockReturnValue(noForwardedRequest),
-        }),
-      } as unknown as ExecutionContext;
+      const noForwardedContext = createExecutionContext(noForwardedRequest);
 
       const metadata: AuditMetadata = {
         action: AuditAction.UPDATE,
@@ -314,14 +297,9 @@ describe('AuditInterceptor', () => {
     it('should handle null userId when no auth present', (done) => {
       const noAuthRequest = {
         ...mockRequest,
-        auth: undefined,
+        session: undefined,
       };
-      const noAuthContext = {
-        ...mockExecutionContext,
-        switchToHttp: jest.fn().mockReturnValue({
-          getRequest: jest.fn().mockReturnValue(noAuthRequest),
-        }),
-      } as unknown as ExecutionContext;
+      const noAuthContext = createExecutionContext(noAuthRequest);
 
       const metadata: AuditMetadata = {
         action: AuditAction.UPDATE,

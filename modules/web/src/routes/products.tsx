@@ -8,11 +8,15 @@ import {
   useListCategories,
   type CategoryWithChildrenResponseDto,
   getListCategoriesQueryOptions,
-} from '@/lib/data/generated'
+} from '@/lib/data/categories'
 
 export const Route = createFileRoute('/products')({
   loader: async ({ context: { queryClient } }) => {
-    await queryClient.ensureQueryData(getListCategoriesQueryOptions())
+    try {
+      await queryClient.ensureQueryData(getListCategoriesQueryOptions())
+    } catch {
+      // Allow client-side to retry if SSR prefetch fails
+    }
   },
   component: ProductPage,
 })

@@ -1,11 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ErrorType, type ErrorResponseDto as ErrorResponseDtoShape } from '@librestock/types';
 
-export enum ErrorType {
-  BAD_REQUEST = 'BadRequest',
-  NOT_FOUND = 'NotFound',
-}
+export { ErrorType };
 
-export class ErrorResponseDto {
+export class ErrorResponseDto implements ErrorResponseDtoShape {
   @ApiProperty({ example: 'Resource not found' })
   error: string;
 }

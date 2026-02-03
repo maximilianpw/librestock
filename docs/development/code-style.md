@@ -46,7 +46,7 @@ import { CreateProductDto } from './dto';
 
 ```typescript
 // Use inline type imports
-import { type ProductResponseDto } from '@/lib/data/generated';
+import { type ProductResponseDto } from '@/lib/data/products';
 ```
 
 **Unused Variables**:

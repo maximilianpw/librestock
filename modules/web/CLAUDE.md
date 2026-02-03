@@ -5,7 +5,7 @@
 ## Tech Stack
 
 TanStack Start · TanStack Router · React 19 · TypeScript · Tailwind CSS 4 · Radix UI · TanStack
-Query + Form · Better Auth · i18next · Orval
+Query + Form · Better Auth · i18next · @librestock/types
 
 ## Directory Structure
 
@@ -32,7 +32,8 @@ modules/web/src/
 ├── lib/
 │   ├── data/
 │   │   ├── axios-client.ts  # Axios instance + auth
-│   │   └── generated.ts     # Orval-generated hooks
+│   │   ├── products.ts      # Handwritten API hooks
+│   │   └── locations.ts     # Handwritten API hooks
 │   ├── utils.ts             # cn() utility
 │   └── env.ts               # Environment validation
 ├── router.tsx               # Router configuration
@@ -109,18 +110,12 @@ Authentication is handled by Better Auth's `useSession()` hook from `@/lib/auth-
 
 ## API Integration
 
-### Generated Client
+### Shared Types + Handwritten Client
 
-```bash
-pnpm api:gen  # Regenerates src/lib/data/generated.ts from openapi.yaml
-```
+**Source of truth:**
 
-**Generated artifacts:**
-
-- Interfaces: `ProductResponseDto`, `CreateProductDto`, etc.
-- Query hooks: `useListProducts`, `useListCategories`
-- Mutation hooks: `useCreateProduct`, `useUpdateCategory`
-- Query keys: `getListProductsQueryKey()`
+- Interfaces/enums: `packages/types/src/*`
+- API hooks: `src/lib/data/*.ts`
 
 ### Usage Patterns
 
@@ -269,7 +264,6 @@ VITE_API_BASE_URL=http://localhost:8080/api/v1   # Required
 ```bash
 pnpm dev        # Dev server (port 3000)
 pnpm build      # Production build
-pnpm api:gen    # Regenerate API client
 pnpm lint       # ESLint
 pnpm type-check # TypeScript check
 ```
@@ -281,8 +275,7 @@ pnpm type-check # TypeScript check
 | `app/__root.tsx`           | Root layout, provider hierarchy |
 | `router.tsx`               | Router configuration            |
 | `lib/data/axios-client.ts` | API client, auth injection      |
-| `lib/data/generated.ts`    | Auto-generated API hooks        |
+| `lib/data/*.ts`            | Handwritten API hooks           |
 | `locales/i18n.ts`          | i18next config                  |
 | `app/globals.css`          | Tailwind + CSS variables        |
-| `orval.config.ts`          | API generation config           |
 | `vite.config.ts`           | Vite + TanStack Start config    |

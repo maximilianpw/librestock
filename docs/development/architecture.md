@@ -32,7 +32,7 @@ graph TB
 | Frontend | TanStack Start, React 19, TanStack Router, TanStack Query/Form, Tailwind CSS |
 | Backend | NestJS 11, TypeORM, PostgreSQL 16 |
 | Auth | Clerk |
-| API Docs | OpenAPI/Swagger |
+| API Docs | Swagger UI |
 | Tooling | pnpm workspaces, devenv.sh, TypeScript |
 
 ## Monorepo Structure
@@ -45,8 +45,8 @@ librestock/
 ├── packages/
 │   ├── tsconfig/            # Shared TS configs
 │   └── eslint-config/       # Shared ESLint config
+│   └── types/               # Shared DTO interfaces/enums
 ├── docs/                    # MkDocs documentation
-├── openapi.yaml             # Generated API spec
 ├── pnpm-workspace.yaml
 ├── mkdocs.yml               # Documentation config
 └── devenv.nix               # Nix dev environment
@@ -57,14 +57,15 @@ librestock/
 ```
 ┌─────────────────────────────────────────┐
 │           TanStack Start Frontend       │
-│  React Query ←── Orval (generated) ←────┼── openapi.yaml
+│  React Query + handwritten clients       │
+│  Shared DTOs from @librestock/types      │
 │  Clerk Auth                             │
 └─────────────────────────────────────────┘
                     ▼ HTTP/REST
 ┌─────────────────────────────────────────┐
 │            NestJS Backend               │
 │  Controller → Service → Repository      │
-│  ClerkAuthGuard · TypeORM · Swagger ────┼──► openapi.yaml
+│  ClerkAuthGuard · TypeORM · Swagger UI  │
 └─────────────────────────────────────────┘
                     ▼
 ┌─────────────────────────────────────────┐
@@ -82,20 +83,17 @@ Frontend: Authorization: Bearer {token}
 Backend: ClerkAuthGuard → verify → req.auth.userId
 ```
 
-## OpenAPI-First Workflow
+## Shared-Types Workflow
 
-The API specification is the contract between frontend and backend:
+Shared DTO interfaces/enums are the contract between frontend and backend:
 
 ```bash
-# 1. Backend generates spec from decorators
-pnpm --filter @librestock/api openapi:generate   # → openapi.yaml
-
-# 2. Frontend generates typed hooks from spec
-pnpm --filter @librestock/web api:gen            # → src/lib/data/generated.ts
+# 1. Update shared types
+pnpm --filter @librestock/types build
 ```
 
-!!! warning "Always regenerate both after API changes"
-    The `openapi.yaml` at repo root is the source of truth for the frontend.
+!!! warning "Keep shared types aligned"
+    Ensure backend DTOs and frontend hooks match `packages/types`.
 
 ## Domain Model
 
@@ -172,4 +170,4 @@ classDiagram
 | BaseAuditEntity | `api/src/common/entities/` | Soft delete + audit fields |
 | ClerkAuthGuard | `api/src/common/guards/` | JWT verification |
 | HATEOAS | `api/src/common/hateoas/` | REST hypermedia links |
-| Generated hooks | `web/src/lib/data/generated.ts` | Type-safe API calls |
+| Shared DTOs | `packages/types/src/` | Backend/Frontend contracts |
