@@ -11,7 +11,7 @@ Query + Form · Better Auth · i18next · @librestock/types
 
 ```
 modules/web/src/
-├── app/                     # TanStack Router file-based routes
+├── routes/                  # TanStack Router file-based routes
 │   ├── __root.tsx           # Root layout + providers
 │   ├── index.tsx            # Home (/)
 │   ├── products.tsx         # Products page (/products)
@@ -44,7 +44,7 @@ modules/web/src/
 
 ### File-Based Routing
 
-Routes are defined in `src/app/` using TanStack Router conventions:
+Routes are defined in `src/routes/` using TanStack Router conventions:
 
 - `__root.tsx` - Root layout wrapping all routes
 - `index.tsx` - Home page (`/`)
@@ -198,7 +198,7 @@ const { t, i18n } = useTranslation();
 
 ## Adding a New Page
 
-1. Create `src/app/<route>.tsx` with `createFileRoute`
+1. Create `src/routes/<route>.tsx` with `createFileRoute`
 2. Export the `Route` constant
 3. Add route to `Header.tsx` navigation
 4. Add translations to `locales/{lang}/common.json`
@@ -206,7 +206,7 @@ const { t, i18n } = useTranslation();
 Example:
 
 ```typescript
-// src/app/reports.tsx
+// src/routes/reports.tsx
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/reports')({
@@ -253,6 +253,63 @@ const { id } = Route.useParams();
 const { page, filter } = Route.useSearch();
 ```
 
+## Reusable Components
+
+### Common Components (`src/components/common/`)
+
+| Component | Props | Purpose |
+| --------- | ----- | ------- |
+| `PaginationControls` | `page`, `totalPages`, `totalItems?`, `isLoading?`, `onPageChange` | Prev/next pagination with result count |
+| `EmptyState` | `message`, `description?`, `icon?`, `variant?` | Empty data placeholder (`simple` or `bordered`) |
+| `ErrorState` | `message`, `icon?`, `variant?` | Error display (`simple` or `bordered`) |
+| `FormDialog` | `title`, `description`, `formId`, `open`, `onOpenChange`, ... | Modal dialog wrapping a form |
+| `DeleteConfirmationDialog` | `title`, `description`, `open`, `isLoading`, `onConfirm`, `onOpenChange` | Confirm before delete |
+| `CrudDropdownMenu` | `onEdit`, `onDelete` | Three-dot menu with edit/delete actions |
+| `SearchBar` | `value`, `onChange`, `onClear`, `placeholder?` | Search input with clear button |
+
+### Search Param Helpers (`src/lib/router/search.ts`)
+
+Used with Zod schemas for `validateSearch` in route definitions:
+
+```typescript
+import { parseStringParam, parseNumberParam, parseBooleanParam } from '@/lib/router/search'
+
+const searchSchema = z.object({
+  page: z.preprocess(parseNumberParam, z.number().int().min(1).optional()),
+  q: z.preprocess(parseStringParam, z.string().optional()),
+  active: z.preprocess(parseBooleanParam, z.boolean().optional()),
+})
+
+export const Route = createFileRoute('/example')({
+  validateSearch: (search) => searchSchema.parse(search),
+  component: ExamplePage,
+})
+```
+
+## Testing (Playwright)
+
+Config: `playwright.config.ts`. Test files: `e2e/tests/*.spec.ts`
+
+```bash
+pnpm test:e2e                  # Run all (needs devenv up)
+pnpm test:e2e:ui               # Interactive UI mode
+pnpm test:e2e:headed           # Visible browser
+```
+
+**Setup:**
+- `e2e/global-setup.ts` — creates test user via API (`e2e-test@librestock.local`)
+- `e2e/auth.setup.ts` — logs in and saves auth state to `e2e/.auth/user.json`
+
+**Playwright projects:**
+- `setup` — runs auth setup
+- `chromium` — authenticated tests (depends on `setup`, uses stored auth)
+- `unauthenticated` — tests that run without auth (e.g., login flow)
+
+**Patterns:**
+- Use `page.locator('[data-sidebar="menu-button"]', { hasText: /text/i })` for sidebar nav
+- Use `{ timeout: 15000 }` for navigation assertions
+- New authenticated test files must be added to the `chromium` project's `testMatch` regex in `playwright.config.ts`
+
 ## Environment Variables
 
 ```bash
@@ -272,10 +329,10 @@ pnpm type-check # TypeScript check
 
 | File                       | Purpose                         |
 | -------------------------- | ------------------------------- |
-| `app/__root.tsx`           | Root layout, provider hierarchy |
+| `routes/__root.tsx`        | Root layout, provider hierarchy |
 | `router.tsx`               | Router configuration            |
 | `lib/data/axios-client.ts` | API client, auth injection      |
 | `lib/data/*.ts`            | Handwritten API hooks           |
 | `locales/i18n.ts`          | i18next config                  |
-| `app/globals.css`          | Tailwind + CSS variables        |
+| `routes/globals.css`       | Tailwind + CSS variables        |
 | `vite.config.ts`           | Vite + TanStack Start config    |

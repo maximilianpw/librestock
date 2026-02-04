@@ -83,6 +83,24 @@ Orders, Photos, StockMovements, Suppliers, Clients — these have entity definit
 5. **Shared DTOs/enums** in `packages/types/src/<feature>/` — rebuild with `pnpm --filter @librestock/types build`
 6. **Frontend hooks** in `web/src/lib/data/<feature>.ts`
 
+## Testing
+
+| Module | Framework | Unit Tests | E2E Tests |
+| ------ | --------- | ---------- | --------- |
+| API | Jest 30 (`ts-jest`) | `src/routes/*/*.spec.ts` | `test/*.e2e-spec.ts` |
+| Web | Playwright | — | `e2e/tests/*.spec.ts` |
+
+```bash
+pnpm --filter @librestock/api test                    # API unit tests
+pnpm --filter @librestock/api test:e2e                # API e2e tests (needs DB)
+pnpm --filter @librestock/web test:e2e                # Playwright (needs devenv up)
+```
+
+**Note:** Jest 30 renamed `--testPathPattern` to `--testPathPatterns` (plural). Use:
+```bash
+pnpm --filter @librestock/api test --testPathPatterns='audit'
+```
+
 ## Module Documentation
 
 - `modules/api/CLAUDE.md` - Backend patterns, entities, endpoints
