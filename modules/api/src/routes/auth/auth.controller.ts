@@ -45,7 +45,15 @@ export class AuthController {
   getProfile(
     @Session() session: UserSession,
   ): ProfileResponseDto {
-    return session.user;
+    const { id, name, email, image, createdAt, updatedAt } = session.user;
+    return {
+      id,
+      name,
+      email,
+      image: image ?? undefined,
+      createdAt: createdAt instanceof Date ? createdAt.toISOString() : String(createdAt),
+      updatedAt: updatedAt instanceof Date ? updatedAt.toISOString() : String(updatedAt),
+    };
   }
 
   @Get('session-claims')

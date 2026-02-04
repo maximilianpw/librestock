@@ -1,3 +1,8 @@
 export interface ProfileResponseDto {
-  [key: string]: unknown
+  id: string
+  name: string
+  email: string
+  image?: string
+  createdAt: string
+  updatedAt: string
 }
