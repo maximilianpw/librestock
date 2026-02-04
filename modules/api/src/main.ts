@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
@@ -100,8 +101,8 @@ async function bootstrap() {
     logger.log('Swagger UI enabled at /api/docs');
   }
 
-  // Run Better Auth migrations in non-production (mirrors TypeORM synchronize behavior)
-  if (!isProduction) {
+  // Run Better Auth migrations in non-production, or when explicitly requested via env flag
+  if (!isProduction || process.env.RUN_BETTER_AUTH_MIGRATIONS === 'true') {
     const ctx = await auth.$context;
     await ctx.runMigrations();
   }
