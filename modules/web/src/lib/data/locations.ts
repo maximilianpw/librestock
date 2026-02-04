@@ -8,17 +8,8 @@ import {
   type PaginatedLocationsResponseDto,
   type UpdateLocationDto,
 } from '@librestock/types'
-import {
-  type QueryClient,
-  type QueryKey,
-  type UseMutationOptions,
-  type UseMutationResult,
-  type UseQueryOptions,
-  type UseQueryResult,
-  useMutation,
-  useQuery,
-} from '@tanstack/react-query'
-import { getAxiosInstance } from './axios-client'
+import { apiGet } from './axios-client'
+import { makeCrudHooks, makeQueryHook } from './make-crud-hooks'
 
 export type {
   CreateLocationDto,
@@ -29,208 +20,29 @@ export type {
 }
 export { LocationSortField, LocationType, SortOrder }
 
-const LOCATIONS_ENDPOINT = '/locations'
-
-export const getListLocationsQueryKey = (params?: LocationQueryDto) => {
-  return [LOCATIONS_ENDPOINT, ...(params ? [params] : [])] as const
-}
-
-export const getListAllLocationsQueryKey = () => ['/locations/all'] as const
-
-const JSON_CONTENT_TYPE = 'application/json'
-
-const listLocations = async (
-  params?: LocationQueryDto,
-  signal?: AbortSignal,
-) => {
-  return await getAxiosInstance<PaginatedLocationsResponseDto>({
-    url: LOCATIONS_ENDPOINT,
-    method: 'GET',
-    params,
-    signal,
-  })
-}
-
-const listAllLocations = async (signal?: AbortSignal) => {
-  return await getAxiosInstance<LocationResponseDto[]>({
-    url: '/locations/all',
-    method: 'GET',
-    signal,
-  })
-}
-
-const getLocation = async (id: string, signal?: AbortSignal) => {
-  return await getAxiosInstance<LocationResponseDto>({
-    url: `/locations/${id}`,
-    method: 'GET',
-    signal,
-  })
-}
-
-const createLocation = async (data: CreateLocationDto) => {
-  return await getAxiosInstance<LocationResponseDto>({
-    url: LOCATIONS_ENDPOINT,
-    method: 'POST',
-    headers: { 'Content-Type': JSON_CONTENT_TYPE },
-    data,
-  })
-}
-
-const updateLocation = async (id: string, data: UpdateLocationDto) => {
-  return await getAxiosInstance<LocationResponseDto>({
-    url: `/locations/${id}`,
-    method: 'PUT',
-    headers: { 'Content-Type': JSON_CONTENT_TYPE },
-    data,
-  })
-}
-
-const deleteLocation = async (id: string) => {
-  return await getAxiosInstance<void>({
-    url: `/locations/${id}`,
-    method: 'DELETE',
-  })
-}
-
-export function getListLocationsQueryOptions(
-  params?: LocationQueryDto,
-  options?: { query?: Partial<UseQueryOptions<PaginatedLocationsResponseDto>> },
-) {
-  const queryKey = options?.query?.queryKey ?? getListLocationsQueryKey(params)
-  const queryFn = async ({ signal }: { signal?: AbortSignal }) =>
-    await listLocations(params, signal)
-  return { queryKey, queryFn, ...options?.query } as UseQueryOptions<
-    PaginatedLocationsResponseDto,
-    unknown,
-    PaginatedLocationsResponseDto,
-    QueryKey
-  >
-}
-
-export function getListAllLocationsQueryOptions(
-  options?: { query?: Partial<UseQueryOptions<LocationResponseDto[]>> },
-) {
-  const queryKey = options?.query?.queryKey ?? getListAllLocationsQueryKey()
-  const queryFn = async ({ signal }: { signal?: AbortSignal }) =>
-    await listAllLocations(signal)
-  return { queryKey, queryFn, ...options?.query } as UseQueryOptions<
-    LocationResponseDto[],
-    unknown,
-    LocationResponseDto[],
-    QueryKey
-  >
-}
-
-export function getGetLocationQueryOptions(
-  id: string,
-  options?: { query?: Partial<UseQueryOptions<LocationResponseDto>> },
-) {
-  const queryKey = options?.query?.queryKey ?? [`/locations/${id}`]
-  const queryFn = async ({ signal }: { signal?: AbortSignal }) =>
-    await getLocation(id, signal)
-  return { queryKey, queryFn, ...options?.query } as UseQueryOptions<
-    LocationResponseDto,
-    unknown,
-    LocationResponseDto,
-    QueryKey
-  >
-}
-
-export function useListLocations(
-  params?: LocationQueryDto,
-  options?: { query?: Partial<UseQueryOptions<PaginatedLocationsResponseDto>> },
-  queryClient?: QueryClient,
-): UseQueryResult<PaginatedLocationsResponseDto> & { queryKey: QueryKey } {
-  const queryOptions = getListLocationsQueryOptions(params, options)
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    PaginatedLocationsResponseDto
-  > & { queryKey: QueryKey }
-  return { ...query, queryKey: queryOptions.queryKey }
-}
-
-export function useListAllLocations(
-  options?: { query?: Partial<UseQueryOptions<LocationResponseDto[]>> },
-  queryClient?: QueryClient,
-): UseQueryResult<LocationResponseDto[]> & { queryKey: QueryKey } {
-  const queryOptions = getListAllLocationsQueryOptions(options)
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    LocationResponseDto[]
-  > & { queryKey: QueryKey }
-  return { ...query, queryKey: queryOptions.queryKey }
-}
-
-export function useGetLocation(
-  id: string,
-  options?: { query?: Partial<UseQueryOptions<LocationResponseDto>> },
-  queryClient?: QueryClient,
-): UseQueryResult<LocationResponseDto> & { queryKey: QueryKey } {
-  const queryOptions = getGetLocationQueryOptions(id, options)
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    LocationResponseDto
-  > & { queryKey: QueryKey }
-  return { ...query, queryKey: queryOptions.queryKey }
-}
-
-export function useCreateLocation(
-  options?: {
-    mutation?: UseMutationOptions<
-      LocationResponseDto,
-      unknown,
-      { data: CreateLocationDto }
-    >
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
+const crud = makeCrudHooks<
   LocationResponseDto,
-  unknown,
-  { data: CreateLocationDto }
-> {
-  return useMutation(
-    {
-      mutationKey: ['createLocation'],
-      mutationFn: async (vars) => await createLocation(vars.data),
-      ...options?.mutation,
-    },
-    queryClient,
-  )
-}
+  CreateLocationDto,
+  UpdateLocationDto,
+  PaginatedLocationsResponseDto,
+  LocationQueryDto,
+  void
+>({ endpoint: '/locations', resourceName: 'Location' })
 
-export function useUpdateLocation(
-  options?: {
-    mutation?: UseMutationOptions<
-      LocationResponseDto,
-      unknown,
-      { id: string; data: UpdateLocationDto }
-    >
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  LocationResponseDto,
-  unknown,
-  { id: string; data: UpdateLocationDto }
-> {
-  return useMutation(
-    {
-      mutationKey: ['updateLocation'],
-      mutationFn: async (vars) => await updateLocation(vars.id, vars.data),
-      ...options?.mutation,
-    },
-    queryClient,
-  )
-}
+export const getListLocationsQueryKey = crud.getListQueryKey
+export const getListLocationsQueryOptions = crud.getListQueryOptions
+export const getGetLocationQueryOptions = crud.getGetQueryOptions
+export const useListLocations = crud.useList
+export const useGetLocation = crud.useGet
+export const useCreateLocation = crud.useCreate
+export const useUpdateLocation = crud.useUpdate
+export const useDeleteLocation = crud.useDelete
 
-export function useDeleteLocation(
-  options?: {
-    mutation?: UseMutationOptions<void, unknown, { id: string }>
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<void, unknown, { id: string }> {
-  return useMutation(
-    {
-      mutationKey: ['deleteLocation'],
-      mutationFn: async (vars) => await deleteLocation(vars.id),
-      ...options?.mutation,
-    },
-    queryClient,
-  )
-}
+const listAll = makeQueryHook<LocationResponseDto[]>(
+  () => ['/locations/all'] as const,
+  (signal) => apiGet<LocationResponseDto[]>('/locations/all', undefined, signal),
+)
+
+export const getListAllLocationsQueryKey = listAll.getQueryKey
+export const getListAllLocationsQueryOptions = listAll.getQueryOptions
+export const useListAllLocations = listAll.useQuery

@@ -5,14 +5,7 @@ import {
   type AuditLogResponseDto,
   type PaginatedAuditLogsResponseDto,
 } from '@librestock/types'
-import {
-  type QueryClient,
-  type QueryKey,
-  type UseQueryOptions,
-  type UseQueryResult,
-  useQuery,
-} from '@tanstack/react-query'
-import { getAxiosInstance } from './axios-client'
+import { makeCrudHooks } from './make-crud-hooks'
 
 export type {
   AuditLogQueryDto,
@@ -21,45 +14,15 @@ export type {
 }
 export { AuditAction, AuditEntityType }
 
-export const getListAuditLogsQueryKey = (params?: AuditLogQueryDto) => {
-  return ['/audit-logs', ...(params ? [params] : [])] as const
-}
+const crud = makeCrudHooks<
+  AuditLogResponseDto,
+  never,
+  never,
+  PaginatedAuditLogsResponseDto,
+  AuditLogQueryDto,
+  void
+>({ endpoint: '/audit-logs', resourceName: 'AuditLog' })
 
-const listAuditLogs = async (
-  params?: AuditLogQueryDto,
-  signal?: AbortSignal,
-) => {
-  return await getAxiosInstance<PaginatedAuditLogsResponseDto>({
-    url: '/audit-logs',
-    method: 'GET',
-    params,
-    signal,
-  })
-}
-
-export function getListAuditLogsQueryOptions(
-  params?: AuditLogQueryDto,
-  options?: { query?: Partial<UseQueryOptions<PaginatedAuditLogsResponseDto>> },
-) {
-  const queryKey = options?.query?.queryKey ?? getListAuditLogsQueryKey(params)
-  const queryFn = async ({ signal }: { signal?: AbortSignal }) =>
-    await listAuditLogs(params, signal)
-  return { queryKey, queryFn, ...options?.query } as UseQueryOptions<
-    PaginatedAuditLogsResponseDto,
-    unknown,
-    PaginatedAuditLogsResponseDto,
-    QueryKey
-  >
-}
-
-export function useListAuditLogs(
-  params?: AuditLogQueryDto,
-  options?: { query?: Partial<UseQueryOptions<PaginatedAuditLogsResponseDto>> },
-  queryClient?: QueryClient,
-): UseQueryResult<PaginatedAuditLogsResponseDto> & { queryKey: QueryKey } {
-  const queryOptions = getListAuditLogsQueryOptions(params, options)
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    PaginatedAuditLogsResponseDto
-  > & { queryKey: QueryKey }
-  return { ...query, queryKey: queryOptions.queryKey }
-}
+export const getListAuditLogsQueryKey = crud.getListQueryKey
+export const getListAuditLogsQueryOptions = crud.getListQueryOptions
+export const useListAuditLogs = crud.useList
