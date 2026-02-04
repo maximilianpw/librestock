@@ -10,7 +10,8 @@
     "report": "Rapport",
     "settings": "Paramètres",
     "stock": "Stock",
-    "products": "Produits"
+    "products": "Produits",
+    "users": "Utilisateurs"
   },
   "search": {
     "placeholder": "Rechercher...",
@@ -95,6 +96,47 @@
     "productError": "Échec de la création du produit",
     "loadCategoriesError": "Échec du chargement des catégories",
     "invalidCategory": "Catégorie invalide"
+  },
+  "users": {
+    "title": "Gestion des utilisateurs",
+    "subtitle": "Gérer les comptes, rôles et accès des utilisateurs",
+    "searchPlaceholder": "Rechercher des utilisateurs...",
+    "name": "Nom",
+    "email": "E-mail",
+    "rolesColumn": "Rôles",
+    "status": "Statut",
+    "created": "Créé",
+    "active": "Actif",
+    "banned": "Banni",
+    "noRoles": "Aucun rôle",
+    "noUsers": "Aucun utilisateur trouvé",
+    "noUsersFiltered": "Aucun résultat pour ces filtres",
+    "errorLoading": "Erreur lors du chargement des utilisateurs",
+    "allRoles": "Tous les rôles",
+    "editRoles": "Modifier les rôles",
+    "editRolesTitle": "Modifier les rôles",
+    "editRolesDescription": "Attribuer des rôles à {{name}}",
+    "rolesUpdated": "Rôles mis à jour avec succès",
+    "rolesUpdateError": "Échec de la mise à jour des rôles",
+    "ban": "Bannir",
+    "unban": "Débannir",
+    "banSuccess": "Utilisateur banni",
+    "banError": "Échec du bannissement de l'utilisateur",
+    "unbanSuccess": "Utilisateur débanni",
+    "unbanError": "Échec du débannissement de l'utilisateur",
+    "revokeSessions": "Révoquer les sessions",
+    "revokeSessionsSuccess": "Sessions révoquées",
+    "revokeSessionsError": "Échec de la révocation des sessions",
+    "deleteTitle": "Supprimer l'utilisateur",
+    "deleteDescription": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.",
+    "deleteSuccess": "Utilisateur supprimé",
+    "deleteError": "Échec de la suppression de l'utilisateur",
+    "roles": {
+      "ADMIN": "Admin",
+      "WAREHOUSE_MANAGER": "Responsable d'entrepôt",
+      "PICKER": "Préparateur",
+      "SALES": "Commercial"
+    }
   },
   "products": {
     "errorLoading": "Erreur lors du chargement des produits:",

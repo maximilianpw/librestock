@@ -1,5 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { LayoutDashboard, Package, Settings, Logs, MapPin, Boxes } from 'lucide-react'
+import { LayoutDashboard, Package, Settings, Logs, MapPin, Boxes, Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { PoweredBy } from '@/components/common/PoweredBy'
@@ -54,6 +54,11 @@ function useRoutes(): {
       name: t('navigation.auditLogs'),
       route: '/audit-logs',
       icon: Logs,
+    },
+    {
+      name: t('navigation.users'),
+      route: '/users',
+      icon: Users,
     },
   ]
 }

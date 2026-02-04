@@ -8,6 +8,7 @@ import { AreasModule } from './routes/areas/areas.module';
 import { InventoryModule } from './routes/inventory/inventory.module';
 import { AuditLogsModule } from './routes/audit-logs/audit-logs.module';
 import { BrandingModule } from './routes/branding/branding.module';
+import { UsersModule } from './routes/users/users.module';
 
 /**
  * Application routes configuration
@@ -50,5 +51,9 @@ export const routes: Routes = [
   {
     path: 'branding',
     module: BrandingModule,
+  },
+  {
+    path: 'users',
+    module: UsersModule,
   },
 ];

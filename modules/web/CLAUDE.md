@@ -21,12 +21,14 @@ modules/web/src/
 │   ├── inventory.tsx        # Inventory page (/inventory)
 │   ├── settings.tsx         # Settings page (/settings)
 │   ├── audit-logs.tsx       # Audit logs (/audit-logs)
+│   ├── users.tsx            # User management (/users, admin)
 │   └── globals.css          # Global styles
 ├── components/
 │   ├── ui/                  # Base components (Radix/shadcn)
 │   ├── category/            # Category features
 │   ├── products/            # Product features
-│   ├── items/               # Shared item display
+│   ├── items/               # Shared item display (includes SearchBar)
+│   ├── users/               # User management (UsersTable, RoleBadges, UpdateRolesDialog)
 │   └── common/              # Header, LanguageSwitcher
 ├── hooks/providers/         # React context providers
 ├── lib/
@@ -106,7 +108,7 @@ BrandingProvider → I18nProvider → ThemeProvider → SidebarProvider
 - **I18nProvider**: Translations
 - **ThemeProvider**: Light/dark mode
 
-Authentication is handled by Better Auth's `useSession()` hook from `@/lib/auth-client` - no provider needed.
+Authentication is handled by Better Auth's `useSession()` hook from `@/lib/auth-client` - no provider needed. The auth client includes the `adminClient()` plugin for admin user management types.
 
 ## API Integration
 
@@ -200,8 +202,9 @@ const { t, i18n } = useTranslation();
 
 1. Create `src/routes/<route>.tsx` with `createFileRoute`
 2. Export the `Route` constant
-3. Add route to `Header.tsx` navigation
-4. Add translations to `locales/{lang}/common.json`
+3. **Update `src/routeTree.gen.ts`** — this file is auto-generated when `pnpm dev` runs, but if you're adding a route without the dev server running, you must manually add the route entry (import, route config, and all type interfaces). Without this, TypeScript will error on `createFileRoute('/new-route')`.
+4. Add route to `Header.tsx` navigation (sidebar)
+5. Add translations to `locales/{lang}/common.json` (en, de, fr)
 
 Example:
 
@@ -221,7 +224,7 @@ function ReportsPage(): React.JSX.Element {
 ## Adding a Feature Component
 
 1. Create component in `src/components/<feature>/`
-2. Use generated hooks from `@/lib/data/generated`
+2. Use hooks from `@/lib/data/<feature>.ts` (built with `makeCrudHooks` or `makeMutationHook`)
 3. Handle loading/error/empty states
 4. Add translations for user-facing text
 
@@ -265,6 +268,11 @@ const { page, filter } = Route.useSearch();
 | `FormDialog` | `title`, `description`, `formId`, `open`, `onOpenChange`, ... | Modal dialog wrapping a form |
 | `DeleteConfirmationDialog` | `title`, `description`, `open`, `isLoading`, `onConfirm`, `onOpenChange` | Confirm before delete |
 | `CrudDropdownMenu` | `onEdit`, `onDelete` | Three-dot menu with edit/delete actions |
+
+### Shared Components (`src/components/items/`)
+
+| Component | Props | Purpose |
+| --------- | ----- | ------- |
 | `SearchBar` | `value`, `onChange`, `onClear`, `placeholder?` | Search input with clear button |
 
 ### Search Param Helpers (`src/lib/router/search.ts`)

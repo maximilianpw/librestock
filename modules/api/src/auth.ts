@@ -1,4 +1,5 @@
 import { betterAuth } from 'better-auth';
+import { admin } from 'better-auth/plugins';
 import { Pool } from 'pg';
 import { getSSLConfig, getPoolMax, IDLE_TIMEOUT_MS } from './config/db-connection.utils';
 
@@ -38,6 +39,7 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7,
   },
+  plugins: [admin()],
   advanced: {
     database: {
       generateId: 'uuid',

@@ -32,6 +32,8 @@ modules/api/src/
     ├── areas/              # /api/v1/areas/*
     ├── inventory/          # /api/v1/inventory/*
     ├── audit-logs/         # /api/v1/audit-logs/*
+    ├── branding/           # /api/v1/branding/*
+    ├── users/              # /api/v1/users/* (admin only)
     ├── suppliers/          # Entity only, no endpoints yet
     └── health/             # /health-check (no auth)
 ```
@@ -70,10 +72,14 @@ Each feature module follows:
 - Use `@ApiProperty()` on all fields for Swagger
 - Validation via class-validator decorators
 
-### Authentication
+### Authentication & Authorization
 
 - All `/api/v1/*` routes require Better Auth (global guard)
 - Access session: `@Session()` from `@thallesp/nestjs-better-auth`
+- Better Auth `admin()` plugin enabled in `src/auth.ts` — provides `auth.api.listUsers()`, `banUser()`, `unbanUser()`, `removeUser()`, `revokeUserSessions()`
+- **DB-backed roles:** `RolesGuard` queries the `user_roles` table (not session claims). Falls back to session roles if DB returns nothing.
+- The `user_roles` table uses a PostgreSQL enum (`user_role_enum`) and has a unique constraint on `(user_id, role)`
+- `DB_SYNCHRONIZE` env var is `false` by default — new tables must be created manually or by setting `DB_SYNCHRONIZE=true`
 
 ### HATEOAS
 
@@ -274,6 +280,20 @@ The transaction interceptor automatically wraps decorated methods in TypeORM tra
 | GET    | `/api/v1/audit-logs/user/:userId`                 | User audit history         | Admin only   |
 
 **Note:** All audit-log endpoints are restricted to `@Roles(UserRole.ADMIN)`. Non-admin users receive 403.
+
+### Users (Admin Only)
+
+| Method | Path                                | Description          |
+| ------ | ----------------------------------- | -------------------- |
+| GET    | `/api/v1/users`                     | List (paginated, searchable) |
+| GET    | `/api/v1/users/:id`                 | Get user with roles  |
+| PUT    | `/api/v1/users/:id/roles`           | Set user roles       |
+| PATCH  | `/api/v1/users/:id/ban`             | Ban user             |
+| PATCH  | `/api/v1/users/:id/unban`           | Unban user           |
+| DELETE | `/api/v1/users/:id`                 | Delete user          |
+| POST   | `/api/v1/users/:id/revoke-sessions` | Revoke all sessions  |
+
+**Note:** The users module does not use a repository pattern — it calls Better Auth's admin API directly (`auth.api.*`) and uses TypeORM only for the `user_roles` table. All endpoints require `@Roles(UserRole.ADMIN)`.
 
 ## Testing
 

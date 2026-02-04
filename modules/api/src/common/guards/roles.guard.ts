@@ -5,6 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { DataSource } from 'typeorm';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { UserRole } from '../enums';
@@ -19,7 +20,7 @@ const normalizeRoles = (claim: RoleClaim): string[] => {
   return claim ? [claim] : [];
 };
 
-const extractRoles = (session: UserSession | undefined) => {
+const extractSessionRoles = (session: UserSession | undefined) => {
   if (!session) {
     return [];
   }
@@ -43,9 +44,12 @@ const extractRoles = (session: UserSession | undefined) => {
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private reflector: Reflector,
+    private dataSource: DataSource,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles =
       this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
         context.getHandler(),
@@ -58,7 +62,27 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const session = getUserSession(request);
-    const roles = extractRoles(session);
+    const userId = session?.user?.id;
+
+    // Try DB-backed roles first
+    let roles: string[] = [];
+    if (userId) {
+      try {
+        const rows: { role: string }[] = await this.dataSource.query(
+          'SELECT role FROM user_roles WHERE user_id = $1',
+          [userId],
+        );
+        roles = rows.map((r) => r.role);
+      } catch {
+        // Table may not exist yet during migrations; fall back to session roles
+      }
+    }
+
+    // Fall back to session-based roles if DB returned nothing
+    if (roles.length === 0) {
+      roles = extractSessionRoles(session);
+    }
+
     const hasRole = requiredRoles.some((role) => roles.includes(role));
 
     if (!hasRole) {
