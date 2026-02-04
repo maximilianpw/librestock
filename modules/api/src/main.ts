@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -17,13 +17,30 @@ import { StockMovement } from './routes/stock-movements/entities/stock-movement.
 import { SupplierProduct } from './routes/suppliers/entities/supplier-product.entity';
 import { Supplier } from './routes/suppliers/entities/supplier.entity';
 
+const VALID_NODE_ENVS = ['development', 'staging', 'production'];
+
 async function bootstrap() {
+  const nodeEnv = process.env.NODE_ENV ?? 'development';
+  if (!VALID_NODE_ENVS.includes(nodeEnv)) {
+    throw new Error(
+      `Invalid NODE_ENV="${nodeEnv}". Must be one of: ${VALID_NODE_ENVS.join(', ')}`,
+    );
+  }
+  process.env.NODE_ENV = nodeEnv;
+  const isProduction = nodeEnv === 'production';
+
   const app = await NestFactory.create(AppModule, {
     bodyParser: false,
   });
   const configService = app.get(ConfigService);
+  const logger = new Logger('Bootstrap');
 
   const corsOrigin = configService.get<string>('CORS_ORIGIN');
+  if (isProduction && (!corsOrigin || corsOrigin === '*')) {
+    throw new Error(
+      'CORS_ORIGIN must be set to a specific origin in production (not "*" or empty)',
+    );
+  }
   app.enableCors({
     origin: corsOrigin ?? false,
     credentials: true,
@@ -44,44 +61,47 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new HateoasInterceptor(app.get(Reflector)));
 
-  const config = new DocumentBuilder()
-    .setTitle('LibreStock Inventory API')
-    .setDescription('REST API for LibreStock Inventory Management System')
-    .setVersion('1.0.0')
-    .setContact('API Support', '', '')
-    .setLicense('MIT', '')
-    .addServer('http://localhost:8080', 'Development Server')
-    .addServer('https://api.librestock.com', 'Production Server')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Better Auth token',
-      },
-      'BearerAuth',
-    )
-    .build();
+  if (!isProduction) {
+    const config = new DocumentBuilder()
+      .setTitle('LibreStock Inventory API')
+      .setDescription('REST API for LibreStock Inventory Management System')
+      .setVersion('1.0.0')
+      .setContact('API Support', '', '')
+      .setLicense('MIT', '')
+      .addServer('http://localhost:8080', 'Development Server')
+      .addServer('https://api.librestock.com', 'Production Server')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Better Auth token',
+        },
+        'BearerAuth',
+      )
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config, {
-    extraModels: [
-      AuditLog,
-      Category,
-      Client,
-      Inventory,
-      Location,
-      Order,
-      OrderItem,
-      Photo,
-      StockMovement,
-      Supplier,
-      SupplierProduct,
-    ],
-  });
-  SwaggerModule.setup('api/docs', app, document);
+    const document = SwaggerModule.createDocument(app, config, {
+      extraModels: [
+        AuditLog,
+        Category,
+        Client,
+        Inventory,
+        Location,
+        Order,
+        OrderItem,
+        Photo,
+        StockMovement,
+        Supplier,
+        SupplierProduct,
+      ],
+    });
+    SwaggerModule.setup('api/docs', app, document);
+    logger.log('Swagger UI enabled at /api/docs');
+  }
 
   // Run Better Auth migrations in non-production (mirrors TypeORM synchronize behavior)
-  if (process.env.NODE_ENV !== 'production') {
+  if (!isProduction) {
     const ctx = await auth.$context;
     await ctx.runMigrations();
   }
