@@ -40,7 +40,7 @@ export const useDeleteLocation = crud.useDelete
 
 const listAll = makeQueryHook<LocationResponseDto[]>(
   () => ['/locations/all'] as const,
-  (signal) => apiGet<LocationResponseDto[]>('/locations/all', undefined, signal),
+  async (signal) => await apiGet<LocationResponseDto[]>('/locations/all', undefined, signal),
 )
 
 export const getListAllLocationsQueryKey = listAll.getQueryKey

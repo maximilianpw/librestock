@@ -55,7 +55,7 @@ export const useDeleteProduct = crud.useDelete
 
 const listAll = makeQueryHook<ProductResponseDto[]>(
   () => ['/products/all'] as const,
-  (signal) => apiGet<ProductResponseDto[]>('/products/all', undefined, signal),
+  async (signal) => await apiGet<ProductResponseDto[]>('/products/all', undefined, signal),
 )
 
 export const useListAllProducts = listAll.useQuery
@@ -64,8 +64,8 @@ export const useListAllProducts = listAll.useQuery
 
 const byCategory = makeParamQueryHook<ProductResponseDto[], string>(
   (categoryId) => ['/products/category', categoryId] as const,
-  (categoryId, signal) =>
-    apiGet<ProductResponseDto[]>(
+  async (categoryId, signal) =>
+    await apiGet<ProductResponseDto[]>(
       `/products/category/${categoryId}`,
       undefined,
       signal,
@@ -81,27 +81,27 @@ export const useGetProductsByCategory = byCategory.useQuery
 export const useBulkCreateProducts = makeMutationHook<
   BulkOperationResultDto,
   { data: BulkCreateProductsDto }
->('bulkCreateProducts', (vars) =>
-  apiPost<BulkOperationResultDto>('/products/bulk', vars.data),
+>('bulkCreateProducts', async (vars) =>
+  await apiPost<BulkOperationResultDto>('/products/bulk', vars.data),
 )
 
 export const useBulkUpdateProductStatus = makeMutationHook<
   BulkOperationResultDto,
   { data: BulkUpdateStatusDto }
->('bulkUpdateProductStatus', (vars) =>
-  apiPatch<BulkOperationResultDto>('/products/bulk/status', vars.data),
+>('bulkUpdateProductStatus', async (vars) =>
+  await apiPatch<BulkOperationResultDto>('/products/bulk/status', vars.data),
 )
 
 export const useBulkDeleteProducts = makeMutationHook<
   BulkOperationResultDto,
   { data: BulkDeleteDto }
->('bulkDeleteProducts', (vars) =>
-  apiDelete<BulkOperationResultDto>('/products/bulk', vars.data),
+>('bulkDeleteProducts', async (vars) =>
+  await apiDelete<BulkOperationResultDto>('/products/bulk', vars.data),
 )
 
 export const useBulkRestoreProducts = makeMutationHook<
   BulkOperationResultDto,
   { data: BulkRestoreDto }
->('bulkRestoreProducts', (vars) =>
-  apiPost<BulkOperationResultDto>('/products/bulk/restore', vars.data),
+>('bulkRestoreProducts', async (vars) =>
+  await apiPost<BulkOperationResultDto>('/products/bulk/restore', vars.data),
 )

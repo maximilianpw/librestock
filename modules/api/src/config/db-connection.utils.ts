@@ -11,7 +11,7 @@ export function getSSLConfig(): { rejectUnauthorized: boolean } | false {
 }
 
 export function getPoolMax(): number {
-  const poolMax = parseInt(process.env.DB_POOL_MAX ?? '20', 10);
+  const poolMax = Number.parseInt(process.env.DB_POOL_MAX ?? '20', 10);
   if (Number.isNaN(poolMax) || poolMax <= 0) {
     throw new Error('DB_POOL_MAX must be a positive integer');
   }

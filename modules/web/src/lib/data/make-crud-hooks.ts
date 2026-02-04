@@ -14,11 +14,11 @@ import { apiDelete, apiGet, apiPost, apiPut } from './axios-client'
 // Shared option types
 // ---------------------------------------------------------------------------
 
-export type QueryOptionsArg<TData> = {
+export interface QueryOptionsArg<TData> {
   query?: Partial<UseQueryOptions<TData>>
 }
 
-export type MutationOptionsArg<TData, TVars> = {
+export interface MutationOptionsArg<TData, TVars> {
   mutation?: UseMutationOptions<TData, unknown, TVars>
 }
 
@@ -226,7 +226,7 @@ export function makeQueryHook<TData>(
   }
 
   function getQueryOptions(options?: QueryOptionsArg<TData>) {
-    const queryKey = options?.query?.queryKey ?? (getQueryKey() as QueryKey)
+    const queryKey = options?.query?.queryKey ?? getQueryKey()
     const queryFn = async ({ signal }: { signal?: AbortSignal }) =>
       await fetchFn(signal)
     return { queryKey, queryFn, ...options?.query } as UseQueryOptions<
@@ -267,7 +267,7 @@ export function makeParamQueryHook<TData, TParam>(
     param?: TParam,
     options?: QueryOptionsArg<TData>,
   ) {
-    const queryKey = options?.query?.queryKey ?? (getQueryKey(param) as QueryKey)
+    const queryKey = options?.query?.queryKey ?? getQueryKey(param)
     const queryFn = async ({ signal }: { signal?: AbortSignal }) =>
       await fetchFn(param as TParam, signal)
     return { queryKey, queryFn, ...options?.query } as UseQueryOptions<

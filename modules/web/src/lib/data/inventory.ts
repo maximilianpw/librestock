@@ -37,6 +37,6 @@ export const useDeleteInventoryItem = crud.useDelete
 export const useAdjustInventoryQuantity = makeMutationHook<
   InventoryResponseDto,
   { id: string; data: AdjustInventoryDto }
->('adjustInventoryQuantity', (vars) =>
-  apiPatch<InventoryResponseDto>(`/inventory/${vars.id}/adjust`, vars.data),
+>('adjustInventoryQuantity', async (vars) =>
+  await apiPatch<InventoryResponseDto>(`/inventory/${vars.id}/adjust`, vars.data),
 )
