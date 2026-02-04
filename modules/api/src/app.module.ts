@@ -16,6 +16,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransactionInterceptor } from './common/interceptors/transaction.interceptor';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { ThrottlerExceptionFilter } from './common/filters/throttler-exception.filter';
+import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 import databaseConfig from './config/database.config';
 import { HealthModule } from './routes/health/health.module';
 import { routes } from './app.routes';
@@ -67,6 +68,12 @@ import { auth } from './auth';
     {
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
+    },
+    // APP_FILTER providers run in reverse registration order:
+    // ThrottlerExceptionFilter runs first, GlobalExceptionFilter is the fallback.
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
     },
     {
       provide: APP_FILTER,
