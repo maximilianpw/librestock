@@ -19,6 +19,9 @@ import {
 import { ErrorResponseDto } from '../../common/dto/error-response.dto';
 import { MessageResponseDto } from '../../common/dto/message-response.dto';
 import { HateoasInterceptor } from '../../common/hateoas/hateoas.interceptor';
+import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
+import { Auditable } from '../../common/decorators/auditable.decorator';
+import { AuditAction, AuditEntityType } from '../../common/enums';
 import { StandardThrottle } from '../../common/decorators/throttle.decorator';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -62,8 +65,13 @@ export class CategoriesController {
   }
 
   @Post()
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @CategoryHateoas()
+  @Auditable({
+    action: AuditAction.CREATE,
+    entityType: AuditEntityType.CATEGORY,
+    entityIdFromResponse: 'id',
+  })
   @ApiOperation({
     summary: 'Create category',
     description: 'Creates a new product category',
@@ -96,8 +104,13 @@ export class CategoriesController {
   }
 
   @Put(':id')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @CategoryHateoas()
+  @Auditable({
+    action: AuditAction.UPDATE,
+    entityType: AuditEntityType.CATEGORY,
+    entityIdParam: 'id',
+  })
   @ApiOperation({
     summary: 'Update category',
     description: 'Updates an existing product category',
@@ -141,8 +154,13 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @DeleteCategoryHateoas()
+  @Auditable({
+    action: AuditAction.DELETE,
+    entityType: AuditEntityType.CATEGORY,
+    entityIdParam: 'id',
+  })
   @ApiOperation({
     summary: 'Delete category',
     description: 'Deletes a product category',

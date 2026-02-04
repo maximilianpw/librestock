@@ -21,6 +21,9 @@ import {
 import { ErrorResponseDto } from '../../common/dto/error-response.dto';
 import { MessageResponseDto } from '../../common/dto/message-response.dto';
 import { HateoasInterceptor } from '../../common/hateoas/hateoas.interceptor';
+import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
+import { Auditable } from '../../common/decorators/auditable.decorator';
+import { AuditAction, AuditEntityType } from '../../common/enums';
 import { StandardThrottle } from '../../common/decorators/throttle.decorator';
 import {
   CreateInventoryDto,
@@ -123,8 +126,13 @@ export class InventoryController {
   }
 
   @Post()
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @InventoryHateoas()
+  @Auditable({
+    action: AuditAction.CREATE,
+    entityType: AuditEntityType.INVENTORY,
+    entityIdFromResponse: 'id',
+  })
   @ApiOperation({
     summary: 'Create inventory item',
     operationId: 'createInventoryItem',
@@ -139,8 +147,13 @@ export class InventoryController {
   }
 
   @Put(':id')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @InventoryHateoas()
+  @Auditable({
+    action: AuditAction.UPDATE,
+    entityType: AuditEntityType.INVENTORY,
+    entityIdParam: 'id',
+  })
   @ApiOperation({
     summary: 'Update inventory item',
     operationId: 'updateInventoryItem',
@@ -158,8 +171,13 @@ export class InventoryController {
   }
 
   @Patch(':id/adjust')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @InventoryHateoas()
+  @Auditable({
+    action: AuditAction.ADJUST_QUANTITY,
+    entityType: AuditEntityType.INVENTORY,
+    entityIdParam: 'id',
+  })
   @ApiOperation({
     summary: 'Adjust inventory quantity',
     operationId: 'adjustInventoryQuantity',
@@ -177,8 +195,13 @@ export class InventoryController {
   }
 
   @Delete(':id')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @DeleteInventoryHateoas()
+  @Auditable({
+    action: AuditAction.DELETE,
+    entityType: AuditEntityType.INVENTORY,
+    entityIdParam: 'id',
+  })
   @ApiOperation({
     summary: 'Delete inventory item',
     operationId: 'deleteInventoryItem',

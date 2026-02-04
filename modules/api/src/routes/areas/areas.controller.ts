@@ -20,6 +20,9 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { HateoasInterceptor } from '../../common/hateoas/hateoas.interceptor';
+import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
+import { Auditable } from '../../common/decorators/auditable.decorator';
+import { AuditAction, AuditEntityType } from '../../common/enums';
 import { StandardThrottle } from '../../common/decorators/throttle.decorator';
 import { ErrorResponseDto } from '../../common/dto/error-response.dto';
 import { AreasService } from './areas.service';
@@ -37,8 +40,13 @@ export class AreasController {
   constructor(private readonly areasService: AreasService) {}
 
   @Post()
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @AreaHateoas()
+  @Auditable({
+    action: AuditAction.CREATE,
+    entityType: AuditEntityType.AREA,
+    entityIdFromResponse: 'id',
+  })
   @ApiOperation({ summary: 'Create a new area' })
   @ApiResponse({
     status: 201,
@@ -118,8 +126,13 @@ export class AreasController {
   }
 
   @Put(':id')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @AreaHateoas()
+  @Auditable({
+    action: AuditAction.UPDATE,
+    entityType: AuditEntityType.AREA,
+    entityIdParam: 'id',
+  })
   @ApiOperation({ summary: 'Update an area' })
   @ApiParam({ name: 'id', description: 'Area ID', format: 'uuid' })
   @ApiResponse({
@@ -147,6 +160,12 @@ export class AreasController {
   }
 
   @Delete(':id')
+  @UseInterceptors(AuditInterceptor)
+  @Auditable({
+    action: AuditAction.DELETE,
+    entityType: AuditEntityType.AREA,
+    entityIdParam: 'id',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete an area' })
   @ApiParam({ name: 'id', description: 'Area ID', format: 'uuid' })

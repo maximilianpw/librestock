@@ -20,6 +20,9 @@ import {
 import { ErrorResponseDto } from '../../common/dto/error-response.dto';
 import { MessageResponseDto } from '../../common/dto/message-response.dto';
 import { HateoasInterceptor } from '../../common/hateoas/hateoas.interceptor';
+import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
+import { Auditable } from '../../common/decorators/auditable.decorator';
+import { AuditAction, AuditEntityType } from '../../common/enums';
 import { StandardThrottle } from '../../common/decorators/throttle.decorator';
 import {
   CreateLocationDto,
@@ -82,8 +85,13 @@ export class LocationsController {
   }
 
   @Post()
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @LocationHateoas()
+  @Auditable({
+    action: AuditAction.CREATE,
+    entityType: AuditEntityType.LOCATION,
+    entityIdFromResponse: 'id',
+  })
   @ApiOperation({ summary: 'Create location', operationId: 'createLocation' })
   @ApiResponse({ status: 201, type: LocationResponseDto })
   @ApiResponse({ status: 400, type: ErrorResponseDto })
@@ -95,8 +103,13 @@ export class LocationsController {
   }
 
   @Put(':id')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @LocationHateoas()
+  @Auditable({
+    action: AuditAction.UPDATE,
+    entityType: AuditEntityType.LOCATION,
+    entityIdParam: 'id',
+  })
   @ApiOperation({ summary: 'Update location', operationId: 'updateLocation' })
   @ApiParam({ name: 'id', description: 'Location UUID', type: String })
   @ApiResponse({ status: 200, type: LocationResponseDto })
@@ -111,8 +124,13 @@ export class LocationsController {
   }
 
   @Delete(':id')
-  @UseInterceptors(HateoasInterceptor)
+  @UseInterceptors(HateoasInterceptor, AuditInterceptor)
   @DeleteLocationHateoas()
+  @Auditable({
+    action: AuditAction.DELETE,
+    entityType: AuditEntityType.LOCATION,
+    entityIdParam: 'id',
+  })
   @ApiOperation({ summary: 'Delete location', operationId: 'deleteLocation' })
   @ApiParam({ name: 'id', description: 'Location UUID', type: String })
   @ApiResponse({ status: 200, type: MessageResponseDto })
