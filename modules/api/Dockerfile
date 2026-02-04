@@ -11,7 +11,7 @@ FROM base AS development
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/tsconfig/ ./packages/tsconfig/
 COPY packages/types/package.json ./packages/types/
-COPY packages/types/tsconfig.build.json ./packages/types/
+COPY packages/types/tsconfig.build.json packages/types/tsconfig.build.cjs.json ./packages/types/
 COPY packages/types/scripts/ ./packages/types/scripts/
 COPY packages/types/src/ ./packages/types/src/
 COPY modules/api/package.json ./modules/api/
@@ -25,7 +25,7 @@ FROM base AS builder
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/tsconfig/ ./packages/tsconfig/
 COPY packages/types/package.json ./packages/types/
-COPY packages/types/tsconfig.build.json ./packages/types/
+COPY packages/types/tsconfig.build.json packages/types/tsconfig.build.cjs.json ./packages/types/
 COPY packages/types/scripts/ ./packages/types/scripts/
 COPY packages/types/src/ ./packages/types/src/
 COPY modules/api/package.json ./modules/api/

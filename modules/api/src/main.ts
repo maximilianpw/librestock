@@ -1,7 +1,10 @@
+import 'dotenv/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
+import * as express from 'express';
 import { AppModule } from './app.module';
 import { auth } from './auth';
 import { Client } from './clients/entities/client.entity';
@@ -34,6 +37,13 @@ async function bootstrap() {
   });
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
+
+  app.use(helmet({
+    contentSecurityPolicy: isProduction ? undefined : false,
+  }));
+
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   const corsOrigin = configService.get<string>('CORS_ORIGIN');
   if (isProduction && (!corsOrigin || corsOrigin === '*')) {
@@ -100,8 +110,8 @@ async function bootstrap() {
     logger.log('Swagger UI enabled at /api/docs');
   }
 
-  // Run Better Auth migrations in non-production (mirrors TypeORM synchronize behavior)
-  if (!isProduction) {
+  // Run Better Auth migrations in non-production, or when explicitly requested via env flag
+  if (!isProduction || process.env.RUN_BETTER_AUTH_MIGRATIONS === 'true') {
     const ctx = await auth.$context;
     await ctx.runMigrations();
   }

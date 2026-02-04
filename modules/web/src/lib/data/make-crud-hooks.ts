@@ -52,7 +52,7 @@ export function makeCrudHooks<
   }
 
   function getGetQueryKey(id?: string) {
-    return [endpoint, id] as const
+    return [`${endpoint}/${id}`] as const
   }
 
   // --- query options ---
@@ -268,10 +268,9 @@ export function makeParamQueryHook<TData, TParam>(
     options?: QueryOptionsArg<TData>,
   ) {
     const queryKey = options?.query?.queryKey ?? (getQueryKey(param) as QueryKey)
-    const enabled = param != null && (options?.query?.enabled ?? true)
     const queryFn = async ({ signal }: { signal?: AbortSignal }) =>
-      await fetchFn(param!, signal)
-    return { queryKey, queryFn, enabled, ...options?.query } as UseQueryOptions<
+      await fetchFn(param as TParam, signal)
+    return { queryKey, queryFn, ...options?.query } as UseQueryOptions<
       TData,
       unknown,
       TData,
