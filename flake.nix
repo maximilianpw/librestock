@@ -55,15 +55,12 @@
             docker-buildx
             docker-compose
             pkg-config
-
-            # GTK/WebKit (for Tauri)
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+            # GTK/WebKit (for Tauri) - Linux only
             gtk3
             webkitgtk_4_1
             librsvg
             libayatana-appindicator
-
-            # Formatting
-            nixfmt-rfc-style
           ];
         };
       }
