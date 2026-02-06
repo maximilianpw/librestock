@@ -9,6 +9,9 @@ import { InventoryModule } from './routes/inventory/inventory.module';
 import { AuditLogsModule } from './routes/audit-logs/audit-logs.module';
 import { BrandingModule } from './routes/branding/branding.module';
 import { UsersModule } from './routes/users/users.module';
+import { ClientsModule } from './routes/clients/clients.module';
+import { StockMovementsModule } from './routes/stock-movements/stock-movements.module';
+import { OrdersModule } from './routes/orders/orders.module';
 
 /**
  * Application routes configuration
@@ -55,5 +58,17 @@ export const routes: Routes = [
   {
     path: 'users',
     module: UsersModule,
+  },
+  {
+    path: 'clients',
+    module: ClientsModule,
+  },
+  {
+    path: 'stock-movements',
+    module: StockMovementsModule,
+  },
+  {
+    path: 'orders',
+    module: OrdersModule,
   },
 ];

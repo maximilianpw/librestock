@@ -13,6 +13,8 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
   const shared: Partial<TypeOrmModuleOptions> = {
     type: 'postgres',
     entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
+    migrations: [`${__dirname}/../migrations/*{.ts,.js}`],
+    migrationsRun: isProduction,
     synchronize,
     logging: process.env.NODE_ENV === 'development',
     ssl,

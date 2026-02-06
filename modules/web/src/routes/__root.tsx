@@ -94,6 +94,14 @@ function WelcomeScreen(): React.JSX.Element {
         >
           Sign In
         </Link>
+        <div className="mt-3">
+          <Link
+            className="text-primary text-sm hover:underline"
+            to="/signup"
+          >
+            Create an account
+          </Link>
+        </div>
       </div>
     </div>
   )
@@ -128,7 +136,7 @@ function RootDocument({
 }): React.JSX.Element {
   const { data: session, isPending: isLoading } = useSession()
   const pathname = useRouterState({ select: (state) => state.location.pathname })
-  const isPublicRoute = pathname.startsWith('/login')
+  const isPublicRoute = pathname.startsWith('/login') || pathname.startsWith('/signup')
 
   return (
     <html suppressHydrationWarning lang="en">

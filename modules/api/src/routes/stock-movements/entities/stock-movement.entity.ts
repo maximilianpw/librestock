@@ -5,13 +5,20 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { StockMovementReason } from 'src/common/enums';
+import { StockMovementReason } from '@librestock/types';
+import { Product } from '../../products/entities/product.entity';
 import { Location } from '../../locations/entities/location.entity';
 import { Order } from '../../orders/entities/order.entity';
 
 @Entity('stock_movements')
+@Index(['product_id'])
+@Index(['from_location_id'])
+@Index(['to_location_id'])
+@Index(['reason'])
+@Index(['created_at'])
 export class StockMovement {
   @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
@@ -20,6 +27,14 @@ export class StockMovement {
   @ApiProperty({ description: 'Product ID', format: 'uuid' })
   @Column({ type: 'uuid' })
   product_id: string;
+
+  @ApiProperty({
+    description: 'Product relation',
+    type: () => Product,
+  })
+  @ManyToOne(() => Product)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 
   @ApiProperty({
     description: 'Source location ID',

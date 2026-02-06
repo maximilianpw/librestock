@@ -9,4 +9,5 @@ export enum AuditEntityType {
   STOCK_MOVEMENT = 'STOCK_MOVEMENT',
   PHOTO = 'PHOTO',
   AREA = 'AREA',
+  CLIENT = 'CLIENT',
 }

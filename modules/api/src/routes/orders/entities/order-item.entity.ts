@@ -6,11 +6,15 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Order } from './order.entity';
+import { Product } from '../../products/entities/product.entity';
 
 @Entity('order_items')
+@Index(['order_id'])
+@Index(['product_id'])
 export class OrderItem {
   @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
@@ -28,6 +32,11 @@ export class OrderItem {
   @ApiProperty({ description: 'Product ID', format: 'uuid' })
   @Column({ type: 'uuid' })
   product_id: string;
+
+  @ApiProperty({ description: 'Product relation', type: () => Product })
+  @ManyToOne(() => Product)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 
   @ApiProperty({ description: 'Quantity ordered' })
   @Column({ type: 'int' })

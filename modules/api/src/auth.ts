@@ -43,4 +43,21 @@ export const auth = betterAuth({
       generateId: 'uuid',
     },
   },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          const { rows } = await pool.query(
+            `SELECT 1 FROM user_roles WHERE role = 'ADMIN' LIMIT 1`,
+          );
+          if (rows.length === 0) {
+            await pool.query(
+              `INSERT INTO user_roles (id, user_id, role) VALUES (gen_random_uuid(), $1, 'ADMIN')`,
+              [user.id],
+            );
+          }
+        },
+      },
+    },
+  },
 });

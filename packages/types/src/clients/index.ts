@@ -1,1 +1,6 @@
 export * from './client-status.enum'
+export * from './create-client.type'
+export * from './update-client.type'
+export * from './client-response.type'
+export * from './client-query.type'
+export * from './paginated-clients-response.type'

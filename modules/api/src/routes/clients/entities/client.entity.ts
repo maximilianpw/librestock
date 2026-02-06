@@ -2,14 +2,16 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { ClientStatus } from '../../../common/enums';
+import { ClientStatus } from '@librestock/types';
+import { BaseEntity } from '../../../common/entities/base.entity';
 
 @Entity('clients')
-export class Client {
+@Index(['email'])
+@Index(['account_status'])
+export class Client extends BaseEntity {
   @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -65,12 +67,4 @@ export class Client {
   @ApiProperty({ description: 'Additional notes', nullable: true })
   @Column({ type: 'text', nullable: true })
   notes: string | null;
-
-  @ApiProperty({ description: 'Creation timestamp' })
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @ApiProperty({ description: 'Last update timestamp' })
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
 }

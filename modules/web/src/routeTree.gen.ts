@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StockRouteImport } from './routes/stock'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as InventoryRouteImport } from './routes/inventory'
@@ -20,6 +21,11 @@ import { Route as AuditLogsRouteImport } from './routes/audit-logs'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LocationsIdRouteImport } from './routes/locations.$id'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StockRoute = StockRouteImport.update({
   id: '/stock',
   path: '/stock',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/stock': typeof StockRoute
   '/users': typeof UsersRoute
   '/locations/$id': typeof LocationsIdRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/stock': typeof StockRoute
   '/users': typeof UsersRoute
   '/locations/$id': typeof LocationsIdRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/stock': typeof StockRoute
   '/users': typeof UsersRoute
   '/locations/$id': typeof LocationsIdRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/settings'
+    | '/signup'
     | '/stock'
     | '/users'
     | '/locations/$id'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/settings'
+    | '/signup'
     | '/stock'
     | '/users'
     | '/locations/$id'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/settings'
+    | '/signup'
     | '/stock'
     | '/users'
     | '/locations/$id'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ProductsRoute: typeof ProductsRoute
   SettingsRoute: typeof SettingsRoute
+  SignupRoute: typeof SignupRoute
   StockRoute: typeof StockRoute
   UsersRoute: typeof UsersRoute
 }
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/users': {
       id: '/users'
       path: '/users'
@@ -254,6 +274,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ProductsRoute: ProductsRoute,
   SettingsRoute: SettingsRoute,
+  SignupRoute: SignupRoute,
   StockRoute: StockRoute,
   UsersRoute: UsersRoute,
 }

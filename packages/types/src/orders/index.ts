@@ -1,1 +1,6 @@
 export * from './order-status.enum'
+export * from './create-order.type'
+export * from './update-order.type'
+export * from './update-order-status.type'
+export * from './order-response.type'
+export * from './order-query.type'

@@ -5,13 +5,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { OrderStatus } from 'src/common/enums';
+import { OrderStatus } from '@librestock/types';
 import { Client } from '../../clients/entities/client.entity';
+import { OrderItem } from './order-item.entity';
 
 @Entity('orders')
+@Index(['order_number'], { unique: true })
+@Index(['client_id'])
+@Index(['status'])
 export class Order {
   @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
@@ -106,6 +112,10 @@ export class Order {
   @ApiProperty({ description: 'Creation timestamp' })
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
+
+  @ApiProperty({ description: 'Order items', type: () => [OrderItem] })
+  @OneToMany(() => OrderItem, (item) => item.order)
+  items: OrderItem[];
 
   @ApiProperty({ description: 'Last update timestamp' })
   @UpdateDateColumn({ type: 'timestamptz' })
