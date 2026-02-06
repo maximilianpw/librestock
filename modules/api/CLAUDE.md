@@ -264,6 +264,50 @@ The transaction interceptor automatically wraps decorated methods in TypeORM tra
 | PATCH  | `/api/v1/inventory/:id/adjust` | Adjust quantity   |
 | DELETE | `/api/v1/inventory/:id`      | Delete              |
 
+### Audit Logs
+
+| Method | Path                                              | Description                | Auth         |
+| ------ | ------------------------------------------------- | -------------------------- | ------------ |
+| GET    | `/api/v1/audit-logs`                              | List (paginated, filtered) | Admin only   |
+| GET    | `/api/v1/audit-logs/:id`                          | Get one                    | Admin only   |
+| GET    | `/api/v1/audit-logs/entity/:entityType/:entityId` | Entity audit history       | Admin only   |
+| GET    | `/api/v1/audit-logs/user/:userId`                 | User audit history         | Admin only   |
+
+**Note:** All audit-log endpoints are restricted to `@Roles(UserRole.ADMIN)`. Non-admin users receive 403.
+
+## Testing
+
+### Unit Tests (Jest 30)
+
+Config is inline in `package.json`. Test files: `src/**/*.spec.ts`
+
+```bash
+pnpm test                                        # All unit tests
+pnpm test --testPathPatterns='audit'              # Filter by path
+pnpm test:cov                                    # With coverage
+```
+
+**Important:** Jest 30 uses `--testPathPatterns` (plural), not `--testPathPattern`.
+
+**Patterns:**
+- Use `@nestjs/testing` `Test.createTestingModule()` for DI
+- Mock repositories with `jest.fn()` + `mockResolvedValue()`
+- Test util: `src/test-utils/execution-context.ts` for mocking `ExecutionContext`
+
+### E2E Tests (Jest + Supertest)
+
+Config: `test/jest-e2e.json`. Test files: `test/*.e2e-spec.ts`
+
+```bash
+pnpm test:e2e                                    # Requires running DB
+```
+
+**Patterns:**
+- Boot full NestJS app with `Test.createTestingModule({ imports: [AppModule] })`
+- Override `AuthGuard` with mock: `.overrideGuard(AuthGuard).useValue(mockAuthGuard)`
+- Clean DB in `beforeEach` with raw SQL deletes
+- Use `supertest` for HTTP assertions
+
 ## Environment Variables
 
 ```bash

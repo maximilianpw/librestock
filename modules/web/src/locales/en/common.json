@@ -180,6 +180,43 @@
     "deleted": "Area deleted successfully",
     "deleteError": "Failed to delete area"
   },
+  "auditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "View system activity and changes",
+    "noLogs": "No audit logs found",
+    "noLogsFiltered": "No results for these filters",
+    "errorLoading": "Error loading audit logs",
+    "action": "Action",
+    "entityType": "Entity Type",
+    "entityId": "Entity ID",
+    "userId": "User ID",
+    "ipAddress": "IP Address",
+    "date": "Date",
+    "allActions": "All Actions",
+    "allEntityTypes": "All Entity Types",
+    "system": "System",
+    "actions": {
+      "CREATE": "Create",
+      "UPDATE": "Update",
+      "DELETE": "Delete",
+      "RESTORE": "Restore",
+      "ADJUST_QUANTITY": "Adjust Quantity",
+      "ADD_PHOTO": "Add Photo",
+      "STATUS_CHANGE": "Status Change"
+    },
+    "entityTypes": {
+      "PRODUCT": "Product",
+      "CATEGORY": "Category",
+      "SUPPLIER": "Supplier",
+      "ORDER": "Order",
+      "ORDER_ITEM": "Order Item",
+      "INVENTORY": "Inventory",
+      "LOCATION": "Location",
+      "STOCK_MOVEMENT": "Stock Movement",
+      "PHOTO": "Photo",
+      "AREA": "Area"
+    }
+  },
   "inventory": {
     "subtitle": "Track stock levels across locations",
     "allInventory": "All Inventory",
