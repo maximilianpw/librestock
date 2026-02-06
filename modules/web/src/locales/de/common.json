@@ -10,7 +10,8 @@
     "report": "Bericht",
     "settings": "Einstellungen",
     "stock": "Bestand",
-    "products": "Produkte"
+    "products": "Produkte",
+    "users": "Benutzer"
   },
   "search": {
     "placeholder": "Suchen...",
@@ -95,6 +96,47 @@
     "productError": "Produkt konnte nicht erstellt werden",
     "loadCategoriesError": "Kategorien konnten nicht geladen werden",
     "invalidCategory": "Ungültige Kategorie"
+  },
+  "users": {
+    "title": "Benutzerverwaltung",
+    "subtitle": "Benutzerkonten, Rollen und Zugriff verwalten",
+    "searchPlaceholder": "Benutzer suchen...",
+    "name": "Name",
+    "email": "E-Mail",
+    "rolesColumn": "Rollen",
+    "status": "Status",
+    "created": "Erstellt",
+    "active": "Aktiv",
+    "banned": "Gesperrt",
+    "noRoles": "Keine Rollen",
+    "noUsers": "Keine Benutzer gefunden",
+    "noUsersFiltered": "Keine Ergebnisse für diese Filter",
+    "errorLoading": "Fehler beim Laden der Benutzer",
+    "allRoles": "Alle Rollen",
+    "editRoles": "Rollen bearbeiten",
+    "editRolesTitle": "Rollen bearbeiten",
+    "editRolesDescription": "Rollen für {{name}} zuweisen",
+    "rolesUpdated": "Rollen erfolgreich aktualisiert",
+    "rolesUpdateError": "Rollen konnten nicht aktualisiert werden",
+    "ban": "Sperren",
+    "unban": "Entsperren",
+    "banSuccess": "Benutzer gesperrt",
+    "banError": "Benutzer konnte nicht gesperrt werden",
+    "unbanSuccess": "Benutzer entsperrt",
+    "unbanError": "Benutzer konnte nicht entsperrt werden",
+    "revokeSessions": "Sitzungen widerrufen",
+    "revokeSessionsSuccess": "Sitzungen widerrufen",
+    "revokeSessionsError": "Sitzungen konnten nicht widerrufen werden",
+    "deleteTitle": "Benutzer löschen",
+    "deleteDescription": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteSuccess": "Benutzer gelöscht",
+    "deleteError": "Benutzer konnte nicht gelöscht werden",
+    "roles": {
+      "ADMIN": "Admin",
+      "WAREHOUSE_MANAGER": "Lagerverwalter",
+      "PICKER": "Kommissionierer",
+      "SALES": "Vertrieb"
+    }
   },
   "products": {
     "errorLoading": "Fehler beim Laden von Produkten:",

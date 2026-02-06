@@ -56,11 +56,15 @@ Branding       ← singleton app branding settings (name, logo, colors)
 
 ### Registered Modules (active)
 
-Health, Auth, Categories, Products, Locations, Areas, Inventory, AuditLogs, Branding
+Health, Auth, Categories, Products, Locations, Areas, Inventory, AuditLogs, Branding, Users
 
 ### Entity-Only Modules (not yet wired up)
 
 Orders, Photos, StockMovements, Suppliers, Clients — these have entity definitions but no controller/service/repository yet.
+
+### User Roles
+
+Roles are stored in the `user_roles` DB table (not in Better Auth sessions). The `RolesGuard` queries this table at runtime. To assign roles, insert into `user_roles` or use the admin API endpoints. The `admin()` Better Auth plugin provides ban/unban/delete/list user capabilities.
 
 ## Key Patterns
 
@@ -82,6 +86,8 @@ Orders, Photos, StockMovements, Suppliers, Clients — these have entity definit
 4. **Register module** in `api/src/app.module.ts` and `app.routes.ts`
 5. **Shared DTOs/enums** in `packages/types/src/<feature>/` — rebuild with `pnpm --filter @librestock/types build`
 6. **Frontend hooks** in `web/src/lib/data/<feature>.ts`
+7. **Route tree** — `web/src/routeTree.gen.ts` must be updated (auto-generated on `pnpm dev`, or manually add the route entry)
+8. **Sidebar nav** — add route to `web/src/components/common/Header.tsx`
 
 ## Testing
 

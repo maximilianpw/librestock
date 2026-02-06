@@ -12,6 +12,7 @@ import { AreasModule } from './routes/areas/areas.module';
 import { InventoryModule } from './routes/inventory/inventory.module';
 import { AuditLogsModule } from './routes/audit-logs/audit-logs.module';
 import { BrandingModule } from './routes/branding/branding.module';
+import { UsersModule } from './routes/users/users.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransactionInterceptor } from './common/interceptors/transaction.interceptor';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
@@ -58,6 +59,7 @@ import { auth } from './auth';
     InventoryModule,
     AuditLogsModule,
     BrandingModule,
+    UsersModule,
     RouterModule.register(routes),
   ],
   providers: [
