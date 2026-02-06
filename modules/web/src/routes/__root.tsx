@@ -19,6 +19,7 @@ import { ThemeProvider } from '@/hooks/providers/ThemeProvider'
 import { useSession } from '@/lib/auth-client'
 import { Theme } from '@/lib/enums/theme.enum'
 import type { RouterContext } from '@/lib/router/context'
+import { sanitizeUrl } from '@/lib/utils'
 
 // eslint-disable-next-line import/order
 import appCss from './globals.css?url'
@@ -67,11 +68,11 @@ function DynamicHead(): React.JSX.Element {
       <meta content={branding.tagline} name="description" />
       <meta content={branding.app_name} name="apple-mobile-web-app-title" />
       <link
-        href={branding.favicon_url ?? '/icons/icon-192x192.png'}
+        href={sanitizeUrl(branding.favicon_url) || '/icons/icon-192x192.png'}
         rel="icon"
       />
       <link
-        href={branding.favicon_url ?? '/icons/apple-touch-icon.png'}
+        href={sanitizeUrl(branding.favicon_url) || '/icons/apple-touch-icon.png'}
         rel="apple-touch-icon"
       />
     </div>

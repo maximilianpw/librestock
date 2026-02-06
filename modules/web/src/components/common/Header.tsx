@@ -16,12 +16,16 @@ import {
 } from '@/components/ui/sidebar'
 import { useSession } from '@/lib/auth-client'
 import { useBranding } from '@/hooks/providers/BrandingProvider'
+import { sanitizeUrl } from '@/lib/utils'
 
-function useRoutes(): {
+interface RouteItem {
   name: string
   route: string
   icon: React.ComponentType
-}[] {
+  adminOnly?: boolean
+}
+
+function useRoutes(): RouteItem[] {
   const { t } = useTranslation()
 
   return [
@@ -54,11 +58,13 @@ function useRoutes(): {
       name: t('navigation.auditLogs'),
       route: '/audit-logs',
       icon: Logs,
+      adminOnly: true,
     },
     {
       name: t('navigation.users'),
       route: '/users',
       icon: Users,
+      adminOnly: true,
     },
   ]
 }
@@ -67,9 +73,14 @@ export default function AppSidebar(): React.JSX.Element {
   const { t } = useTranslation()
   const { branding } = useBranding()
   const { data: session } = useSession()
-  const routes = useRoutes()
+  const allRoutes = useRoutes()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
+
+  // Hide admin-only links when user is not authenticated
+  const routes = session
+    ? allRoutes
+    : allRoutes.filter((r) => !r.adminOnly)
 
   return (
     <Sidebar>
@@ -79,7 +90,7 @@ export default function AppSidebar(): React.JSX.Element {
             <img
               alt={branding.app_name}
               className="h-6 w-auto"
-              src={branding.logo_url}
+              src={sanitizeUrl(branding.logo_url)}
             />
           ) : null}
           <span className="text-base font-bold tracking-tight">

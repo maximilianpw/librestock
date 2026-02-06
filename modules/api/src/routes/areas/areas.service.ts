@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Transactional } from '../../common/decorators/transactional.decorator';
-import { LocationRepository } from '../locations/location.repository';
+import { LocationsService } from '../locations/locations.service';
 import { AreaRepository } from './area.repository';
 import { Area } from './entities/area.entity';
 import { CreateAreaDto } from './dto/create-area.dto';
@@ -16,12 +16,12 @@ import { AreaResponseDto } from './dto/area-response.dto';
 export class AreasService {
   constructor(
     private readonly areaRepository: AreaRepository,
-    private readonly locationRepository: LocationRepository,
+    private readonly locationsService: LocationsService,
   ) {}
 
   async create(dto: CreateAreaDto): Promise<AreaResponseDto> {
     // Validate location exists
-    const locationExists = await this.locationRepository.existsById(
+    const locationExists = await this.locationsService.existsById(
       dto.location_id,
     );
     if (!locationExists) {

@@ -62,17 +62,10 @@ export class AuditInterceptor implements NestInterceptor {
   }
 
   private extractAuditContext(request: AuthRequest): AuditContext {
-    const forwardedFor = request.headers['x-forwarded-for'];
-    const ipAddress = Array.isArray(forwardedFor)
-      ? forwardedFor[0]
-      : forwardedFor?.split(',')[0]?.trim() ??
-        request.socket?.remoteAddress ??
-        null;
-
     const session = getUserSession(request);
     return {
       userId: getUserIdFromSession(session),
-      ipAddress,
+      ipAddress: request.ip ?? null,
       userAgent: request.headers['user-agent'] ?? null,
     };
   }

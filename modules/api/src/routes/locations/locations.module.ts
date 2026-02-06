@@ -9,6 +9,6 @@ import { LocationRepository } from './location.repository';
   imports: [TypeOrmModule.forFeature([Location])],
   controllers: [LocationsController],
   providers: [LocationsService, LocationRepository],
-  exports: [LocationsService, LocationRepository],
+  exports: [LocationsService],
 })
 export class LocationsModule {}

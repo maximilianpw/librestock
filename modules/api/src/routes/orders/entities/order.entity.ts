@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { OrderStatus } from 'src/common/enums';
-import { Client } from 'src/clients/entities/client.entity';
+import { Client } from '../../clients/entities/client.entity';
 
 @Entity('orders')
 export class Order {

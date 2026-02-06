@@ -80,9 +80,30 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/",
+      "\\.module\\.ts$",
+      "\\.entity\\.ts$",
+      "\\.dto\\.ts$",
+      "\\.hateoas\\.ts$",
+      "main\\.ts$",
+      "/test-utils/",
+      "/scripts/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 50,
+        "functions": 50,
+        "lines": 50,
+        "statements": 50
+      }
+    },
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/$1"
+      "^src/(.*)$": "<rootDir>/$1",
+      "^@librestock/types$": "<rootDir>/../../../packages/types/dist/cjs/index.js",
+      "^@librestock/types/(.*)$": "<rootDir>/../../../packages/types/dist/cjs/$1/index.js"
     }
   }
 }

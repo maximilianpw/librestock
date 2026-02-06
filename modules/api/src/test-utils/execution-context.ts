@@ -4,8 +4,9 @@ export interface MockRequest {
   params: { id: string };
   body?: Record<string, unknown>;
   headers?: Record<string, string>;
+  ip?: string;
   socket: { remoteAddress: string };
-  session?: { user?: { id?: string } } | undefined;
+  session?: { user?: { id?: string; [key: string]: unknown } } | undefined;
 }
 
 export const createExecutionContext = (

@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { ClientStatus } from '../../common/enums';
+import { ClientStatus } from '../../../common/enums';
 
 @Entity('clients')
 export class Client {

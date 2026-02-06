@@ -4,9 +4,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Transactional } from '../../common/decorators/transactional.decorator';
-import { ProductRepository } from '../products/product.repository';
-import { LocationRepository } from '../locations/location.repository';
-import { AreaRepository } from '../areas/area.repository';
+import { toPaginationMeta } from '../../common/utils/pagination.utils';
+import { ProductsService } from '../products/products.service';
+import { LocationsService } from '../locations/locations.service';
+import { AreasService } from '../areas/areas.service';
 import { Inventory } from './entities/inventory.entity';
 import {
   CreateInventoryDto,
@@ -22,9 +23,9 @@ import { InventoryRepository } from './inventory.repository';
 export class InventoryService {
   constructor(
     private readonly inventoryRepository: InventoryRepository,
-    private readonly productRepository: ProductRepository,
-    private readonly locationRepository: LocationRepository,
-    private readonly areaRepository: AreaRepository,
+    private readonly productsService: ProductsService,
+    private readonly locationsService: LocationsService,
+    private readonly areasService: AreasService,
   ) {}
 
   async findAllPaginated(
@@ -34,14 +35,7 @@ export class InventoryService {
 
     return {
       data: result.data.map((inventory) => this.toResponseDto(inventory)),
-      meta: {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        total_pages: result.total_pages,
-        has_next: result.page < result.total_pages,
-        has_previous: result.page > 1,
-      },
+      meta: toPaginationMeta(result.total, result.page, result.limit),
     };
   }
 
@@ -59,8 +53,8 @@ export class InventoryService {
   }
 
   async findByProduct(productId: string): Promise<InventoryResponseDto[]> {
-    const product = await this.productRepository.findById(productId);
-    if (!product) {
+    const exists = await this.productsService.existsById(productId);
+    if (!exists) {
       throw new NotFoundException('Product not found');
     }
 
@@ -69,8 +63,8 @@ export class InventoryService {
   }
 
   async findByLocation(locationId: string): Promise<InventoryResponseDto[]> {
-    const location = await this.locationRepository.findById(locationId);
-    if (!location) {
+    const exists = await this.locationsService.existsById(locationId);
+    if (!exists) {
       throw new NotFoundException('Location not found');
     }
 
@@ -83,27 +77,27 @@ export class InventoryService {
     createInventoryDto: CreateInventoryDto,
   ): Promise<InventoryResponseDto> {
     // Validate product exists
-    const product = await this.productRepository.findById(
+    const productExists = await this.productsService.existsById(
       createInventoryDto.product_id,
     );
-    if (!product) {
+    if (!productExists) {
       throw new BadRequestException('Product not found');
     }
 
     // Validate location exists
-    const location = await this.locationRepository.findById(
+    const locationExists = await this.locationsService.existsById(
       createInventoryDto.location_id,
     );
-    if (!location) {
+    if (!locationExists) {
       throw new BadRequestException('Location not found');
     }
 
     // Validate area exists and belongs to the location
     if (createInventoryDto.area_id) {
-      const area = await this.areaRepository.findById(
-        createInventoryDto.area_id,
-      );
-      if (!area) {
+      let area: { location_id: string };
+      try {
+        area = await this.areasService.findById(createInventoryDto.area_id);
+      } catch {
         throw new BadRequestException('Area not found');
       }
       if (area.location_id !== createInventoryDto.location_id) {
@@ -161,18 +155,20 @@ export class InventoryService {
       updateInventoryDto.location_id &&
       updateInventoryDto.location_id !== inventory.location_id
     ) {
-      const location = await this.locationRepository.findById(
+      const locationExists = await this.locationsService.existsById(
         updateInventoryDto.location_id,
       );
-      if (!location) {
+      if (!locationExists) {
         throw new BadRequestException('Location not found');
       }
     }
 
     // Validate area if provided
     if (newAreaId) {
-      const area = await this.areaRepository.findById(newAreaId);
-      if (!area) {
+      let area: { location_id: string };
+      try {
+        area = await this.areasService.findById(newAreaId);
+      } catch {
         throw new BadRequestException('Area not found');
       }
       if (area.location_id !== newLocationId) {

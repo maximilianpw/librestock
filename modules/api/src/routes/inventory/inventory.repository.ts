@@ -225,10 +225,11 @@ export class InventoryRepository {
       .createQueryBuilder()
       .update(Inventory)
       .set({
-        quantity: () => `quantity + ${adjustment}`,
+        quantity: () => 'quantity + :adjustment',
       })
       .where('id = :id', { id })
       .andWhere('quantity + :adjustment >= 0', { adjustment })
+      .setParameter('adjustment', adjustment)
       .execute();
     return result.affected ?? 0;
   }

@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { CategoryRepository } from '../categories/category.repository';
+import { CategoriesService } from '../categories/categories.service';
 import { Transactional } from '../../common/decorators/transactional.decorator';
 import { ErrorType } from '../../common/dto/error-response.dto';
 import {
@@ -34,7 +34,7 @@ import { ProductBuilder } from './products.builder';
 export class ProductsService {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly categoryRepository: CategoryRepository,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   async findAllPaginated(
@@ -70,7 +70,7 @@ export class ProductsService {
     await this.checkCategoryExistence(categoryId, ErrorType.NOT_FOUND);
 
     const descendantIds =
-      await this.categoryRepository.findAllDescendantIds(categoryId);
+      await this.categoriesService.findAllDescendantIds(categoryId);
     const categoryIds = [categoryId, ...descendantIds];
 
     const products =
@@ -128,7 +128,7 @@ export class ProductsService {
       ...new Set(bulkDto.products.map((p) => p.category_id)),
     ];
     for (const categoryId of categoryIds) {
-      const exists = await this.categoryRepository.existsById(categoryId);
+      const exists = await this.categoriesService.existsById(categoryId);
       if (!exists) {
         // Fail all products if any category is missing
         for (const product of bulkDto.products) {
@@ -361,6 +361,11 @@ export class ProductsService {
     return result;
   }
 
+  async existsById(id: string): Promise<boolean> {
+    const product = await this.productRepository.findById(id);
+    return product !== null;
+  }
+
   private async getProductOrFail(id: string): Promise<Product> {
     const product = await this.productRepository.findById(id);
     if (!product) {
@@ -373,7 +378,7 @@ export class ProductsService {
     categoryId: string,
     errorType: ErrorType,
   ): Promise<void> {
-    const exists = await this.categoryRepository.existsById(categoryId);
+    const exists = await this.categoriesService.existsById(categoryId);
 
     if (!exists) {
       throw errorType === ErrorType.NOT_FOUND

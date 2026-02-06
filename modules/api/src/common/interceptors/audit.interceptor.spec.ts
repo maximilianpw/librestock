@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type CallHandler } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { of, throwError } from 'rxjs';
+import { of, throwError, lastValueFrom } from 'rxjs';
 import { AuditLogService } from '../../routes/audit-logs/audit-log.service';
 import { AuditAction, AuditEntityType } from '../enums';
 import { type AuditMetadata } from '../decorators/auditable.decorator';
@@ -10,6 +10,12 @@ import {
   createExecutionContext,
 } from '../../test-utils/execution-context';
 import { AuditInterceptor } from './audit.interceptor';
+
+/**
+ * Flush all pending microtasks (resolved promises).
+ * Replaces fragile setTimeout(fn, 10) patterns that cause race conditions.
+ */
+const flushPromises = () => new Promise<void>((resolve) => process.nextTick(resolve));
 
 describe('AuditInterceptor', () => {
   let interceptor: AuditInterceptor;
@@ -20,9 +26,9 @@ describe('AuditInterceptor', () => {
     params: { id: 'entity-123' },
     body: { name: 'Test' },
     headers: {
-      'x-forwarded-for': '192.168.1.1',
       'user-agent': 'Mozilla/5.0',
     },
+    ip: '192.168.1.1',
     socket: { remoteAddress: '127.0.0.1' },
     session: { user: { id: 'user_123' } },
   };
@@ -61,19 +67,18 @@ describe('AuditInterceptor', () => {
   });
 
   describe('intercept', () => {
-    it('should pass through when no audit metadata is present', (done) => {
+    it('should pass through when no audit metadata is present', async () => {
       reflector.get.mockReturnValue(undefined);
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: (result) => {
-          expect(result).toEqual({ id: 'response-id', name: 'Test' });
-          expect(auditLogService.log).not.toHaveBeenCalled();
-          done();
-        },
-      });
+      const result = await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, mockCallHandler),
+      );
+
+      expect(result).toEqual({ id: 'response-id', name: 'Test' });
+      expect(auditLogService.log).not.toHaveBeenCalled();
     });
 
-    it('should create audit log when metadata is present with entityIdParam', (done) => {
+    it('should create audit log when metadata is present with entityIdParam', async () => {
       const metadata: AuditMetadata = {
         action: AuditAction.UPDATE,
         entityType: AuditEntityType.PRODUCT,
@@ -81,28 +86,25 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: () => {
-          // Wait for async audit log creation
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith({
-              action: AuditAction.UPDATE,
-              entityType: AuditEntityType.PRODUCT,
-              entityId: 'entity-123',
-              context: {
-                userId: 'user_123',
-                ipAddress: '192.168.1.1',
-                userAgent: 'Mozilla/5.0',
-              },
-              changes: null,
-            });
-            done();
-          }, 10);
+      await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith({
+        action: AuditAction.UPDATE,
+        entityType: AuditEntityType.PRODUCT,
+        entityId: 'entity-123',
+        context: {
+          userId: 'user_123',
+          ipAddress: '192.168.1.1',
+          userAgent: 'Mozilla/5.0',
         },
+        changes: null,
       });
     });
 
-    it('should extract entity ID from response when entityIdFromResponse is set', (done) => {
+    it('should extract entity ID from response when entityIdFromResponse is set', async () => {
       const metadata: AuditMetadata = {
         action: AuditAction.CREATE,
         entityType: AuditEntityType.PRODUCT,
@@ -110,21 +112,19 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                entityId: 'response-id',
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
+      await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entityId: 'response-id',
+        }),
+      );
     });
 
-    it('should extract entity ID from body when entityIdFromBody is set', (done) => {
+    it('should extract entity ID from body when entityIdFromBody is set', async () => {
       const customRequest = {
         ...mockRequest,
         body: { productId: 'body-id' },
@@ -138,21 +138,19 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(customContext, mockCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                entityId: 'body-id',
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
+      await lastValueFrom(
+        interceptor.intercept(customContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entityId: 'body-id',
+        }),
+      );
     });
 
-    it('should handle bulk operations with succeeded array in response', (done) => {
+    it('should handle bulk operations with succeeded array in response', async () => {
       const bulkResponse = {
         succeeded: ['id-1', 'id-2', 'id-3'],
         failures: [],
@@ -168,22 +166,20 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, bulkCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.logBulk).toHaveBeenCalledWith({
-              action: AuditAction.DELETE,
-              entityType: AuditEntityType.PRODUCT,
-              entityIds: ['id-1', 'id-2', 'id-3'],
-              context: expect.any(Object),
-            });
-            done();
-          }, 10);
-        },
+      await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, bulkCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.logBulk).toHaveBeenCalledWith({
+        action: AuditAction.DELETE,
+        entityType: AuditEntityType.PRODUCT,
+        entityIds: ['id-1', 'id-2', 'id-3'],
+        context: expect.any(Object),
       });
     });
 
-    it('should not create audit log on error', (done) => {
+    it('should not create audit log on error', async () => {
       const errorCallHandler: CallHandler = {
         handle: jest
           .fn()
@@ -197,17 +193,18 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, errorCallHandler).subscribe({
-        error: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).not.toHaveBeenCalled();
-            done();
-          }, 10);
-        },
-      });
+      await expect(
+        lastValueFrom(
+          interceptor.intercept(mockExecutionContext, errorCallHandler),
+        ),
+      ).rejects.toThrow('Test error');
+
+      await flushPromises();
+
+      expect(auditLogService.log).not.toHaveBeenCalled();
     });
 
-    it('should extract IP from x-forwarded-for header', (done) => {
+    it('should extract IP from request.ip', async () => {
       const metadata: AuditMetadata = {
         action: AuditAction.UPDATE,
         entityType: AuditEntityType.PRODUCT,
@@ -215,31 +212,26 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                context: expect.objectContaining({
-                  ipAddress: '192.168.1.1',
-                }),
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
+      await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          context: expect.objectContaining({
+            ipAddress: '192.168.1.1',
+          }),
+        }),
+      );
     });
 
-    it('should handle multiple IPs in x-forwarded-for header', (done) => {
-      const multiIpRequest = {
+    it('should handle null IP when request.ip is undefined', async () => {
+      const noIpRequest = {
         ...mockRequest,
-        headers: {
-          ...mockRequest.headers,
-          'x-forwarded-for': '10.0.0.1, 192.168.1.1, 172.16.0.1',
-        },
+        ip: undefined,
       };
-      const multiIpContext = createExecutionContext(multiIpRequest);
+      const noIpContext = createExecutionContext(noIpRequest);
 
       const metadata: AuditMetadata = {
         action: AuditAction.UPDATE,
@@ -248,53 +240,21 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(multiIpContext, mockCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                context: expect.objectContaining({
-                  ipAddress: '10.0.0.1',
-                }),
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
+      await lastValueFrom(
+        interceptor.intercept(noIpContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          context: expect.objectContaining({
+            ipAddress: null,
+          }),
+        }),
+      );
     });
 
-    it('should fall back to socket remoteAddress when no x-forwarded-for', (done) => {
-      const noForwardedRequest = {
-        ...mockRequest,
-        headers: { 'user-agent': 'Mozilla/5.0' },
-      };
-      const noForwardedContext = createExecutionContext(noForwardedRequest);
-
-      const metadata: AuditMetadata = {
-        action: AuditAction.UPDATE,
-        entityType: AuditEntityType.PRODUCT,
-        entityIdParam: 'id',
-      };
-      reflector.get.mockReturnValue(metadata);
-
-      interceptor.intercept(noForwardedContext, mockCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                context: expect.objectContaining({
-                  ipAddress: '127.0.0.1',
-                }),
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
-    });
-
-    it('should handle null userId when no auth present', (done) => {
+    it('should handle null userId when no auth present', async () => {
       const noAuthRequest = {
         ...mockRequest,
         session: undefined,
@@ -308,44 +268,40 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(noAuthContext, mockCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                context: expect.objectContaining({
-                  userId: null,
-                }),
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
+      await lastValueFrom(
+        interceptor.intercept(noAuthContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          context: expect.objectContaining({
+            userId: null,
+          }),
+        }),
+      );
     });
 
-    it('should default to params.id when no entityId configuration', (done) => {
+    it('should default to params.id when no entityId configuration', async () => {
       const metadata: AuditMetadata = {
         action: AuditAction.DELETE,
         entityType: AuditEntityType.PRODUCT,
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                entityId: 'entity-123',
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
+      await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entityId: 'entity-123',
+        }),
+      );
     });
 
-    it('should handle nested path in entityIdFromResponse', (done) => {
+    it('should handle nested path in entityIdFromResponse', async () => {
       const nestedResponse = { data: { entity: { id: 'nested-id' } } };
       const nestedCallHandler: CallHandler = {
         handle: jest.fn().mockReturnValue(of(nestedResponse)),
@@ -358,21 +314,19 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, nestedCallHandler).subscribe({
-        next: () => {
-          setTimeout(() => {
-            expect(auditLogService.log).toHaveBeenCalledWith(
-              expect.objectContaining({
-                entityId: 'nested-id',
-              }),
-            );
-            done();
-          }, 10);
-        },
-      });
+      await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, nestedCallHandler),
+      );
+      await flushPromises();
+
+      expect(auditLogService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entityId: 'nested-id',
+        }),
+      );
     });
 
-    it('should continue without error when audit log creation fails', (done) => {
+    it('should continue without error when audit log creation fails', async () => {
       auditLogService.log.mockRejectedValue(new Error('Database error'));
 
       const metadata: AuditMetadata = {
@@ -382,13 +336,13 @@ describe('AuditInterceptor', () => {
       };
       reflector.get.mockReturnValue(metadata);
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: (result) => {
-          // Response should still be returned even if audit logging fails
-          expect(result).toEqual({ id: 'response-id', name: 'Test' });
-          done();
-        },
-      });
+      const result = await lastValueFrom(
+        interceptor.intercept(mockExecutionContext, mockCallHandler),
+      );
+      await flushPromises();
+
+      // Response should still be returned even if audit logging fails
+      expect(result).toEqual({ id: 'response-id', name: 'Test' });
     });
   });
 });

@@ -71,12 +71,23 @@ Roles are stored in the `user_roles` DB table (not in Better Auth sessions). The
 | Pattern         | Location                   | Purpose                                          |
 | --------------- | -------------------------- | ------------------------------------------------ |
 | Repository      | `api/src/routes/*/`        | Data access layer                                |
-| Service         | `api/src/routes/*/`        | Business logic                                   |
+| Service         | `api/src/routes/*/`        | Business logic (only Services are exported from modules) |
 | BaseAuditEntity | `api/src/common/entities/` | Soft delete + audit fields                       |
 | BetterAuthModule | `api/src/app.module.ts`   | Global auth guard via `disableGlobalAuthGuard: false` |
 | RolesGuard      | `api/src/common/guards/`   | `@Roles()` decorator for role-based access       |
-| HATEOAS         | `api/src/common/hateoas/`  | REST hypermedia links                            |
+| HATEOAS         | `api/src/common/hateoas/`  | REST hypermedia links (includes `/api/v1` prefix) |
 | Shared DTOs     | `packages/types/src/`      | Backend/Frontend contracts                       |
+| sanitizeUrl     | `web/src/lib/utils.ts`     | Strips dangerous URL protocols (javascript:, data:) |
+| toPaginationMeta | `api/src/common/utils/pagination.utils.ts` | Shared pagination metadata builder |
+| DB connection   | `api/src/config/db-connection.utils.ts` | Shared DB connection params for TypeORM + Better Auth |
+
+### Architecture Rules
+
+- **Modules only export Services**, never Repositories. Cross-module data access must go through the Service layer.
+- **All `:id` params** must use `ParseUUIDPipe` for validation.
+- **Admin-only endpoints** must use `@UseGuards(RolesGuard)` + `@Roles(UserRole.ADMIN)`.
+- **User-submitted URLs** must be validated on both backend (`@IsUrl()`) and frontend (`sanitizeUrl()`). Never render raw URLs from API data in `href` or `src` attributes.
+- **DB_SYNCHRONIZE** is blocked in production regardless of env var.
 
 ## Adding a New Entity (Full Stack)
 

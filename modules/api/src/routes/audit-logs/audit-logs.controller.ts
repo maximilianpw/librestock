@@ -4,6 +4,7 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
+  ParseEnumPipe,
   UseGuards,
   NotFoundException,
 } from '@nestjs/common';
@@ -100,7 +101,7 @@ export class AuditLogsController {
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 401, type: ErrorResponseDto })
   async getEntityAuditHistory(
-    @Param('entityType') entityType: AuditEntityType,
+    @Param('entityType', new ParseEnumPipe(AuditEntityType)) entityType: AuditEntityType,
     @Param('entityId', ParseUUIDPipe) entityId: string,
   ): Promise<AuditLogResponseDto[]> {
     return this.auditLogService.getEntityHistory(entityType, entityId);
@@ -116,7 +117,7 @@ export class AuditLogsController {
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 401, type: ErrorResponseDto })
   async getUserAuditHistory(
-    @Param('userId') userId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<AuditLogResponseDto[]> {
     return this.auditLogService.getUserHistory(userId);
   }

@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, MaxLength, Matches } from 'class-validator';
+import { IsString, IsOptional, MaxLength, Matches, IsUrl, ValidateIf } from 'class-validator';
 import type { UpdateBrandingDto as UpdateBrandingDtoShape } from '@librestock/types';
 
 export class UpdateBrandingDto implements UpdateBrandingDtoShape {
@@ -17,13 +17,15 @@ export class UpdateBrandingDto implements UpdateBrandingDtoShape {
 
   @ApiPropertyOptional({ description: 'Logo URL (relative or absolute)', maxLength: 500, type: 'string', nullable: true })
   @IsOptional()
-  @IsString()
+  @ValidateIf((_o, value) => value !== null)
+  @IsUrl({ require_tld: false }, { message: 'logo_url must be a valid URL' })
   @MaxLength(500)
   logo_url?: string | null;
 
   @ApiPropertyOptional({ description: 'Favicon URL (relative or absolute)', maxLength: 500, type: 'string', nullable: true })
   @IsOptional()
-  @IsString()
+  @ValidateIf((_o, value) => value !== null)
+  @IsUrl({ require_tld: false }, { message: 'favicon_url must be a valid URL' })
   @MaxLength(500)
   favicon_url?: string | null;
 

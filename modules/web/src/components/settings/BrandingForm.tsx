@@ -29,11 +29,30 @@ import {
   getBrandingControllerGetQueryKey,
 } from '@/lib/data/branding'
 
+const safeUrlSchema = z
+  .string()
+  .max(500)
+  .refine(
+    (val) => {
+      if (!val) return true
+      // Allow relative URLs
+      if (val.startsWith('/') || val.startsWith('.')) return true
+      try {
+        const parsed = new URL(val)
+        return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+      } catch {
+        // Reject anything that looks like a dangerous protocol
+        return !/^[a-z]+:/i.test(val)
+      }
+    },
+    { message: 'Must be a valid URL (https://, http://, or relative path)' },
+  )
+
 const brandingSchema = z.object({
   app_name: z.string().min(1, 'App name is required').max(100),
   tagline: z.string().max(255),
-  logo_url: z.string().max(500),
-  favicon_url: z.string().max(500),
+  logo_url: safeUrlSchema,
+  favicon_url: safeUrlSchema,
   primary_color: z
     .string()
     .regex(/^#[\dA-Fa-f]{6}$/, 'Must be a valid hex color (e.g., #3b82f6)'),

@@ -9,8 +9,6 @@ import {
   Query,
   UseInterceptors,
   ParseUUIDPipe,
-  HttpCode,
-  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -166,17 +164,19 @@ export class AreasController {
     entityType: AuditEntityType.AREA,
     entityIdParam: 'id',
   })
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete an area' })
   @ApiParam({ name: 'id', description: 'Area ID', format: 'uuid' })
-  @ApiResponse({ status: 204, description: 'Area deleted successfully' })
+  @ApiResponse({ status: 200, description: 'Area deleted successfully' })
   @ApiResponse({
     status: 404,
     description: 'Area not found',
     type: ErrorResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+  async delete(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<{ message: string }> {
     await this.areasService.delete(id);
+    return { message: 'Area deleted successfully' };
   }
 }

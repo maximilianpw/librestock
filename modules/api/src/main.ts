@@ -7,7 +7,7 @@ import helmet from 'helmet';
 import * as express from 'express';
 import { AppModule } from './app.module';
 import { auth } from './auth';
-import { Client } from './clients/entities/client.entity';
+import { Client } from './routes/clients/entities/client.entity';
 import { HateoasInterceptor } from './common/hateoas';
 import { AuditLog } from './routes/audit-logs/entities/audit-log.entity';
 import { Category } from './routes/categories/entities/category.entity';

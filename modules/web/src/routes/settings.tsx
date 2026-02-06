@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { getSession } from '@/lib/auth-client'
 import { useTranslation } from 'react-i18next'
 
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher'
@@ -13,6 +14,12 @@ import {
 } from '@/components/ui/card'
 
 export const Route = createFileRoute('/settings')({
+  beforeLoad: async () => {
+    const { data: session } = await getSession()
+    if (!session) {
+      throw redirect({ to: '/login' })
+    }
+  },
   component: SettingsPage,
 })
 

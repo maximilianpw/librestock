@@ -36,23 +36,13 @@ modules/web/src/
 │   │   ├── axios-client.ts  # Axios instance + auth
 │   │   ├── products.ts      # Handwritten API hooks
 │   │   └── locations.ts     # Handwritten API hooks
-│   ├── utils.ts             # cn() utility
+│   ├── utils.ts             # cn(), sanitizeUrl()
 │   └── env.ts               # Environment validation
 ├── router.tsx               # Router configuration
 └── locales/                 # i18n (en, de, fr)
 ```
 
 ## Routing (TanStack Router)
-
-### File-Based Routing
-
-Routes are defined in `src/routes/` using TanStack Router conventions:
-
-- `__root.tsx` - Root layout wrapping all routes
-- `index.tsx` - Home page (`/`)
-- `products.tsx` - `/products`
-- `locations.tsx` - `/locations`
-- `locations.$id.tsx` - `/locations/:id` (dynamic route)
 
 ### Route Definition Pattern
 
@@ -68,6 +58,22 @@ function ProductPage(): React.JSX.Element {
 }
 ```
 
+### Route Guards (Admin Pages)
+
+Admin-only routes use `beforeLoad` to check auth session and redirect unauthenticated users:
+
+```typescript
+export const Route = createFileRoute('/users')({
+  beforeLoad: async () => {
+    const session = await getSession()
+    if (!session) throw redirect({ to: '/login' })
+  },
+  component: UsersPage,
+})
+```
+
+Currently guarded routes: `/users`, `/audit-logs`, `/settings`. Admin-only nav links in `Header.tsx` are hidden when the user has no session (via `adminOnly: true` flag).
+
 ### Dynamic Routes
 
 ```typescript
@@ -82,20 +88,6 @@ function LocationDetailPage(): React.JSX.Element {
 }
 ```
 
-### Navigation
-
-```typescript
-import { Link, useNavigate } from '@tanstack/react-router'
-
-// Link component
-<Link to="/products">Products</Link>
-<Link to="/locations/$id" params={{ id: '123' }}>Location</Link>
-
-// Programmatic navigation
-const navigate = useNavigate()
-navigate({ to: '/locations' })
-```
-
 ## Provider Hierarchy
 
 Order matters in `__root.tsx`:
@@ -108,7 +100,7 @@ BrandingProvider → I18nProvider → ThemeProvider → SidebarProvider
 - **I18nProvider**: Translations
 - **ThemeProvider**: Light/dark mode
 
-Authentication is handled by Better Auth's `useSession()` hook from `@/lib/auth-client` - no provider needed. The auth client includes the `adminClient()` plugin for admin user management types.
+Authentication is handled by Better Auth's `useSession()` hook from `@/lib/auth-client` - no provider needed. The auth client includes the `adminClient()` plugin for admin user management types and exports `getSession` for use in route guards.
 
 ## API Integration
 
@@ -141,6 +133,7 @@ await mutation.mutateAsync(formData)
 1. `AuthProvider` registers `getToken` with axios-client on mount
 2. `getAxiosInstance` calls `getToken()` before each request
 3. Token added as `Authorization: Bearer {token}` header
+4. **401 interceptor**: Axios response interceptor automatically redirects to `/login` on 401 responses (session expiry)
 
 ## State Management
 
@@ -190,6 +183,13 @@ const { t, i18n } = useTranslation();
 <button onClick={() => i18n.changeLanguage('de')}>Deutsch</button>
 ```
 
+## Security Patterns
+
+- **`sanitizeUrl(url)`** in `lib/utils.ts` — strips dangerous protocols (`javascript:`, `data:`, `vbscript:`, etc.). Always use when rendering URLs from API data (branding logo, favicon, external links). Returns empty string for unsafe URLs.
+- **Zod URL validation** — use the `safeUrlSchema` pattern in `BrandingForm.tsx` to validate user-submitted URLs only allow `http:`, `https:`, or relative paths.
+- **No `BETTER_AUTH_SECRET`** in frontend `.env` — this secret belongs only in the API module.
+- **`better-auth`** is pinned to a specific version (not `"latest"`).
+
 ## Styling
 
 - **CSS variables** in `globals.css` for theming (light/dark via `.dark` class)
@@ -200,61 +200,11 @@ const { t, i18n } = useTranslation();
 
 ## Adding a New Page
 
-1. Create `src/routes/<route>.tsx` with `createFileRoute`
-2. Export the `Route` constant
-3. **Update `src/routeTree.gen.ts`** — this file is auto-generated when `pnpm dev` runs, but if you're adding a route without the dev server running, you must manually add the route entry (import, route config, and all type interfaces). Without this, TypeScript will error on `createFileRoute('/new-route')`.
-4. Add route to `Header.tsx` navigation (sidebar)
-5. Add translations to `locales/{lang}/common.json` (en, de, fr)
-
-Example:
-
-```typescript
-// src/routes/reports.tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/reports')({
-  component: ReportsPage,
-})
-
-function ReportsPage(): React.JSX.Element {
-  return <div>Reports</div>
-}
-```
-
-## Adding a Feature Component
-
-1. Create component in `src/components/<feature>/`
-2. Use hooks from `@/lib/data/<feature>.ts` (built with `makeCrudHooks` or `makeMutationHook`)
-3. Handle loading/error/empty states
-4. Add translations for user-facing text
-
-## Component Checklist
-
-- [ ] `cn()` for class merging
-- [ ] TypeScript props interface
-- [ ] Loading, error, empty states
-- [ ] Translations via `useTranslation()`
-
-## Common Patterns
-
-```typescript
-// Conditional rendering
-if (isLoading) return <Spinner />;
-if (error) return <ErrorState error={error} />;
-if (!data?.length) return <EmptyState />;
-
-// Query invalidation
-queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-
-// Conditional fetching
-const query = useListProducts(params, { enabled: !!categoryId });
-
-// Get route params
-const { id } = Route.useParams();
-
-// Get search params
-const { page, filter } = Route.useSearch();
-```
+1. Create `src/routes/<route>.tsx` with `createFileRoute` + `component`
+2. `routeTree.gen.ts` auto-updates when `pnpm dev` runs (manual update needed otherwise)
+3. Add to `Header.tsx` sidebar nav (use `adminOnly: true` for admin routes)
+4. Add translations to `locales/{lang}/common.json` (en, de, fr)
+5. New components go in `src/components/<feature>/` using hooks from `lib/data/`
 
 ## Reusable Components
 
@@ -333,14 +283,3 @@ pnpm lint       # ESLint
 pnpm type-check # TypeScript check
 ```
 
-## Key Files
-
-| File                       | Purpose                         |
-| -------------------------- | ------------------------------- |
-| `routes/__root.tsx`        | Root layout, provider hierarchy |
-| `router.tsx`               | Router configuration            |
-| `lib/data/axios-client.ts` | API client, auth injection      |
-| `lib/data/*.ts`            | Handwritten API hooks           |
-| `locales/i18n.ts`          | i18next config                  |
-| `routes/globals.css`       | Tailwind + CSS variables        |
-| `vite.config.ts`           | Vite + TanStack Start config    |

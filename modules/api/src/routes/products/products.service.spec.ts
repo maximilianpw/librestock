@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { CategoryRepository } from '../categories/category.repository';
+import { CategoriesService } from '../categories/categories.service';
 import { type Category } from '../categories/entities/category.entity';
 import { ProductsService } from './products.service';
 import { ProductRepository, type PaginatedResult } from './product.repository';
@@ -10,7 +10,7 @@ import { ProductSortField, SortOrder } from './dto';
 describe('ProductsService', () => {
   let service: ProductsService;
   let productRepository: jest.Mocked<ProductRepository>;
-  let categoryRepository: jest.Mocked<CategoryRepository>;
+  let categoriesService: jest.Mocked<CategoriesService>;
 
   const mockCategory: Category = {
     id: '550e8400-e29b-41d4-a716-446655440000',
@@ -76,14 +76,12 @@ describe('ProductsService', () => {
       hardDeleteMany: jest.fn(),
     };
 
-    const mockCategoryRepository = {
+    const mockCategoriesService = {
       findAll: jest.fn(),
-      findById: jest.fn(),
       existsById: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-      findOne: jest.fn(),
       findAllDescendantIds: jest.fn(),
     };
 
@@ -95,15 +93,15 @@ describe('ProductsService', () => {
           useValue: mockProductRepository,
         },
         {
-          provide: CategoryRepository,
-          useValue: mockCategoryRepository,
+          provide: CategoriesService,
+          useValue: mockCategoriesService,
         },
       ],
     }).compile();
 
     service = module.get<ProductsService>(ProductsService);
     productRepository = module.get(ProductRepository);
-    categoryRepository = module.get(CategoryRepository);
+    categoriesService = module.get(CategoriesService);
   });
 
   it('should be defined', () => {
@@ -202,7 +200,7 @@ describe('ProductsService', () => {
 
   describe('findByCategory', () => {
     it('should return products by category', async () => {
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
       productRepository.findByCategoryId.mockResolvedValue([mockProduct]);
 
       const result = await service.findByCategory(mockCategory.id);
@@ -212,7 +210,7 @@ describe('ProductsService', () => {
     });
 
     it('should throw NotFoundException when category does not exist', async () => {
-      categoryRepository.existsById.mockResolvedValue(false);
+      categoriesService.existsById.mockResolvedValue(false);
 
       await expect(service.findByCategory('non-existent-id')).rejects.toThrow(
         NotFoundException,
@@ -223,8 +221,8 @@ describe('ProductsService', () => {
   describe('findByCategoryTree', () => {
     it('should return products from category and descendants', async () => {
       const childCategoryId = '550e8400-e29b-41d4-a716-446655440001';
-      categoryRepository.existsById.mockResolvedValue(true);
-      categoryRepository.findAllDescendantIds.mockResolvedValue([
+      categoriesService.existsById.mockResolvedValue(true);
+      categoriesService.findAllDescendantIds.mockResolvedValue([
         childCategoryId,
       ]);
       productRepository.findByCategoryIds.mockResolvedValue([mockProduct]);
@@ -250,14 +248,14 @@ describe('ProductsService', () => {
     };
 
     it('should create a product successfully', async () => {
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
       productRepository.findBySku.mockResolvedValue(null);
       productRepository.create.mockResolvedValue(mockProduct);
       productRepository.findById.mockResolvedValue(mockProduct);
 
       const result = await service.create(createDto, 'user_123');
 
-      expect(categoryRepository.existsById).toHaveBeenCalledWith(
+      expect(categoriesService.existsById).toHaveBeenCalledWith(
         mockCategory.id,
       );
       expect(productRepository.create).toHaveBeenCalled();
@@ -265,7 +263,7 @@ describe('ProductsService', () => {
     });
 
     it('should throw BadRequestException when category does not exist', async () => {
-      categoryRepository.existsById.mockResolvedValue(false);
+      categoriesService.existsById.mockResolvedValue(false);
 
       await expect(service.create(createDto, 'user_123')).rejects.toThrow(
         BadRequestException,
@@ -273,7 +271,7 @@ describe('ProductsService', () => {
     });
 
     it('should throw BadRequestException when SKU already exists', async () => {
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
       productRepository.findBySku.mockResolvedValue(mockProduct);
 
       await expect(service.create(createDto, 'user_123')).rejects.toThrow(
@@ -290,7 +288,7 @@ describe('ProductsService', () => {
         standard_cost: 100,
         standard_price: 50,
       };
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
       productRepository.findBySku.mockResolvedValue(null);
 
       await expect(
@@ -309,7 +307,7 @@ describe('ProductsService', () => {
         standard_cost: 100,
         standard_price: 100,
       };
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
       productRepository.findBySku.mockResolvedValue(null);
       productRepository.create.mockResolvedValue(mockProduct);
       productRepository.findById.mockResolvedValue(mockProduct);
@@ -343,7 +341,7 @@ describe('ProductsService', () => {
     };
 
     it('should create multiple products successfully', async () => {
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
       productRepository.findBySku.mockResolvedValue(null);
       productRepository.create
         .mockResolvedValueOnce({ ...mockProduct, id: 'id-1' })
@@ -357,7 +355,7 @@ describe('ProductsService', () => {
     });
 
     it('should fail all if category does not exist', async () => {
-      categoryRepository.existsById.mockResolvedValue(false);
+      categoriesService.existsById.mockResolvedValue(false);
 
       const result = await service.bulkCreate(bulkDto, 'user_123');
 
@@ -373,7 +371,7 @@ describe('ProductsService', () => {
           { ...bulkDto.products[1], sku: 'DUPLICATE' },
         ],
       };
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
 
       const result = await service.bulkCreate(
         bulkDtoWithDuplicates,
@@ -386,7 +384,7 @@ describe('ProductsService', () => {
     });
 
     it('should handle partial failures', async () => {
-      categoryRepository.existsById.mockResolvedValue(true);
+      categoriesService.existsById.mockResolvedValue(true);
       productRepository.findBySku
         .mockResolvedValueOnce(mockProduct)
         .mockResolvedValueOnce(null);
@@ -433,7 +431,7 @@ describe('ProductsService', () => {
     it('should validate category exists when updating category_id', async () => {
       const updateDto = { category_id: 'new-category-id' };
       productRepository.findById.mockResolvedValue(mockProduct);
-      categoryRepository.existsById.mockResolvedValue(false);
+      categoriesService.existsById.mockResolvedValue(false);
 
       await expect(
         service.update(mockProduct.id, updateDto, 'user_123'),

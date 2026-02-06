@@ -10,6 +10,6 @@ import { AreasController } from './areas.controller';
   imports: [TypeOrmModule.forFeature([Area]), LocationsModule],
   controllers: [AreasController],
   providers: [AreasService, AreaRepository],
-  exports: [AreaRepository, AreasService],
+  exports: [AreasService],
 })
 export class AreasModule {}

@@ -59,6 +59,8 @@ Each feature module follows:
 
 **Dependency flow:** Controller → Service → Repository → TypeORM → PostgreSQL
 
+**Module export rule:** Modules only export their Service, never the Repository. Cross-module access must go through the Service layer (e.g., `ProductsService` calls `CategoriesService`, not `CategoryRepository`).
+
 ## Key Conventions
 
 ### Base Entities
@@ -79,11 +81,14 @@ Each feature module follows:
 - Better Auth `admin()` plugin enabled in `src/auth.ts` — provides `auth.api.listUsers()`, `banUser()`, `unbanUser()`, `removeUser()`, `revokeUserSessions()`
 - **DB-backed roles:** `RolesGuard` queries the `user_roles` table (not session claims). Falls back to session roles if DB returns nothing.
 - The `user_roles` table uses a PostgreSQL enum (`user_role_enum`) and has a unique constraint on `(user_id, role)`
-- `DB_SYNCHRONIZE` env var is `false` by default — new tables must be created manually or by setting `DB_SYNCHRONIZE=true`
+- `DB_SYNCHRONIZE` env var is `false` by default — new tables must be created manually or by setting `DB_SYNCHRONIZE=true`. **Blocked in production** regardless of env var.
+- **All `:id` path params** must use `ParseUUIDPipe` for validation
+- **Enum path params** (like `entityType`) must use `ParseEnumPipe`
+- **Admin-only endpoints** must have `@UseGuards(RolesGuard)` + `@Roles(UserRole.ADMIN)` — currently applied to: AuditLogs, Users, Branding PUT
 
 ### HATEOAS
 
-Each module has a `<module>.hateoas.ts` file:
+The `HateoasInterceptor` automatically prepends `{protocol}://{host}/api/v1` to all link hrefs. Hateoas definition files use relative paths (without the `/api/v1` prefix):
 
 ```typescript
 // products.hateoas.ts
@@ -110,7 +115,7 @@ Products use soft delete via `BaseAuditEntity`. Repositories filter `deleted_at 
 
 ### Rate Limiting
 
-API endpoints are protected with configurable rate limits using `@nestjs/throttler`:
+API endpoints are protected with configurable rate limits using `@nestjs/throttler`. The `ThrottlerGuard` is registered as a global `APP_GUARD` in `app.module.ts`, covering all routes including Better Auth `/api/auth/*` endpoints.
 
 **Throttle Decorators:**
 - `@StandardThrottle()` - 100 requests/min (most endpoints)
@@ -118,53 +123,13 @@ API endpoints are protected with configurable rate limits using `@nestjs/throttl
 - `@AuthThrottle()` - 10 requests/min (auth endpoints to prevent brute force)
 - `@SkipThrottle()` - Skip rate limiting (health checks)
 
-**Usage:**
-```typescript
-@StandardThrottle()
-@Controller()
-export class ProductsController {
-  @BulkThrottle() // Override class-level throttle
-  @Post('bulk')
-  async bulkCreate() { ... }
-}
-```
-
-**429 Response:**
-```json
-{
-  "statusCode": 429,
-  "error": "Too Many Requests",
-  "message": "Rate limit exceeded. Please slow down your requests and try again later.",
-  "timestamp": "2026-01-18T20:00:00.000Z"
-}
-```
-
-### Enhanced Error Handling
-
-Authentication errors include type information for better UX. Refer to the
-Better Auth docs for payload details.
+Use at controller or method level. Method-level overrides class-level.
 
 ### Transaction Management
 
 Critical operations use `@Transactional()` decorator to ensure atomicity:
 
-**Usage:**
-```typescript
-@Transactional()
-async bulkCreate(dto: BulkCreateDto) {
-  // All database operations in this method run in a transaction
-  // If any operation fails, all changes are rolled back
-}
-```
-
-**Protected Operations:**
-- `ProductsService.bulkCreate` - Prevents partial batch inserts
-- `InventoryService.create` - Eliminates TOCTOU race conditions
-- `InventoryService.adjustQuantity` - Atomic quantity updates
-- `CategoriesService.update` - Safe circular reference checks
-- `AreasService.update` - Protected hierarchical updates
-
-The transaction interceptor automatically wraps decorated methods in TypeORM transactions with proper logging.
+Add `@Transactional()` to any service method that needs atomicity. The `TransactionInterceptor` wraps it in a TypeORM transaction with automatic rollback on error. Used on: `ProductsService.bulkCreate`, `InventoryService.create/adjustQuantity`, `CategoriesService.update`, `AreasService.update`.
 
 ### Foreign Keys
 
@@ -311,8 +276,11 @@ pnpm test:cov                                    # With coverage
 
 **Patterns:**
 - Use `@nestjs/testing` `Test.createTestingModule()` for DI
-- Mock repositories with `jest.fn()` + `mockResolvedValue()`
+- Mock repositories/services with `jest.fn()` + `mockResolvedValue()`
 - Test util: `src/test-utils/execution-context.ts` for mocking `ExecutionContext`
+- **Override RolesGuard in controller tests:** Controllers with `@UseGuards(RolesGuard)` require `.overrideGuard(RolesGuard).useValue({ canActivate: () => true })` on the test module builder, since `RolesGuard` depends on `DataSource` and `Reflector`
+- **Async fire-and-forget testing:** Use `await flushPromises()` (via `new Promise(r => process.nextTick(r))`) instead of `setTimeout` with `done()` callbacks
+- **Coverage thresholds** are configured at 50% globally; entities, DTOs, modules, and HATEOAS files are excluded from coverage
 
 ### E2E Tests (Jest + Supertest)
 
@@ -342,14 +310,20 @@ PORT=8080                          # Default: 8080
 NODE_ENV=development               # development | production
 ```
 
-## Commands
+## Shared Utilities
 
-```bash
-npm run start:dev       # Dev with hot reload
-npm run build           # Compile
-npm run start:prod      # Production
-pnpm --filter @librestock/types build # Build shared types
-```
+| Utility | Location | Purpose |
+| ------- | -------- | ------- |
+| `toPaginationMeta(total, page, limit)` | `common/utils/pagination.utils.ts` | Builds `{ page, limit, total, total_pages, has_next, has_previous }` metadata |
+| `getDbConnectionParams()` | `config/db-connection.utils.ts` | Shared DB connection config used by both TypeORM and Better Auth |
+| `createExecutionContext()` | `test-utils/execution-context.ts` | Mock `ExecutionContext` for interceptor/guard tests |
+
+## Security Conventions
+
+- **Never interpolate values into SQL** — always use parameterized queries (`:paramName` with `.setParameter()`)
+- **Validate all user-submitted URLs** with `@IsUrl()` in DTOs — reject `javascript:` and `data:` protocols
+- **Use `request.ip`** for IP extraction in audit logs (respects Express trust proxy settings)
+- **Secrets** must be 32+ random bytes. Never place `BETTER_AUTH_SECRET` in the frontend `.env`.
 
 ## Response Formats
 
@@ -361,42 +335,3 @@ pnpm --filter @librestock/types build # Build shared types
 
 **Error:** `{ statusCode, message, error }`
 
-## Inventory Data Model
-
-The inventory system uses a three-level hierarchy to track stock:
-
-```
-Product (what)     → defines item metadata (SKU, name, category, reorder point)
-Location (where)   → physical place (warehouse, supplier, client, in-transit)
-Area (where within)→ specific spot inside a location (zone, shelf, bin)
-Inventory (how many) → quantity of a product at a location/area
-```
-
-### Design Decisions
-
-1. **Product vs Inventory separation**: Products define *what* an item is (catalog). Inventory tracks *how many* exist at each location. This allows the same product to exist in multiple locations with different quantities.
-
-2. **Location types**: `WAREHOUSE`, `SUPPLIER`, `IN_TRANSIT`, `CLIENT` — describes the category of place, not its position in a hierarchy.
-
-3. **Areas are optional**: Inventory can reference just a Location, or optionally an Area within that Location for precise placement tracking.
-
-4. **Area hierarchy**: Areas support parent-child relationships (Zone A → Shelf A1 → Bin A1-1). All areas must belong to the same Location.
-
-5. **Unique constraint**: One inventory record per (product, location, area) combination. Use `PATCH /inventory/:id/adjust` to modify quantities.
-
-### Entity Relationships
-
-```
-┌─────────────┐      ┌─────────────┐
-│   Product   │      │  Category   │
-│  (catalog)  │──────│  (tree)     │
-└──────┬──────┘      └─────────────┘
-       │ 1:N
-       ▼
-┌─────────────┐      ┌─────────────┐      ┌─────────────┐
-│  Inventory  │──────│  Location   │──────│    Area     │
-│ (quantity)  │ N:1  │  (place)    │ 1:N  │  (spot)     │
-└─────────────┘      └─────────────┘      └──────┬──────┘
-       │                                         │ self-ref
-       └─────────────────────────────────────────┘ (optional)
-```

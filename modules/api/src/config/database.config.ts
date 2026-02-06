@@ -1,39 +1,34 @@
 import { registerAs } from '@nestjs/config';
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { getSSLConfig, getPoolMax, IDLE_TIMEOUT_MS } from './db-connection.utils';
+import { getSSLConfig, getPoolMax, IDLE_TIMEOUT_MS, getDbConnectionParams } from './db-connection.utils';
 
 const ssl = getSSLConfig();
 const poolMax = getPoolMax();
 
 export default registerAs('database', (): TypeOrmModuleOptions => {
-  // If DATABASE_URL is set, use it (for production/CI)
-  if (process.env.DATABASE_URL) {
-    return {
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
-      entities: [`${__dirname  }/../**/*.entity{.ts,.js}`],
-      synchronize: process.env.DB_SYNCHRONIZE === 'true',
-      logging: process.env.NODE_ENV === 'development',
-      ssl,
-      extra: { max: poolMax, idleTimeoutMillis: IDLE_TIMEOUT_MS },
-    };
-  }
+  const isProduction = process.env.NODE_ENV === 'production';
+  const synchronize = !isProduction && process.env.DB_SYNCHRONIZE === 'true';
+  const params = getDbConnectionParams();
 
-  // Otherwise use PG* env vars (devenv sets these)
-  const host = process.env.PGHOST ?? 'localhost';
-  const isSocket = host.startsWith('/');
-
-  return {
+  const shared: Partial<TypeOrmModuleOptions> = {
     type: 'postgres',
-    host,
-    ...(isSocket ? {} : { port: Number.parseInt(process.env.PGPORT ?? '5432', 10) }),
-    username: process.env.PGUSER ?? process.env.USER,
-    password: process.env.PGPASSWORD ?? '',
-    database: process.env.PGDATABASE ?? 'librestock_inventory',
-    entities: [`${__dirname  }/../**/*.entity{.ts,.js}`],
-    synchronize: process.env.DB_SYNCHRONIZE === 'true',
+    entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
+    synchronize,
     logging: process.env.NODE_ENV === 'development',
     ssl,
     extra: { max: poolMax, idleTimeoutMillis: IDLE_TIMEOUT_MS },
   };
+
+  if ('url' in params) {
+    return { ...shared, url: params.url } as TypeOrmModuleOptions;
+  }
+
+  return {
+    ...shared,
+    host: params.host,
+    ...(params.port !== undefined ? { port: params.port } : {}),
+    username: params.user,
+    password: params.password,
+    database: params.database,
+  } as TypeOrmModuleOptions;
 });

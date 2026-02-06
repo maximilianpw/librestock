@@ -19,3 +19,32 @@ export function getPoolMax(): number {
 }
 
 export const IDLE_TIMEOUT_MS = 30000;
+
+export interface DbConnectionParams {
+  host: string;
+  port?: number;
+  user: string;
+  password: string;
+  database: string;
+}
+
+/**
+ * Returns the shared database connection parameters from environment variables.
+ * Used by both TypeORM (database.config.ts) and Better Auth (auth.ts).
+ */
+export function getDbConnectionParams(): { url: string } | DbConnectionParams {
+  if (process.env.DATABASE_URL) {
+    return { url: process.env.DATABASE_URL };
+  }
+
+  const host = process.env.PGHOST ?? 'localhost';
+  const isSocket = host.startsWith('/');
+
+  return {
+    host,
+    ...(isSocket ? {} : { port: Number.parseInt(process.env.PGPORT ?? '5432', 10) }),
+    user: process.env.PGUSER ?? process.env.USER ?? '',
+    password: process.env.PGPASSWORD ?? '',
+    database: process.env.PGDATABASE ?? 'librestock_inventory',
+  };
+}

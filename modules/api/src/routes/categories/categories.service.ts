@@ -101,6 +101,14 @@ export class CategoriesService {
     return updatedCategory!;
   }
 
+  async existsById(id: string): Promise<boolean> {
+    return this.categoryRepository.existsById(id);
+  }
+
+  async findAllDescendantIds(parentId: string): Promise<string[]> {
+    return this.categoryRepository.findAllDescendantIds(parentId);
+  }
+
   async delete(id: string): Promise<void> {
     const category = await this.categoryRepository.findById(id);
 

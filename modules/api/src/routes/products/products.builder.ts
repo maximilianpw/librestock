@@ -1,3 +1,4 @@
+import { toPaginationMeta } from '../../common/utils/pagination.utils';
 import { type Product } from './entities/product.entity';
 import {
   type CreateProductDto,
@@ -85,14 +86,7 @@ export class ProductBuilder {
   ): PaginatedProductsResponseDto {
     return {
       data: ProductBuilder.toResponseDtoList(result.data),
-      meta: {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        total_pages: result.total_pages,
-        has_next: result.page < result.total_pages,
-        has_previous: result.page > 1,
-      },
+      meta: toPaginationMeta(result.total, result.page, result.limit),
     };
   }
 

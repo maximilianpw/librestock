@@ -1,7 +1,10 @@
-import { Controller, Get, Put, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Put, Body, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AllowAnonymous, Session, UserSession } from '@thallesp/nestjs-better-auth';
 import { StandardThrottle } from 'src/common/decorators/throttle.decorator';
+import { Roles } from 'src/common/decorators';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { UserRole } from 'src/common/enums';
 import { getUserIdFromSession } from 'src/common/auth/session';
 import { BrandingService } from './branding.service';
 import { BrandingResponseDto } from './dto/branding-response.dto';
@@ -23,8 +26,11 @@ export class BrandingController {
 
   @Put()
   @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update branding settings' })
   @ApiResponse({ status: 200, description: 'Updated branding settings', type: BrandingResponseDto })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async update(
     @Body() dto: UpdateBrandingDto,
     @Session() session: UserSession,

@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 import { z } from 'zod'
 
+import { redirect } from '@tanstack/react-router'
+import { getSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -30,6 +32,12 @@ const AUDIT_LOG_PAGE_SIZE = 50
 
 export const Route = createFileRoute('/audit-logs')({
   validateSearch: (search) => auditLogsSearchSchema.parse(search),
+  beforeLoad: async () => {
+    const { data: session } = await getSession()
+    if (!session) {
+      throw redirect({ to: '/login' })
+    }
+  },
   component: AuditPage,
 })
 

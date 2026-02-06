@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { toPaginationMeta } from '../../common/utils/pagination.utils';
 import { Location } from './entities/location.entity';
 import {
   CreateLocationDto,
@@ -20,14 +21,7 @@ export class LocationsService {
 
     return {
       data: result.data.map((location) => this.toResponseDto(location)),
-      meta: {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        total_pages: result.total_pages,
-        has_next: result.page < result.total_pages,
-        has_previous: result.page > 1,
-      },
+      meta: toPaginationMeta(result.total, result.page, result.limit),
     };
   }
 
@@ -78,6 +72,10 @@ export class LocationsService {
   async delete(id: string): Promise<void> {
     await this.getLocationOrFail(id);
     await this.locationRepository.delete(id);
+  }
+
+  async existsById(id: string): Promise<boolean> {
+    return this.locationRepository.existsById(id);
   }
 
   private async getLocationOrFail(id: string): Promise<Location> {

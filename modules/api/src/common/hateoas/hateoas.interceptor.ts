@@ -31,7 +31,7 @@ export class HateoasInterceptor implements NestInterceptor {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const baseUrl = `${request.protocol}://${request.get('host')}`;
+    const baseUrl = `${request.protocol}://${request.get('host')}/api/v1`;
 
     return next.handle().pipe(
       map((data) => {

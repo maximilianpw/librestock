@@ -5,6 +5,8 @@ import { X } from 'lucide-react'
 import { z } from 'zod'
 import { UserRole } from '@librestock/types'
 
+import { redirect } from '@tanstack/react-router'
+import { getSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -28,6 +30,12 @@ const USERS_PAGE_SIZE = 20
 
 export const Route = createFileRoute('/users')({
   validateSearch: (search) => usersSearchSchema.parse(search),
+  beforeLoad: async () => {
+    const { data: session } = await getSession()
+    if (!session) {
+      throw redirect({ to: '/login' })
+    }
+  },
   component: UsersPage,
 })
 
